@@ -1,12 +1,20 @@
 import dotenv from "dotenv";
 import { Bot, Context, session, SessionFlavor } from "grammy";
 import { greetingKeyboard } from "./keyboards/generalKeyboards";
-import { SessionData } from "./interfaces";
+import { routeHistoryUnit, SessionData } from "./interfaces";
 import sessionConfig from "./bot_config/sessionConfig";
+import { keyboard } from "./handlers/buttonRouters";
+import {
+  type Conversation,
+  type ConversationFlavor,
+  conversations,
+  createConversation,
+} from "@grammyjs/conversations";
+import sendStartMessage from "./serviceMessages/sendStartMessage";
+import { MyContext } from "./types";
+import traceRoutes from "./middleware/traceRoutes";
 
 dotenv.config();
-
-type MyContext = Context & SessionFlavor<SessionData>;
 
 const token = process.env.BOT_API_TOKEN;
 if (!token) {
@@ -19,35 +27,34 @@ bot.use(
     initial: () => structuredClone(sessionConfig),
   })
 );
+bot.use(conversations());
+bot.use(traceRoutes);
+bot.use(keyboard);
 
-bot.command("start", async (ctx) => {
-  let greeting = "Привет. Добро пожаловать ";
-  greeting += "в меню бота клуба любителей английского языка.";
-  greeting += " Чем я могу помочь?";
-
-  await ctx.reply(greeting, {
-    reply_markup: greetingKeyboard,
-  });
+bot.command("start", async (ctx: MyContext) => {
+  await sendStartMessage(ctx);
 });
 
-bot.hears("message", async (ctx) => {
-  ctx.session.lastMsgId += 1;
-  ctx.reply(ctx.session.lastMsgId.toString());
+bot.callbackQuery("back", async (ctx: MyContext) => {
+  const canEdit = ctx.session.editMode;
+  await ctx.session.routeHistory.pop(); //фальшивка
+  const routeParams: routeHistoryUnit = ctx.session.routeHistory.pop()!;
+  // ctx.session.conversation = {};
+
+  if (canEdit) {
+    await ctx.editMessageText(routeParams.text, {
+      reply_markup: routeParams.reply_markup,
+      parse_mode: "HTML",
+    });
+  } else {
+    await ctx.reply(routeParams.text, {
+      reply_markup: routeParams.reply_markup,
+      parse_mode: "HTML",
+    });
+    //FIXME
+    ctx.session.editMode = true;
+  }
+  ctx.answerCallbackQuery();
 });
 
-// // Set custom properties on context objects.
-// bot.use(async (ctx, next) => {
-//   ctx.config = {
-//     botDeveloper: BOT_DEVELOPER,
-//     isDeveloper: ctx.from?.id === BOT_DEVELOPER,
-//   };
-//   await next();
-// });
-
-// // Define handlers for custom context objects.
-// bot.command("start", async (ctx) => {
-//   console.log(ctx);
-//   if (ctx.config.isDeveloper) await ctx.reply("Hi mom!");
-//   else await ctx.reply("Welcome");
-// });
 bot.start();
