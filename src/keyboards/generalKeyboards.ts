@@ -8,6 +8,8 @@ export const greetingKeyboard = new InlineKeyboard()
   .text("Попасть на занятие", "gen_invite")
   .row()
   .text("Расписание", "gen_schedule");
+// .row()
+// .text("Invoice", "invoice");
 
 export const infoKeyboards = {
   generalInfo: new InlineKeyboard()

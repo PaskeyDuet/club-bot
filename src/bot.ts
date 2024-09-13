@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Bot, Context, session, SessionFlavor } from "grammy";
 import { greetingKeyboard } from "./keyboards/generalKeyboards";
 import { routeHistoryUnit, SessionData } from "./interfaces";
-import sessionConfig from "./bot_config/sessionConfig";
+import sessionConfig from "./botConfig/sessionConfig";
 import { keyboard } from "./handlers/buttonRouters";
 import {
   type Conversation,
@@ -13,8 +13,19 @@ import {
 import sendStartMessage from "./serviceMessages/sendStartMessage";
 import { MyContext } from "./types";
 import traceRoutes from "./middleware/traceRoutes";
+import { sequelize } from "./dbSetup/dbClient";
+import User from "./dbSetup/models/User";
 
 dotenv.config();
+
+(async () => {
+  await sequelize.sync();
+  User.create({
+    userId: 23,
+    regDate: String(new Date().getTime()),
+  });
+  console.log("Database synced");
+})();
 
 const token = process.env.BOT_API_TOKEN;
 if (!token) {
