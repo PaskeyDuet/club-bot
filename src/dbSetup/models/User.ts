@@ -1,51 +1,39 @@
-import { Optional } from "sequelize";
-import {
-  Table,
-  Model,
-  Column,
-  DataType,
-  CreatedAt,
-  UpdatedAt,
-  PrimaryKey,
-} from "sequelize-typescript";
+import { HasOne } from "sequelize";
+import { Table, Model, Column, DataType } from "sequelize-typescript";
+import Subscription from "./Subscription";
 
-interface UserAttributes {
-  id: number;
-  userId: number;
-  regDate: string;
-}
-
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+export type DbUserAttributes = {
+  user_id: number;
+  first_name: string;
+  second_name: string;
+  reg_date: string;
+};
 
 @Table({
   timestamps: true,
   tableName: "users",
   modelName: "User",
 })
-export default class User extends Model<
-  UserAttributes,
-  UserCreationAttributes
-> {
+export default class User extends Model<DbUserAttributes> {
   @Column({
+    type: DataType.INTEGER,
     primaryKey: true,
-    type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
+    unique: true,
   })
-  declare id: number;
-
-  @Column({
-    type: DataType.BIGINT,
-  })
-  declare userId: number;
+  declare user_id: number;
 
   @Column({
     type: DataType.STRING,
   })
-  declare regDate: string;
+  declare first_name: string;
 
-  //   @CreatedAt
-  //   declare createdAt: Date;
+  @Column({
+    type: DataType.STRING,
+  })
+  declare second_name: string;
 
-  //   @UpdatedAt
-  //   declare updatedAt: Date;
+  @Column({
+    type: DataType.DATE,
+  })
+  declare reg_date: string;
 }

@@ -1,8 +1,7 @@
-import { log } from "console";
 import guardExp from "../helpers/guardExp";
 import sendStartMessage from "../serviceMessages/sendStartMessage";
-import { CallbackCtx, MyContext } from "../types";
 import { NextFunction } from "grammy";
+import { CallbackCtx, MyContext } from "../types/grammy.types";
 
 export default async function (ctx: MyContext, next: NextFunction) {
   let currentMsgId: number | undefined =
@@ -17,14 +16,14 @@ export default async function (ctx: MyContext, next: NextFunction) {
     ctx.session.lastMsgId = currentMsgId;
 
     if (ctx?.callbackQuery) {
-      callackTracer(<CallbackCtx>ctx);
+      callbackTracer(<CallbackCtx>ctx);
     }
 
     await next();
   }
 }
 
-function callackTracer(ctx: CallbackCtx) {
+function callbackTracer(ctx: CallbackCtx) {
   const cb = ctx.callbackQuery;
   guardExp(cb.message, "callackTracer error, cbQMessage.text");
   const cbQMessage = cb.message;

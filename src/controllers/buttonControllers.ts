@@ -1,7 +1,7 @@
 import { infoKeyboards } from "../keyboards/generalKeyboards";
-import { MyContext } from "../types";
 import guardExp from "../helpers/guardExp";
 import { photos } from "../media/mediaBuilders";
+import { MyContext } from "../types/grammy.types";
 
 export async function sendInfoMessage(ctx: MyContext) {
   let generalInfo = "Мы молодые амбициозные перспективные педагоги, ";

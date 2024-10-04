@@ -1,29 +1,29 @@
 import dotenv from "dotenv";
-import { Bot, Context, session, SessionFlavor } from "grammy";
-import { greetingKeyboard } from "./keyboards/generalKeyboards";
-import { routeHistoryUnit, SessionData } from "./interfaces";
+import { Bot, session } from "grammy";
 import sessionConfig from "./botConfig/sessionConfig";
 import { keyboard } from "./handlers/buttonRouters";
-import {
-  type Conversation,
-  type ConversationFlavor,
-  conversations,
-  createConversation,
-} from "@grammyjs/conversations";
+import { conversations, createConversation } from "@grammyjs/conversations";
 import sendStartMessage from "./serviceMessages/sendStartMessage";
-import { MyContext } from "./types";
 import traceRoutes from "./middleware/traceRoutes";
-import { sequelize } from "./dbSetup/dbClient";
 import User from "./dbSetup/models/User";
+import userRegistrationConv from "./conversations/userRegistrationConv";
+import ctxExtender from "./middleware/ctxExtender";
+import { sequelize } from "./dbSetup/dbClient";
+import { MyContext, routeHistoryUnit } from "./types/grammy.types";
+import Subscription from "./dbSetup/models/Subscription";
 
 dotenv.config();
 
 (async () => {
   await sequelize.sync();
-  User.create({
-    userId: 23,
-    regDate: String(new Date().getTime()),
-  });
+  // try {
+  //   User.create({
+  //     user_id: 23,
+  //     reg_date: new Date().toISOString(),
+  //     first_name: "Volodua",
+  //     second_name: "ivan",
+  //   });
+  // } catch (error) {}
   console.log("Database synced");
 })();
 
@@ -32,18 +32,29 @@ if (!token) {
   throw new Error("There is no bot token");
 }
 const bot = new Bot<MyContext>(token);
-
+bot.use(keyboard);
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
   })
 );
 bot.use(conversations());
+bot.use(createConversation(userRegistrationConv, "userReg"));
 bot.use(traceRoutes);
-bot.use(keyboard);
+bot.use(ctxExtender);
 
 bot.command("start", async (ctx: MyContext) => {
   await sendStartMessage(ctx);
+});
+
+bot.callbackQuery("sub", async (ctx: MyContext) => {
+  const data = await Subscription.create({
+    user_id: ctx.userId,
+    sub_date: new Date().toISOString(),
+    sub_type: 1,
+  });
+
+  console.log(data);
 });
 
 bot.callbackQuery("back", async (ctx: MyContext) => {

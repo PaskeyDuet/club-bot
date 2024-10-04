@@ -1,7 +1,6 @@
 import { Composer, Context } from "grammy";
-import { MyContext } from "../types";
 import { infoUnits, sendInfoMessage } from "../controllers/buttonControllers";
-import { title } from "process";
+import { MyContext } from "../types/grammy.types";
 
 export const keyboard = new Composer<MyContext>();
 
@@ -37,20 +36,6 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
     default:
       break;
   }
-});
-
-keyboard.callbackQuery("invoice", async (ctx) => {
-  const res = await ctx.replyWithInvoice(
-    "title",
-    "description",
-    "payload",
-    "RUB",
-    [{ label: "Месячная подписка", amount: 10000 }],
-    {
-      provider_token: "401643678:TEST:a94a2a06-9a58-4b81-9bc6-a6960d249abb",
-    }
-  );
-  console.log(res);
 });
 
 keyboard.on("pre_checkout_query", async (ctx) => {

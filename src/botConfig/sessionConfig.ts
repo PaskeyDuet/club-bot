@@ -1,4 +1,4 @@
-import { SessionData } from "../interfaces";
+import { SessionData } from "../types/grammy.types";
 
 const initialConfig: SessionData = {
   user: {

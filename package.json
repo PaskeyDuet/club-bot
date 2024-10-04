@@ -10,6 +10,10 @@
     "lint:check": "eslint",
     "lint:fix": "eslint --fix"
   },
+  "imports": {
+    "#db": "./src/dbSetup/**",
+    "#root": "./src/**"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -7,7 +7,7 @@ export const greetingKeyboard = new InlineKeyboard()
   .row()
   .text("Попасть на занятие", "gen_invite")
   .row()
-  .text("Расписание", "gen_schedule");
+  .text("Расписание", /*"gen_schedule"*/ "sub");
 // .row()
 // .text("Invoice", "invoice");
 
