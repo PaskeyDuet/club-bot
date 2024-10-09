@@ -1,6 +1,7 @@
-import { Composer, Context } from "grammy";
-import { infoUnits, sendInfoMessage } from "../controllers/buttonControllers";
+import { Composer } from "grammy";
 import { MyContext } from "../types/grammy.types";
+import { infoUnits, sendInfoMessage } from "../controllers/infoUnit";
+import { sendSubMessage } from "../controllers/subscriptionUnit";
 
 export const keyboard = new Composer<MyContext>();
 
@@ -12,6 +13,7 @@ keyboard.callbackQuery(/gen_/, async (ctx) => {
       await sendInfoMessage(ctx);
       break;
     case "invite":
+      await sendSubMessage(ctx);
       break;
     case "schedule":
       break;

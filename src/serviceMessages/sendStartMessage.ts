@@ -16,8 +16,12 @@ export default async function sendStartMessage(ctx: MyContext) {
     await ctx.conversation.enter("userReg");
     return;
   } else {
-    const firstName = user.first_name;
-    let greeting = `Привет, ${firstName}. С возвращением`;
+    const userSession = ctx.session.user;
+    userSession.firstName = user.first_name;
+    userSession.secondName = user.second_name;
+    userSession.isNewbie = user.is_newbie;
+
+    let greeting = `Привет, ${user.first_name}. С возвращением`;
     greeting += "в меню бота клуба любителей английского языка.\n";
     greeting += "Чем я могу помочь?";
 

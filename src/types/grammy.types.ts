@@ -17,7 +17,8 @@ export type MyConversation = Conversation<MyContext>;
 export type CallbackCtx = Filter<MyContext, "callback_query">;
 
 interface TelegramUser {
-  fio: string;
+  firstName: string;
+  secondName: string;
   isNewbie: boolean;
 }
 

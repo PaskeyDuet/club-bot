@@ -2,7 +2,8 @@ import { SessionData } from "../types/grammy.types";
 
 const initialConfig: SessionData = {
   user: {
-    fio: "",
+    firstName: "",
+    secondName: "",
     isNewbie: true,
   },
   routeHistory: [],

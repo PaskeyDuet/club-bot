@@ -1,20 +1,26 @@
 import { HasOne } from "sequelize";
 import { Table, Model, Column, DataType } from "sequelize-typescript";
-import Subscription from "./Subscription";
+import type { PartialBy } from "@sequelize/utils";
 
 export type DbUserAttributes = {
   user_id: number;
   first_name: string;
   second_name: string;
-  reg_date: string;
+  is_newbie: boolean;
+  reg_date: Date;
 };
+
+type DbUserCreationAttributes = PartialBy<DbUserAttributes, "is_newbie">;
 
 @Table({
   timestamps: true,
   tableName: "users",
   modelName: "User",
 })
-export default class User extends Model<DbUserAttributes> {
+export default class User extends Model<
+  DbUserAttributes,
+  DbUserCreationAttributes
+> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -33,7 +39,13 @@ export default class User extends Model<DbUserAttributes> {
   declare second_name: string;
 
   @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  declare is_newbie: boolean;
+
+  @Column({
     type: DataType.DATE,
   })
-  declare reg_date: string;
+  declare reg_date: Date;
 }

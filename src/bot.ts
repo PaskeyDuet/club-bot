@@ -1,29 +1,32 @@
 import dotenv from "dotenv";
-import { Bot, session } from "grammy";
+import { Bot, GrammyError, HttpError, session } from "grammy";
 import sessionConfig from "./botConfig/sessionConfig";
 import { keyboard } from "./handlers/buttonRouters";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import sendStartMessage from "./serviceMessages/sendStartMessage";
 import traceRoutes from "./middleware/traceRoutes";
-import User from "./dbSetup/models/User";
 import userRegistrationConv from "./conversations/userRegistrationConv";
 import ctxExtender from "./middleware/ctxExtender";
 import { sequelize } from "./dbSetup/dbClient";
 import { MyContext, routeHistoryUnit } from "./types/grammy.types";
-import Subscription from "./dbSetup/models/Subscription";
+import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
+import { subConv } from "./conversations/subscriptionConvs/subConv";
+import Meetings from "./dbSetup/models/Meetings";
+import createDbDate from "./helpers/createDbDate";
+import createFutureMeetingsList from "./helpers/createFutureMeetingsList";
 
 dotenv.config();
 
 (async () => {
   await sequelize.sync();
-  // try {
-  //   User.create({
-  //     user_id: 23,
-  //     reg_date: new Date().toISOString(),
-  //     first_name: "Volodua",
-  //     second_name: "ivan",
-  //   });
-  // } catch (error) {}
+  await createFutureMeetingsList();
+  // console.log(createDbDate.dateFromString("2025-10-23 12:30"));
+
+  await Meetings.create({
+    topic: "Worlkd",
+    date: createDbDate.dateFromString("2024-11-23 10:03"),
+    place: "Moscow",
+  });
   console.log("Database synced");
 })();
 
@@ -32,7 +35,6 @@ if (!token) {
   throw new Error("There is no bot token");
 }
 const bot = new Bot<MyContext>(token);
-bot.use(keyboard);
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
@@ -40,21 +42,18 @@ bot.use(
 );
 bot.use(conversations());
 bot.use(createConversation(userRegistrationConv, "userReg"));
+bot.use(createConversation(newbieSubConv));
+bot.use(createConversation(subConv));
 bot.use(traceRoutes);
 bot.use(ctxExtender);
+bot.use(keyboard);
 
 bot.command("start", async (ctx: MyContext) => {
   await sendStartMessage(ctx);
 });
 
-bot.callbackQuery("sub", async (ctx: MyContext) => {
-  const data = await Subscription.create({
-    user_id: ctx.userId,
-    sub_date: new Date().toISOString(),
-    sub_type: 1,
-  });
-
-  console.log(data);
+bot.callbackQuery("gen_invite", async (ctx: MyContext) => {
+  await ctx.conversation.enter("subBuy");
 });
 
 bot.callbackQuery("back", async (ctx: MyContext) => {
@@ -77,6 +76,19 @@ bot.callbackQuery("back", async (ctx: MyContext) => {
     ctx.session.editMode = true;
   }
   ctx.answerCallbackQuery();
+});
+
+bot.catch((err) => {
+  const ctx = err.ctx;
+  console.error(`Error while handling update ${ctx.update.update_id}:`);
+  const e = err.error;
+  if (e instanceof GrammyError) {
+    console.error("Error in request:", e.description);
+  } else if (e instanceof HttpError) {
+    console.error("Could not contact Telegram:", e);
+  } else {
+    console.error("Unknown error:", e);
+  }
 });
 
 bot.start();
