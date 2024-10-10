@@ -4,6 +4,8 @@ import { mainMenu } from "../keyboards/generalKeyboards";
 import { generateMeetingsKeyboard } from "../keyboards/meetingsKeyboards";
 import { MyContext, MyConversation } from "../types/grammy.types";
 import { TextWithInlineKeyboardObj } from "../types/shared.types";
+import chooseMeetingNumber from "./helpers/chooseMeetingNumber";
+import unlessActions from "./helpers/unlessActions";
 
 export async function registrationForMeeting(
   conversation: MyConversation,
@@ -30,7 +32,10 @@ export async function registrationForMeeting(
     reply_markup: messageData.keyboard,
   });
 
-  const s = await conversation.waitForCallbackQuery(/reg_for_meeting/, {
-    otherwise: () => console.log("s"),
-  });
+  const { callbackQuery: cbQ } = await chooseMeetingNumber(
+    conversation,
+    ctx,
+    messageData
+  );
+  const meetingNumber = cbQ.data.split("reg_for_meeting_")[1];
 }
