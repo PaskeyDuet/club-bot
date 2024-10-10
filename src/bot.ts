@@ -12,21 +12,29 @@ import { MyContext, routeHistoryUnit } from "./types/grammy.types";
 import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
 import { subConv } from "./conversations/subscriptionConvs/subConv";
 import Meetings from "./dbSetup/models/Meetings";
-import createDbDate from "./helpers/createDbDate";
+import dates from "./helpers/dates";
 import createFutureMeetingsList from "./helpers/createFutureMeetingsList";
+import { registrationForMeeting } from "./conversations/registrationForMeeting";
 
 dotenv.config();
 
 (async () => {
   await sequelize.sync();
-  await createFutureMeetingsList();
-  // console.log(createDbDate.dateFromString("2025-10-23 12:30"));
-
-  await Meetings.create({
-    topic: "Worlkd",
-    date: createDbDate.dateFromString("2024-11-23 10:03"),
-    place: "Moscow",
-  });
+  // await Meetings.create({
+  //   topic: "Worlkd",
+  //   date: dates.dateFromString("2024-11-23 12:03"),
+  //   place: "Moscow",
+  // });
+  // await Meetings.create({
+  //   topic: "Moscow",
+  //   date: dates.dateFromString("2024-01-23 11:03"),
+  //   place: "Moscow",
+  // });
+  // await Meetings.create({
+  //   topic: "Russ",
+  //   date: dates.dateFromString("2024-10-23 10:03"),
+  //   place: "Moscow",
+  // });
   console.log("Database synced");
 })();
 
@@ -42,6 +50,7 @@ bot.use(
 );
 bot.use(conversations());
 bot.use(createConversation(userRegistrationConv, "userReg"));
+bot.use(createConversation(registrationForMeeting));
 bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
 bot.use(traceRoutes);
@@ -50,10 +59,6 @@ bot.use(keyboard);
 
 bot.command("start", async (ctx: MyContext) => {
   await sendStartMessage(ctx);
-});
-
-bot.callbackQuery("gen_invite", async (ctx: MyContext) => {
-  await ctx.conversation.enter("subBuy");
 });
 
 bot.callbackQuery("back", async (ctx: MyContext) => {

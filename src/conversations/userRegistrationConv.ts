@@ -2,7 +2,7 @@ import createUser from "../dbSetup/handlers/createUser";
 import sendStartMessage from "../serviceMessages/sendStartMessage";
 import { MyContext, MyConversation } from "../types/grammy.types";
 import { DbUserAttributes } from "../dbSetup/models/User";
-import createDbDate from "../helpers/createDbDate";
+import dates from "../helpers/dates";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {
   let nameText = "Пожалуйста, напишите ваше <b>имя</b>\n";
@@ -32,7 +32,7 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
       first_name: user_name,
       second_name: second_user_name,
       is_newbie: true,
-      reg_date: createDbDate.currDate(),
+      reg_date: dates.currDate(),
     };
     await createUser(newUser);
     return await sendStartMessage(ctx);

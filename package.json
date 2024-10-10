@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/bot.ts",
+    "dev": "cross-env NODE_NO_WARNINGS=1 nodemon src/bot.ts",
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -24,6 +24,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.4",
     "@types/validator": "^13.12.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.8.3",

@@ -4,7 +4,7 @@ import type { PartialBy } from "@sequelize/utils";
 
 export type SubDetailsType = {
   sub_id: number;
-  sub_period: string;
+  sub_period: Date;
   sub_price: number;
 };
 
@@ -29,7 +29,7 @@ export default class SubDetails extends Model<
   @Column({
     type: DataType.DATE,
   })
-  declare sub_period: string;
+  declare sub_period: Date;
 
   @Column({
     type: DataType.INTEGER,

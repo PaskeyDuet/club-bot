@@ -3,13 +3,11 @@ import { InlineKeyboard } from "grammy";
 //TODO: Если подписка есть, не добавлять кнопку
 //TODO: Если человек зашёл не в первый раз, вместо куда я попал добавлять ИНФО кнопку
 export const greetingKeyboard = new InlineKeyboard()
-  .text("Куда я попал?", "gen_info")
+  .text("Куда я попал?", "gen__info")
   .row()
-  .text("Попасть на занятие", "gen_invite")
+  .text("Записаться на занятие", "gen__reg_for_meeting")
   .row()
-  .text("Расписание", /*"gen_schedule"*/ "sub");
-// .row()
-// .text("Invoice", "invoice");
+  .text("Расписание", "gen__schedule");
 
 export const infoKeyboards = {
   generalInfo: new InlineKeyboard()
@@ -24,4 +22,4 @@ export const infoKeyboards = {
   when: new InlineKeyboard().text("Назад", "back"),
 };
 
-// export const subInfoKeyboards;
+export const mainMenu = new InlineKeyboard().text("Главное меню", "main_menu");

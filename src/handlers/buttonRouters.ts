@@ -5,15 +5,15 @@ import { sendSubMessage } from "../controllers/subscriptionUnit";
 
 export const keyboard = new Composer<MyContext>();
 
-keyboard.callbackQuery(/gen_/, async (ctx) => {
-  const path = ctx.callbackQuery.data.split("gen_")[1];
+keyboard.callbackQuery(/gen__/, async (ctx) => {
+  const path = ctx.callbackQuery.data.split("gen__")[1];
 
   switch (path) {
     case "info":
       await sendInfoMessage(ctx);
       break;
-    case "invite":
-      await sendSubMessage(ctx);
+    case "reg_for_meeting":
+      await ctx.conversation.enter("registrationForMeeting");
       break;
     case "schedule":
       break;

@@ -20,7 +20,7 @@
   ],
   "include": [
     "src//**/*",
-    "config//*"
+    "config//*",
   ],
   "esModuleInterop": true,
   "forceConsistentCasingInFileNames": true,

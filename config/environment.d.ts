@@ -8,6 +8,9 @@ declare global {
       DB_HOST: string;
       DB_PORT: number;
     }
+    type GlobalConfig = {
+      maxmeetingsPerMessage: number;
+    };
   }
 }
 

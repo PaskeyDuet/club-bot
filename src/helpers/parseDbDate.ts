@@ -1,14 +1,5 @@
-import { dateObj } from "../types/shared.types";
+import moment from "moment-timezone";
 
-export const meetingDateParser = (date: Date | string): dateObj => {
-  if (date instanceof Date) {
-    return {
-      day: date.getUTCDate(),
-      month: date.getUTCMonth().toLocaleString(),
-      hours: date.getHours(),
-      minutes: date.getMinutes(),
-    };
-  } else {
-    throw new Error("Wrong date");
-  }
+export const meetingDateParser = (date: Date | string): string => {
+  return moment(date).locale("ru").format("LLL");
 };

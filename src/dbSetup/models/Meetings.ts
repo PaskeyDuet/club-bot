@@ -4,7 +4,7 @@ export type MeetingsType = {
   meeting_id: number;
   place: string;
   topic: string;
-  date: string | Date;
+  date: Date;
 };
 
 type MeetingsCreationType = PartialBy<MeetingsType, "meeting_id">;

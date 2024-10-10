@@ -1,17 +1,13 @@
-interface User {
-  fio: string;
-  isNewbie: boolean;
-}
-export type dateObj = {
-  day?: number;
-  month?: string;
-  hours?: number;
-  minutes?: number;
+import { InlineKeyboardMarkup } from "grammy/types";
+
+export type TextWithInlineKeyboardObj = {
+  text: string;
+  keyboard?: InlineKeyboardMarkup;
 };
 export type MeetingsObject = {
   meetingId: number;
   place: string;
   topic: string;
-  date: dateObj;
+  date: string;
 };
 export type DbDateType = `${number}-${number}-${number} ${number}:${number}`;

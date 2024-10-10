@@ -12,7 +12,7 @@ import SubDetails from "./SubDetails";
 export type UserSubscription = {
   id: number;
   user_id: number;
-  sub_date: string;
+  sub_date: Date;
   sub_number: number;
   sub_status: number;
   sub_end: string;
