@@ -13,7 +13,7 @@ export type DbUserAttributes = {
 type DbUserCreationAttributes = PartialBy<DbUserAttributes, "is_newbie">;
 
 @Table({
-  timestamps: true,
+  timestamps: false,
   tableName: "users",
   modelName: "User",
 })

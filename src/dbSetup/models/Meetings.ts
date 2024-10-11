@@ -1,16 +1,21 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
 import type { PartialBy } from "@sequelize/utils";
+import MeetingsDetails from "./MeetingsDetails";
 export type MeetingsType = {
   meeting_id: number;
   place: string;
   topic: string;
   date: Date;
+  MeetingsDetails?: MeetingsDetails[];
 };
 
-type MeetingsCreationType = PartialBy<MeetingsType, "meeting_id">;
+type MeetingsCreationType = PartialBy<
+  MeetingsType,
+  "meeting_id" | "MeetingsDetails"
+>;
 
 @Table({
-  timestamps: true,
+  timestamps: false,
   tableName: "meetings",
   modelName: "Meetings",
 })

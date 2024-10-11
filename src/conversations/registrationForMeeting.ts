@@ -1,3 +1,4 @@
+import meetingsDetailsController from "../dbSetup/handlers/meetingsDetailsController";
 import createFutureMeetingsList from "../helpers/createFutureMeetingsList";
 import getFutureMeetings from "../helpers/getFutureMeetings";
 import { mainMenu } from "../keyboards/generalKeyboards";
@@ -11,6 +12,8 @@ export async function registrationForMeeting(
   conversation: MyConversation,
   ctx: MyContext
 ) {
+  console.log(ctx.userId);
+
   const futureMeetings = await getFutureMeetings();
   const messageData: TextWithInlineKeyboardObj = {
     text: "",
@@ -37,5 +40,10 @@ export async function registrationForMeeting(
     ctx,
     messageData
   );
-  const meetingNumber = cbQ.data.split("reg_for_meeting_")[1];
+  const meetingId = cbQ.data.split("reg_for_meeting_")[1];
+  const createdVisit = await meetingsDetailsController.addUserToMeet(
+    ctx.userId,
+    parseInt(meetingId)
+  );
+  console.log(createdVisit);
 }

@@ -10,4 +10,7 @@ export type MeetingsObject = {
   topic: string;
   date: string;
 };
+export type MeetingsWithDetailsObject = MeetingsObject & {
+  user_id: number;
+};
 export type DbDateType = `${number}-${number}-${number} ${number}:${number}`;

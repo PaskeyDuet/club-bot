@@ -24,7 +24,7 @@ type UserSubscriptionCreationAttributes = PartialBy<
 >;
 
 @Table({
-  timestamps: true,
+  timestamps: false,
   tableName: "subscriptions",
   modelName: "Subscription",
 })

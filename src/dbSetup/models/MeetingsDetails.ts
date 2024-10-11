@@ -19,7 +19,7 @@ export type MeetingsDetailsType = {
 type MeetingsDetailsCreationType = PartialBy<MeetingsDetailsType, "id">;
 
 @Table({
-  timestamps: true,
+  timestamps: false,
   tableName: "meetings_details",
   modelName: "MeetingsDetails",
 })

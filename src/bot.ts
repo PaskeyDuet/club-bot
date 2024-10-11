@@ -15,11 +15,17 @@ import Meetings from "./dbSetup/models/Meetings";
 import dates from "./helpers/dates";
 import createFutureMeetingsList from "./helpers/createFutureMeetingsList";
 import { registrationForMeeting } from "./conversations/registrationForMeeting";
+import meetingsController from "./dbSetup/handlers/meetingsController";
+import meetingsDetailsController from "./dbSetup/handlers/meetingsDetailsController";
 
 dotenv.config();
 
 (async () => {
   await sequelize.sync();
+
+  const data = await meetingsController.futureMeetingsWithUsers();
+  console.log(data);
+
   // await Meetings.create({
   //   topic: "Worlkd",
   //   date: dates.dateFromString("2024-11-23 12:03"),

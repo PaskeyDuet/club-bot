@@ -11,7 +11,7 @@ export type SubDetailsType = {
 type CreationSubDetailsType = PartialBy<SubDetailsType, "sub_id">;
 
 @Table({
-  timestamps: true,
+  timestamps: false,
   tableName: "sub_details",
   modelName: "SubDetails",
 })
