@@ -4,9 +4,13 @@ import { Conversation, ConversationFlavor } from "@grammyjs/conversations";
 
 export interface SessionData {
   user: TelegramUser;
+  temp: {
+    meetingNumber: number | null;
+  };
   routeHistory: Array<routeHistoryUnit>; // Укажите тип элементов, если это строки, или другой тип, если необходимо
   lastMsgId: number;
   editMode: boolean;
+  conversation: object;
 }
 export type MyContext = Context &
   SessionFlavor<SessionData> &
@@ -20,6 +24,7 @@ interface TelegramUser {
   firstName: string;
   secondName: string;
   isNewbie: boolean;
+  hasSub: boolean;
 }
 
 export interface routeHistoryUnit {

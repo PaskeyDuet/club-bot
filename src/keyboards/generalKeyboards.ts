@@ -2,13 +2,30 @@ import { InlineKeyboard } from "grammy";
 
 //TODO: Если подписка есть, не добавлять кнопку
 //TODO: Если человек зашёл не в первый раз, вместо куда я попал добавлять ИНФО кнопку
-export const greetingKeyboard = new InlineKeyboard()
-  .text("Куда я попал?", "gen__info")
-  .row()
-  .text("Записаться на занятие", "gen__reg_for_meeting")
-  .row()
-  .text("Расписание", "gen__schedule");
-
+export function greetingKeyboard(newbie: boolean, subscribed: boolean) {
+  const keyboard = new InlineKeyboard();
+  if (newbie) {
+    keyboard
+      .text("Куда я попал?", "gen__info")
+      .row()
+      .text("Попасть на занятие", "gen__reg_for_meeting_newbie")
+      .row();
+  } else if (subscribed) {
+    keyboard
+      .text("Инфо", "gen__info")
+      .row()
+      .text("Записаться на занятие", "gen__reg_for_meeting")
+      .row();
+  } else {
+    keyboard
+      .text("Инфо", "gen__info")
+      .row()
+      .text("Оформить подписку", "gen__create_sub")
+      .row();
+  }
+  keyboard.text("Расписание", "gen__schedule");
+  return keyboard;
+}
 export const infoKeyboards = {
   generalInfo: new InlineKeyboard()
     .text("Кто мы", "info_who")

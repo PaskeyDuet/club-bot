@@ -5,7 +5,7 @@ export async function newbieSubConv(
   conversation: MyConversation,
   ctx: MyContext
 ) {
-  const isNewbie = true;
+  const isNewbie = ctx.session.user.isNewbie;
 
   let generalInfo = "";
   generalInfo +=

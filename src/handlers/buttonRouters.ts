@@ -2,6 +2,7 @@ import { Composer } from "grammy";
 import { MyContext } from "../types/grammy.types";
 import { infoUnits, sendInfoMessage } from "../controllers/infoUnit";
 import { sendSubMessage } from "../controllers/subscriptionUnit";
+import sendStartMessage from "../serviceMessages/sendStartMessage";
 
 export const keyboard = new Composer<MyContext>();
 
@@ -14,6 +15,9 @@ keyboard.callbackQuery(/gen__/, async (ctx) => {
       break;
     case "reg_for_meeting":
       await ctx.conversation.enter("registrationForMeeting");
+      break;
+    case "reg_for_meeting_newbie":
+      await ctx.conversation.enter("newbieSubConv");
       break;
     case "schedule":
       break;
@@ -40,13 +44,6 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
   }
 });
 
-keyboard.on("pre_checkout_query", async (ctx) => {
-  console.log("precheck");
-  return ctx.answerPreCheckoutQuery(true).catch(() => {
-    console.log("err");
-  });
-});
-
-keyboard.on(":successful_payment", async (ctx) => {
-  console.log("success");
+keyboard.callbackQuery("main_menu", async (ctx) => {
+  await sendStartMessage(ctx);
 });

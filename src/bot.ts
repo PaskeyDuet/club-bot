@@ -22,10 +22,7 @@ dotenv.config();
 
 (async () => {
   await sequelize.sync();
-
   const data = await meetingsController.futureMeetingsWithUsers();
-  console.log(data);
-
   // await Meetings.create({
   //   topic: "Worlkd",
   //   date: dates.dateFromString("2024-11-23 12:03"),
