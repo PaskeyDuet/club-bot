@@ -11,33 +11,66 @@ import { sequelize } from "./dbSetup/dbClient";
 import { MyContext, routeHistoryUnit } from "./types/grammy.types";
 import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
 import { subConv } from "./conversations/subscriptionConvs/subConv";
-import Meetings from "./dbSetup/models/Meetings";
-import dates from "./helpers/dates";
-import createFutureMeetingsList from "./helpers/createFutureMeetingsList";
 import { registrationForMeeting } from "./conversations/registrationForMeeting";
-import meetingsController from "./dbSetup/handlers/meetingsController";
-import meetingsDetailsController from "./dbSetup/handlers/meetingsDetailsController";
+import Subscription from "./dbSetup/models/Subscription";
+import SubDetails from "./dbSetup/models/SubDetails";
 
 dotenv.config();
-
 (async () => {
-  await sequelize.sync();
-  const data = await meetingsController.futureMeetingsWithUsers();
+  await sequelize.sync({ alter: true });
+  // const data = await meetingsController.futureMeetingsWithUsers();
   // await Meetings.create({
   //   topic: "Worlkd",
   //   date: dates.dateFromString("2024-11-23 12:03"),
-  //   place: "Moscow",
+  //   place: "Moscow 1",
   // });
   // await Meetings.create({
   //   topic: "Moscow",
   //   date: dates.dateFromString("2024-01-23 11:03"),
-  //   place: "Moscow",
+  //   place: "Moscow 2",
   // });
   // await Meetings.create({
   //   topic: "Russ",
   //   date: dates.dateFromString("2024-10-23 10:03"),
-  //   place: "Moscow",
+  //   place: "Moscow 3",
   // });
+  // await Meetings.create({
+  //   topic: "Our family",
+  //   date: dates.dateFromString("2024-10-23 10:03"),
+  //   place: "Moscow 4",
+  // });
+  // await SubDetails.create({
+  //   duration_days: 99999,
+  //   sub_price: 0,
+  // });
+  // await SubDetails.create({
+  //   duration_days: 30,
+  //   sub_price: 100,
+  // });
+  // await SubDetails.create({
+  //   duration_days: 60,
+  //   sub_price: 1000,
+  // });
+  // await SubDetails.create({
+  //   duration_days: 1200,
+  //   sub_price: 10000,
+  // });
+  // await SubDetails.update(
+  //   { sub_name: "Free tier" },
+  //   { where: { sub_number: 1 } }
+  // );
+  // await SubDetails.update(
+  //   { sub_name: "Месячная подписка" },
+  //   { where: { sub_number: 2 } }
+  // );
+  // await SubDetails.update(
+  //   { sub_name: "Трехмесячная подписка" },
+  //   { where: { sub_number: 3 } }
+  // );
+  // await SubDetails.update(
+  //   { sub_name: "Годовая подписка" },
+  //   { where: { sub_number: 4 } }
+  // );
   console.log("Database synced");
 })();
 

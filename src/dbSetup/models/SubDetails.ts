@@ -1,14 +1,14 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
-import User from "./User";
 import type { PartialBy } from "@sequelize/utils";
 
 export type SubDetailsType = {
-  sub_id: number;
-  sub_period: Date;
+  sub_number: number;
+  duration_days: number;
   sub_price: number;
+  sub_name: string;
 };
 
-type CreationSubDetailsType = PartialBy<SubDetailsType, "sub_id">;
+type CreationSubDetailsType = PartialBy<SubDetailsType, "sub_number">;
 
 @Table({
   timestamps: false,
@@ -27,12 +27,17 @@ export default class SubDetails extends Model<
   declare sub_number: number;
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.INTEGER,
   })
-  declare sub_period: Date;
+  declare duration_days: number;
 
   @Column({
     type: DataType.INTEGER,
   })
   declare sub_price: number;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  declare sub_name: string;
 }

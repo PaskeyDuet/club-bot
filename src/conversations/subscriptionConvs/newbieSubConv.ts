@@ -1,3 +1,5 @@
+import meetingsController from "../../dbSetup/handlers/meetingsController";
+import { mainMenu } from "../../keyboards/generalKeyboards";
 import { subKeyboard } from "../../keyboards/subKeyboards";
 import { MyContext, MyConversation } from "../../types/grammy.types";
 
@@ -6,6 +8,16 @@ export async function newbieSubConv(
   ctx: MyContext
 ) {
   const isNewbie = ctx.session.user.isNewbie;
+  const futureMeetingsWithUsers =
+    await meetingsController.futureMeetingsWithUsers();
+
+  if (isNewbie && futureMeetingsWithUsers.length) {
+    let regDenyText = "Для пробного посещения доступно только одно посещение\n";
+    regDenyText +=
+      "В главном меню вы можете отменить запись и затем зарегистрироваться на другую встречу";
+    await ctx.editMessageText(regDenyText, { reply_markup: mainMenu });
+    return;
+  }
 
   let generalInfo = "";
   generalInfo +=

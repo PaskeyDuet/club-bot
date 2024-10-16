@@ -7,7 +7,10 @@ export default (
   futureMeetings: MeetingsObject[],
   futureMeetingsWithUsers: MeetingsWithDetailsObject[]
 ) => {
-  const f1 = futureMeetings.map((el) => el.meetingId);
-  const f2 = futureMeetingsWithUsers;
-  return f2.filter((el) => !f1.includes(el.meetingId));
+  if (!futureMeetingsWithUsers.length) {
+    return futureMeetings;
+  }
+  const f1 = futureMeetings;
+  const f2 = futureMeetingsWithUsers.map((el) => el.meetingId);
+  return f1.filter((el) => !f2.includes(el.meetingId));
 };

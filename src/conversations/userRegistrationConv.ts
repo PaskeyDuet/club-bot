@@ -1,8 +1,8 @@
-import createUser from "../dbSetup/handlers/createUser";
 import sendStartMessage from "../serviceMessages/sendStartMessage";
 import { MyContext, MyConversation } from "../types/grammy.types";
 import { DbUserAttributes } from "../dbSetup/models/User";
 import dates from "../helpers/dates";
+import createUserDbImage from "../dbSetup/handlers/createUserDbImage";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {
   let nameText = "Пожалуйста, напишите ваше <b>имя</b>\n";
@@ -31,10 +31,9 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
       user_id: ctx.from?.id,
       first_name: user_name,
       second_name: second_user_name,
-      is_newbie: true,
       reg_date: dates.currDate(),
     };
-    await createUser(newUser);
+    await createUserDbImage(newUser);
     return await sendStartMessage(ctx);
   }
 }

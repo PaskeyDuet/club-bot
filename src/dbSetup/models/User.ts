@@ -6,21 +6,15 @@ export type DbUserAttributes = {
   user_id: number;
   first_name: string;
   second_name: string;
-  is_newbie: boolean;
   reg_date: Date;
 };
-
-type DbUserCreationAttributes = PartialBy<DbUserAttributes, "is_newbie">;
 
 @Table({
   timestamps: false,
   tableName: "users",
   modelName: "User",
 })
-export default class User extends Model<
-  DbUserAttributes,
-  DbUserCreationAttributes
-> {
+export default class User extends Model<DbUserAttributes> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -37,12 +31,6 @@ export default class User extends Model<
     type: DataType.STRING,
   })
   declare second_name: string;
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  declare is_newbie: boolean;
 
   @Column({
     type: DataType.DATE,

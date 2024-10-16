@@ -8,20 +8,18 @@ import {
 import User from "./User";
 import type { PartialBy } from "@sequelize/utils";
 import SubDetails from "./SubDetails";
+import { SubStatusNames } from "../../types/shared.types";
 
 export type UserSubscription = {
   id: number;
   user_id: number;
   sub_date: Date;
   sub_number: number;
-  sub_status: number;
+  sub_status: SubStatusNames;
   sub_end: string;
 };
 
-type UserSubscriptionCreationAttributes = PartialBy<
-  UserSubscription,
-  "id" | "sub_end"
->;
+type UserSubscriptionCreationAttributes = PartialBy<UserSubscription, "id">;
 
 @Table({
   timestamps: false,
@@ -55,12 +53,10 @@ export default class Subscription extends Model<
     type: DataType.INTEGER,
   })
   declare sub_number: number;
-
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
   })
-  declare sub_status: number;
-
+  declare sub_status: SubStatusNames;
   @Column({
     type: DataType.DATE,
   })

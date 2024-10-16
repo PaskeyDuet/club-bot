@@ -4,11 +4,12 @@ const initialConfig: SessionData = {
   user: {
     firstName: "",
     secondName: "",
-    isNewbie: true,
+    isNewbie: false,
     hasSub: false,
   },
   temp: {
     meetingNumber: null,
+    sub_number: null,
   },
   routeHistory: [],
   lastMsgId: 0,

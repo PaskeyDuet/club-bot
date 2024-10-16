@@ -19,6 +19,9 @@ keyboard.callbackQuery(/gen__/, async (ctx) => {
     case "reg_for_meeting_newbie":
       await ctx.conversation.enter("newbieSubConv");
       break;
+    case "create_sub":
+      await ctx.conversation.enter("subConv");
+      break;
     case "schedule":
       break;
     default:
