@@ -5,6 +5,8 @@ import dates from "../helpers/dates";
 import createUserDbImage from "../dbSetup/handlers/createUserDbImage";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {
+  console.log(ctx);
+
   let nameText = "Пожалуйста, напишите ваше <b>имя</b>\n";
   nameText += "<i>В дальнейшем вы сможете его изменить в меню настроек</i>";
   await ctx.reply(nameText, { parse_mode: "HTML" });
@@ -31,6 +33,7 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
       user_id: ctx.from?.id,
       first_name: user_name,
       second_name: second_user_name,
+      username: ctx.from?.username,
       reg_date: dates.currDate(),
     };
     await createUserDbImage(newUser);

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Bot, GrammyError, HttpError, session } from "grammy";
+import { Api, Bot, GrammyError, HttpError, session } from "grammy";
 import sessionConfig from "./botConfig/sessionConfig";
 import { keyboard } from "./handlers/buttonRouters";
 import { conversations, createConversation } from "@grammyjs/conversations";
@@ -12,16 +12,14 @@ import { MyContext, routeHistoryUnit } from "./types/grammy.types";
 import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
 import { subConv } from "./conversations/subscriptionConvs/subConv";
 import { registrationForMeeting } from "./conversations/registrationForMeeting";
-import Subscription from "./dbSetup/models/Subscription";
-import SubDetails from "./dbSetup/models/SubDetails";
-import { where } from "sequelize";
+import sendAdminMenu from "./serviceMessages/adminSection/sendAdminMenu";
 
 dotenv.config();
 (async () => {
   await sequelize.sync({ alter: true });
   // await Subscription.update(
   //   { sub_number: 1, sub_status: "unactive" },
-  //   { where: { user_id: 335815247 } }
+  //   { where: { user_id: 1973775175 } }
   // );
   // const data = await meetingsController.futureMeetingsWithUsers();
   // await Meetings.create({
@@ -87,7 +85,8 @@ const token = process.env.BOT_API_TOKEN;
 if (!token) {
   throw new Error("There is no bot token");
 }
-const bot = new Bot<MyContext>(token);
+export const bot = new Bot<MyContext>(token);
+export const admin = new Api(token);
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
@@ -102,6 +101,9 @@ bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
+bot.command("admin", async (ctx) => {
+  await sendAdminMenu(ctx);
+});
 bot.command("start", async (ctx: MyContext) => {
   await sendStartMessage(ctx);
 });

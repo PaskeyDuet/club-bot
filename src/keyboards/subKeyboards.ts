@@ -1,4 +1,5 @@
 import { InlineKeyboard } from "grammy";
+import { UserWithSubscription } from "../types/shared.types";
 
 export function subKeyboard(newbie: boolean) {
   const k = new InlineKeyboard();
@@ -18,3 +19,14 @@ export const waitForPayKeyboard = new InlineKeyboard()
   .text("Оплачено", "sub_paid")
   .row()
   .text("Отменить оплату", "sub_payment_cancel");
+
+export const subPaymentManaginKeyboard = (paidSubs: UserWithSubscription[]) => {
+  const k = new InlineKeyboard();
+  paidSubs.forEach((user, inx) => {
+    inx += 1;
+    console.log(inx);
+    k.text(`${inx}. Decline`, `sub_decline_${user.user_id}`);
+    k.text(`${inx}. Accept`, `sub_accept_${user.user_id}`).row();
+  });
+  return k;
+};

@@ -46,3 +46,12 @@ export const infoKeyboards = {
 };
 
 export const mainMenu = new InlineKeyboard().text("Главное меню", "main_menu");
+
+export const adminMenuKeyboard = (newSubs: boolean) => {
+  const k = new InlineKeyboard();
+  if (newSubs) {
+    return k.text("Активировать подписки", "sub_manage");
+  } else {
+    return k.text("пусто");
+  }
+};

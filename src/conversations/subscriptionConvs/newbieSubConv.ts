@@ -31,6 +31,6 @@ export async function newbieSubConv(
       parse_mode: "HTML",
     });
   } catch (error) {
-    console.log("sendInfoMessage");
+    console.log("sendInfoMessage error");
   }
 }

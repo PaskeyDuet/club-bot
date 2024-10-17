@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import SubDetails from "../models/SubDetails";
 import Subscription from "../models/Subscription";
+import { SubDetailsPartialType } from "../../types/shared.types";
 
 export default {
   getAllSubs: async () => await SubDetails.findAll(),
@@ -14,4 +15,6 @@ export default {
         where: { user_id: userId },
       },
     }),
+  findSubByQuery: async (query: SubDetailsPartialType) =>
+    await SubDetails.findOne({ where: query }),
 };

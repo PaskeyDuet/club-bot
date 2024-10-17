@@ -18,9 +18,6 @@ export default async (user: DbUserAttributes) => {
       sub_status: "active",
       sub_end: endDate.toString(),
     });
-    const data1 = await Subscription.findAll();
-    const data2 = await User.findAll();
-    console.log("data1\n", data1, "\ndata2\n", data2);
   } else {
     throw new Error("found No newbie sub");
   }

@@ -1,8 +1,13 @@
 import { Composer } from "grammy";
 import { MyContext } from "../types/grammy.types";
 import { infoUnits, sendInfoMessage } from "../controllers/infoUnit";
-import { sendSubMessage } from "../controllers/subscriptionUnit";
+import {
+  paymentAccepted,
+  paymentDeclined,
+  paymentsManaging,
+} from "../controllers/subscriptionUnit";
 import sendStartMessage from "../serviceMessages/sendStartMessage";
+import paymentApproved from "../serviceMessages/paymentApproved";
 
 export const keyboard = new Composer<MyContext>();
 
@@ -49,14 +54,32 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
 
 keyboard.callbackQuery(/\bsub_/, async (ctx) => {
   const cbData = ctx.callbackQuery.data;
-  const action = cbData.split("sub_")[0];
-  switch (action) {
-    case "paid":
-      await paymentApproved();
-      break;
-    case "payment_cancel":
-      await paymentDenied();
-      break;
+  const actionMatch = cbData.match(/_(\w+)_?/);
+  let action = actionMatch ? actionMatch[1] : null;
+
+  const userIdMatch = cbData.match(/_(\d+)$/);
+  const userId = userIdMatch ? +userIdMatch[1] : null;
+
+  if (userId) {
+    // TODO: Добавить проверку
+    const adminAction = action?.split("_")[0];
+
+    switch (adminAction) {
+      case "decline":
+        await paymentDeclined(ctx, userId);
+        break;
+      case "accept":
+        await paymentAccepted(ctx, userId);
+        break;
+    }
+  } else {
+    switch (action) {
+      case "paid":
+        await paymentApproved(ctx);
+        break;
+      case "manage":
+        await paymentsManaging(ctx);
+    }
   }
 });
 

@@ -40,7 +40,7 @@ export async function subConv(conversation: MyConversation, ctx: MyContext) {
     reply_markup: mainMenu,
     parse_mode: "HTML",
   });
-  await subscriptionHandler.updateSub(
+  await subscriptionHandler.upgradeSub(
     ctx.userId,
     "pending",
     chosenSub.sub_number

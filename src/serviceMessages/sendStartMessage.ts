@@ -1,21 +1,21 @@
 import { Message, Update } from "grammy/types";
-import userVerification from "../dbSetup/handlers/userVerification";
 import { greetingKeyboard } from "../keyboards/generalKeyboards";
 import { MyContext } from "../types/grammy.types";
 import subscriptionHandler from "../dbSetup/handlers/subscriptionHandler";
 import guardExp from "../helpers/guardExp";
 import sendPayMessage from "./sendPayMessage";
 import sendPaidMessage from "./sendPaidMessage";
+import usersController from "../dbSetup/handlers/usersController";
 
 export default async function sendStartMessage(ctx: MyContext) {
   ctx.session.routeHistory = [];
   ctx.session.conversation = {};
   ctx.session.temp.meetingNumber = null;
-  const userId = ctx.msg?.chat?.id || ctx.callbackQuery?.from.id;
+  const userId = ctx.userId || ctx.callbackQuery?.from.id;
   guardExp(userId, "noId");
   let user;
   if (userId) {
-    user = await userVerification(userId);
+    user = await usersController.userVerification(userId);
   }
 
   if (!user) {
@@ -37,7 +37,6 @@ export default async function sendStartMessage(ctx: MyContext) {
       userSession.isNewbie = true;
     }
     const isNewbie = userSession.isNewbie;
-    console.log(sub_status);
 
     let subStatus: "pending" | "paid" | boolean;
     if (sub_status === "active") {

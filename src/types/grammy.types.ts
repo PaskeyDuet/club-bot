@@ -1,5 +1,5 @@
 import { InlineKeyboardButton, InlineKeyboardMarkup } from "grammy/types";
-import { Context, Filter, SessionFlavor } from "grammy";
+import { Api, Context, Filter, RawApi, SessionFlavor } from "grammy";
 import { Conversation, ConversationFlavor } from "@grammyjs/conversations";
 
 export interface SessionData {

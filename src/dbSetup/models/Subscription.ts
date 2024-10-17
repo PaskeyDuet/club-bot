@@ -11,14 +11,13 @@ import SubDetails from "./SubDetails";
 import { SubStatusNames } from "../../types/shared.types";
 
 export type UserSubscription = {
-  id: number;
+  id?: number;
   user_id: number;
   sub_date: Date;
   sub_number: number;
   sub_status: SubStatusNames;
   sub_end: string;
 };
-
 type UserSubscriptionCreationAttributes = PartialBy<UserSubscription, "id">;
 
 @Table({
