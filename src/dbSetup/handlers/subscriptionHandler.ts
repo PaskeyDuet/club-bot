@@ -5,15 +5,6 @@ import Subscription from "../models/Subscription";
 export default {
   findSub: async (userId: number) =>
     await Subscription.findOne({ where: { user_id: userId } }),
-  findSubWithDetails: async (userId: number) => {
-    await Subscription.findOne({
-      where: { user_id: userId },
-      include: {
-        model: SubDetails,
-        required: true,
-      },
-    });
-  },
   updateSub: async (
     userId: number,
     status: SubStatusNames,

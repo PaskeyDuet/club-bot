@@ -14,10 +14,15 @@ import { subConv } from "./conversations/subscriptionConvs/subConv";
 import { registrationForMeeting } from "./conversations/registrationForMeeting";
 import Subscription from "./dbSetup/models/Subscription";
 import SubDetails from "./dbSetup/models/SubDetails";
+import { where } from "sequelize";
 
 dotenv.config();
 (async () => {
   await sequelize.sync({ alter: true });
+  // await Subscription.update(
+  //   { sub_number: 1, sub_status: "unactive" },
+  //   { where: { user_id: 335815247 } }
+  // );
   // const data = await meetingsController.futureMeetingsWithUsers();
   // await Meetings.create({
   //   topic: "Worlkd",
@@ -42,18 +47,22 @@ dotenv.config();
   // await SubDetails.create({
   //   duration_days: 99999,
   //   sub_price: 0,
+  //   sub_name: "Free tier",
   // });
   // await SubDetails.create({
   //   duration_days: 30,
   //   sub_price: 100,
+  //   sub_name: "Moth sub",
   // });
   // await SubDetails.create({
   //   duration_days: 60,
   //   sub_price: 1000,
+  //   sub_name: "Three moths sub",
   // });
   // await SubDetails.create({
   //   duration_days: 1200,
   //   sub_price: 10000,
+  //   sub_name: "Ultima sub",
   // });
   // await SubDetails.update(
   //   { sub_name: "Free tier" },
@@ -89,8 +98,8 @@ bot.use(createConversation(userRegistrationConv, "userReg"));
 bot.use(createConversation(registrationForMeeting));
 bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
-bot.use(traceRoutes);
 bot.use(ctxExtender);
+bot.use(traceRoutes);
 bot.use(keyboard);
 
 bot.command("start", async (ctx: MyContext) => {

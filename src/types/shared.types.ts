@@ -14,4 +14,4 @@ export type MeetingsWithDetailsObject = MeetingsObject & {
   user_id: number;
 };
 export type DbDateType = `${number}-${number}-${number} ${number}:${number}`;
-export type SubStatusNames = "unactive" | "pending" | "active";
+export type SubStatusNames = "unactive" | "pending" | "paid" | "active";

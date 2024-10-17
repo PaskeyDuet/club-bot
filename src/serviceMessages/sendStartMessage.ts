@@ -5,6 +5,7 @@ import { MyContext } from "../types/grammy.types";
 import subscriptionHandler from "../dbSetup/handlers/subscriptionHandler";
 import guardExp from "../helpers/guardExp";
 import sendPayMessage from "./sendPayMessage";
+import sendPaidMessage from "./sendPaidMessage";
 
 export default async function sendStartMessage(ctx: MyContext) {
   ctx.session.routeHistory = [];
@@ -36,8 +37,9 @@ export default async function sendStartMessage(ctx: MyContext) {
       userSession.isNewbie = true;
     }
     const isNewbie = userSession.isNewbie;
+    console.log(sub_status);
 
-    let subStatus: string | boolean;
+    let subStatus: "pending" | "paid" | boolean;
     if (sub_status === "active") {
       subStatus = true;
     } else if (sub_status === "unactive") {
@@ -47,7 +49,11 @@ export default async function sendStartMessage(ctx: MyContext) {
     }
 
     if (typeof subStatus === "string") {
-      await sendPayMessage(ctx);
+      if (subStatus === "pending") {
+        await sendPayMessage(ctx);
+      } else {
+        await sendPaidMessage(ctx);
+      }
     } else {
       let greeting = `Привет, ${user.first_name}. С возвращением `;
       greeting += "в меню бота клуба любителей английского языка.\n";
@@ -62,11 +68,11 @@ export default async function sendStartMessage(ctx: MyContext) {
             });
       if (ctx.match) {
         updatedCtx = await ctx.editMessageText(greeting, {
-          reply_markup: greetingKeyboard(isNewbie, subStatus),
+          reply_markup: greetingKeyboard(isNewbie, subStatus, false),
         });
       } else {
         updatedCtx = await ctx.reply(greeting, {
-          reply_markup: greetingKeyboard(isNewbie, subStatus),
+          reply_markup: greetingKeyboard(isNewbie, subStatus, false),
         });
         ctx.session.lastMsgId = updatedCtx.message_id;
       }

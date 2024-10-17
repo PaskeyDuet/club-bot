@@ -2,7 +2,11 @@ import { InlineKeyboard } from "grammy";
 
 //TODO: Если подписка есть, не добавлять кнопку
 //TODO: Если человек зашёл не в первый раз, вместо куда я попал добавлять ИНФО кнопку
-export function greetingKeyboard(newbie: boolean, subscribed: boolean) {
+export function greetingKeyboard(
+  newbie: boolean,
+  subscribed: boolean,
+  paidStatus: boolean
+) {
   const keyboard = new InlineKeyboard();
   if (newbie) {
     keyboard
@@ -16,6 +20,8 @@ export function greetingKeyboard(newbie: boolean, subscribed: boolean) {
       .row()
       .text("Записаться на занятие", "gen__reg_for_meeting")
       .row();
+  } else if (paidStatus) {
+    keyboard.text("Инфо", "gen__info").row();
   } else {
     keyboard
       .text("Инфо", "gen__info")

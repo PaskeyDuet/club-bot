@@ -47,6 +47,19 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
   }
 });
 
+keyboard.callbackQuery(/\bsub_/, async (ctx) => {
+  const cbData = ctx.callbackQuery.data;
+  const action = cbData.split("sub_")[0];
+  switch (action) {
+    case "paid":
+      await paymentApproved();
+      break;
+    case "payment_cancel":
+      await paymentDenied();
+      break;
+  }
+});
+
 keyboard.callbackQuery("main_menu", async (ctx) => {
   await sendStartMessage(ctx);
 });
