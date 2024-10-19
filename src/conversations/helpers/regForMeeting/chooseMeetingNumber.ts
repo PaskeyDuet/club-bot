@@ -11,7 +11,7 @@ export default async function (
     async (ctx) => {
       if (ctx.callbackQuery) {
         const cbQ = ctx.callbackQuery;
-        const meetingId = cbQ.data?.split("reg_for_meeting_")[1];
+        const meetingId = cbQ.data?.split("meeting__reg_")[1];
         if (meetingId) {
           conversation.session.temp.meetingNumber = +meetingId;
           console.log("ctx.session.temp", ctx.session.temp);

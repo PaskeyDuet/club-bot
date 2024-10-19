@@ -43,8 +43,6 @@ export async function paymentsManaging(ctx: MyContext) {
 }
 
 export async function paymentDeclined(ctx: MyContext, userId: number) {
-  console.log("declined");
-
   const subUpdate = subscriptionHandler.updateSubStatus(userId, "unactive");
 
   await admin.sendMessage(
@@ -54,8 +52,6 @@ export async function paymentDeclined(ctx: MyContext, userId: number) {
 }
 
 export async function paymentAccepted(ctx: MyContext, userId: number) {
-  console.log("accepted");
-
   const subUpdate = subscriptionHandler.updateSubStatus(userId, "active");
 
   await admin.sendMessage(userId, "Ваша подписка активирована!");

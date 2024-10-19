@@ -12,12 +12,13 @@ export default {
       where: { date: { [Op.gt]: dates.currDate() } },
     });
   },
-  futureMeetingsWithUsers: async () => {
+  futureMeetingsWithUsers: async (userId?: number) => {
     const meetings = await Meetings.findAll({
       where: { date: { [Op.gt]: dates.currDate() } },
       include: {
         model: MeetingsDetails,
         required: true,
+        where: { user_id: userId || { [Op.ne]: null } },
       },
     });
 
@@ -38,4 +39,5 @@ export default {
       }
     });
   },
+  futureMeetingsByUserID: async (userId: number) => {},
 };

@@ -13,10 +13,23 @@ import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
 import { subConv } from "./conversations/subscriptionConvs/subConv";
 import { registrationForMeeting } from "./conversations/registrationForMeeting";
 import sendAdminMenu from "./serviceMessages/adminSection/sendAdminMenu";
+import meetingsController from "./dbSetup/handlers/meetingsController";
+import Subscription from "./dbSetup/models/Subscription";
+import User from "./dbSetup/models/User";
+import MeetingsDetails from "./dbSetup/models/MeetingsDetails";
+import Meetings from "./dbSetup/models/Meetings";
+import SubDetails from "./dbSetup/models/SubDetails";
 
 dotenv.config();
 (async () => {
   await sequelize.sync({ alter: true });
+  // console.log(await Subscription.findAll());
+  // console.log(await SubDetails.findAll());
+  // await Subscription.update(
+  //   { sub_number: 3, sub_status: "active" },
+  //   { where: { user_id: 335815247 } }
+  // );
+  // console.log(await Subscription.findAll());
   // await Subscription.update(
   //   { sub_number: 1, sub_status: "unactive" },
   //   { where: { user_id: 1973775175 } }

@@ -12,13 +12,13 @@ export function greetingKeyboard(
     keyboard
       .text("Куда я попал?", "gen__info")
       .row()
-      .text("Попасть на занятие", "gen__reg_for_meeting_newbie")
+      .text("Попасть на занятие", "gen__meeting__reg_newbie")
       .row();
   } else if (subscribed) {
     keyboard
       .text("Инфо", "gen__info")
       .row()
-      .text("Записаться на занятие", "gen__reg_for_meeting")
+      .text("Записаться на занятие", "gen__meeting__reg")
       .row();
   } else if (paidStatus) {
     keyboard.text("Инфо", "gen__info").row();

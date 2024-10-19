@@ -4,7 +4,7 @@ import { UserWithSubscription } from "../types/shared.types";
 export function subKeyboard(newbie: boolean) {
   const k = new InlineKeyboard();
   if (newbie) {
-    k.text("Записаться", "gen__reg_for_meeting").row();
+    k.text("Записаться", "gen__meeting__reg").row();
   } else {
     k.text("Месячная подписка", "sub_second")
       .row()

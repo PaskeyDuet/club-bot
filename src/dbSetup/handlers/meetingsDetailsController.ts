@@ -8,4 +8,8 @@ export default {
       meeting_id: meetingId,
     });
   },
+  destroyUserReg: async (meetingId: number, userId: number) =>
+    await MeetingsDetails.destroy({
+      where: { user_id: userId, meeting_id: meetingId },
+    }),
 };
