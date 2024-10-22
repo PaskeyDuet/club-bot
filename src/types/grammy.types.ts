@@ -17,6 +17,7 @@ export type MyContext = Context &
   SessionFlavor<SessionData> &
   ConversationFlavor & {
     userId: number;
+    chatId: number;
   };
 export type MyConversation = Conversation<MyContext>;
 export type CallbackCtx = Filter<MyContext, "callback_query">;

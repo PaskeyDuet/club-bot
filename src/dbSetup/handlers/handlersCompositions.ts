@@ -1,9 +1,9 @@
 import dates from "../../helpers/dates";
 import SubDetails from "../models/SubDetails";
-import Subscription from "../models/Subscription";
+import Subscription from "../models/UserSubscription";
 import User, { DbUserAttributes } from "../models/User";
 
-export default async (user: DbUserAttributes) => {
+export async function createUserDbImage(user: DbUserAttributes) {
   await User.create(user);
   const newbieSub = await SubDetails.findOne({ where: { sub_number: 1 } });
   if (newbieSub) {
@@ -21,4 +21,4 @@ export default async (user: DbUserAttributes) => {
   } else {
     throw new Error("found No newbie sub");
   }
-};
+}

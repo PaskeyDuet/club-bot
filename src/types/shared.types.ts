@@ -1,5 +1,5 @@
 import { InlineKeyboardMarkup } from "grammy/types";
-import Subscription, { UserSubscription } from "../dbSetup/models/Subscription";
+import UserSubscription from "../dbSetup/models/UserSubscription";
 import User from "../dbSetup/models/User";
 import { SubDetailsType } from "../dbSetup/models/SubDetails";
 
@@ -22,4 +22,14 @@ export type SubStatusNames = "unactive" | "pending" | "paid" | "active";
 export type UserWithSubscriptionPartialType = Partial<User> &
   Partial<UserSubscription>;
 export type SubDetailsPartialType = Partial<SubDetailsType>;
-export type UserWithSubscription = User & { Subscription: Subscription };
+export type UserWithSubscription = User & {
+  UserSubscription: UserSubscription;
+};
+
+export type loggerLevelsType =
+  | "fatal"
+  | "error"
+  | "warn"
+  | "info"
+  | "debug"
+  | "trace";

@@ -1,10 +1,14 @@
+import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 import meetingsController from "../dbSetup/handlers/meetingsController";
 import { MeetingsObject } from "../types/shared.types";
 import { meetingDateParser } from "./parseDbDate";
 
-export default async function (): Promise<MeetingsObject[]> {
+export default async function (): Promise<MeetingsObject[] | undefined> {
   try {
     const allMeetings = await meetingsController.futureMeetings();
+    if (!allMeetings) {
+      throw new Error();
+    }
     return allMeetings.map((meeting) => {
       const dv = meeting.dataValues;
       const dateDetails: string = meetingDateParser(dv.date);
@@ -16,7 +20,6 @@ export default async function (): Promise<MeetingsObject[]> {
       };
     });
   } catch (error) {
-    console.error("Error fetching future meetings:", error);
-    throw new Error("Unable to fetch meetings");
+    logErrorAndThrow(error, "fatal", "Error fetching future meetings");
   }
 }

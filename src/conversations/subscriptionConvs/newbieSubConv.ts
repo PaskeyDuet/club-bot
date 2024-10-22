@@ -10,6 +10,9 @@ export async function newbieSubConv(
   const isNewbie = ctx.session.user.isNewbie;
   const futureMeetingsWithUsers =
     await meetingsController.futureMeetingsWithUsers();
+  if (!futureMeetingsWithUsers) {
+    throw new Error();
+  }
 
   if (isNewbie && futureMeetingsWithUsers.length) {
     let regDenyText = "Для пробного посещения доступно только одно посещение\n";

@@ -14,8 +14,6 @@ export default async function (
         const meetingId = cbQ.data?.split("meeting__reg_")[1];
         if (meetingId) {
           conversation.session.temp.meetingNumber = +meetingId;
-          console.log("ctx.session.temp", ctx.session.temp);
-
           return true;
         }
         return false;

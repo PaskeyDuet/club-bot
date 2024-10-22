@@ -6,6 +6,5 @@ export default async function (ctx: MyContext, next: NextFunction) {
   if (userId) {
     ctx.userId = userId;
   }
-
   await next();
 }

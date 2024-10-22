@@ -1,7 +1,5 @@
-import { HasOne } from "sequelize";
 import { Table, Model, Column, DataType } from "sequelize-typescript";
-import type { PartialBy } from "@sequelize/utils";
-import Subscription from "./Subscription";
+import UserSubscription from "./UserSubscription";
 
 export type DbUserAttributes = {
   user_id: number;
@@ -9,7 +7,7 @@ export type DbUserAttributes = {
   second_name: string;
   username: string | undefined;
   reg_date: Date;
-  Subscription?: Subscription[];
+  UserSubscription?: UserSubscription[];
 };
 
 @Table({

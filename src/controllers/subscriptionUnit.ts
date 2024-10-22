@@ -1,6 +1,6 @@
 import { Composer } from "grammy";
 import subDetailsControllers from "../dbSetup/handlers/subDetailsControllers";
-import subscriptionHandler from "../dbSetup/handlers/subscriptionHandler";
+import subscriptionHandler from "../dbSetup/handlers/subscriptionController";
 import usersController from "../dbSetup/handlers/usersController";
 import SubDetails from "../dbSetup/models/SubDetails";
 import guardExp from "../helpers/guardExp";
@@ -18,41 +18,21 @@ export async function sendSubMessage(ctx: MyContext) {
   }
 }
 
-export async function paymentsManaging(ctx: MyContext) {
-  const paidSubs = await usersController.findUsersWithSub({
-    sub_status: "paid",
-  });
-  const subDetails = await subDetailsControllers.getAllButFirstSub();
-
-  const findPrice = (subNum: number) =>
-    subDetails.find((el) => el.sub_number === subNum)?.sub_price;
-
-  const usersList = paidSubs
-    .map((el, inx) => {
-      inx += 1;
-      const username = el.username || `${el.first_name} ${el.second_name}`;
-      return `${inx}. @${username} - ${findPrice(el.Subscription.sub_number)}\n`;
-    })
-    .join("");
-  let messText = "Жми на кнопку - подтверждай подписки. Или нет.\n";
-  messText += usersList;
-
-  await ctx.editMessageText(messText, {
-    reply_markup: subPaymentManaginKeyboard(paidSubs),
-  });
-}
-
-export async function paymentDeclined(ctx: MyContext, userId: number) {
-  const subUpdate = subscriptionHandler.updateSubStatus(userId, "unactive");
-
-  await admin.sendMessage(
-    userId,
-    "Ваш платёж отклонён. Свяжитесь с нашим менеджером @romanovnr"
-  );
-}
-
-export async function paymentAccepted(ctx: MyContext, userId: number) {
-  const subUpdate = subscriptionHandler.updateSubStatus(userId, "active");
-
-  await admin.sendMessage(userId, "Ваша подписка активирована!");
+export async function paymentManage(
+  ctx: MyContext,
+  userId: number,
+  status: "unactive" | "active"
+) {
+  await subscriptionHandler.updateSubStatus(userId, status);
+  let messText = "";
+  switch (status) {
+    case "active":
+      messText += "Ваша подписка активирована!";
+      break;
+    case "unactive":
+      messText +=
+        "Ваш платёж отклонён. Свяжитесь с нашим менеджером @romanovnr";
+      break;
+  }
+  await admin.sendMessage(userId, messText);
 }

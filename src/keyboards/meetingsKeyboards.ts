@@ -1,14 +1,11 @@
 import { InlineKeyboard } from "grammy";
-import {
-  MeetingsObject,
-  MeetingsWithDetailsObject,
-} from "../types/shared.types";
-import { mainMenu } from "./generalKeyboards";
+import { MeetingsObject, MeetingsWithDetailsObject } from "types/shared.types";
+
 // import config from "../botConfig/generalConfig";
 
-export function generateMeetingsKeyboard(
+export const generateMeetingsKeyboard = (
   meetings: (MeetingsObject | MeetingsWithDetailsObject)[]
-): InlineKeyboard {
+): InlineKeyboard => {
   const keyboard = new InlineKeyboard();
   meetings.forEach((el, inx) => {
     const date = el.date.replace(/202.*$/, "");
@@ -24,7 +21,7 @@ export function generateMeetingsKeyboard(
     keyboard.text(keyboardText, callbackData).row();
   });
   return keyboard.text("Главное меню", "main_menu");
-}
+};
 
 export const cancelMeetingRegApproveKeyboard = (
   meetingId: number,
@@ -35,7 +32,10 @@ export const cancelMeetingRegApproveKeyboard = (
     `meeting__cancel_${meetingId}_${userId}`
   );
 
-export const meetingRegApprovedKeyboard = new InlineKeyboard()
-  .text("Записаться ещё", "gen__meeting__reg")
-  .row()
-  .text("Главное меню", "main_menu");
+export const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
+  const k = new InlineKeyboard();
+  if (!isNewbie) {
+    k.text("Записаться ещё", "gen__meeting__reg").row();
+  }
+  return k.text("Главное меню", "main_menu");
+};

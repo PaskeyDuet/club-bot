@@ -7,6 +7,9 @@ export async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
     ctx.userId
   );
+  if (!userMeetings) {
+    throw new Error();
+  }
 
   let meetingsInfo = "";
   if (userMeetings.length) {
@@ -36,5 +39,4 @@ export async function cancelMeetingReg(
 ) {
   const messText = "Вы действительно хотите отменить запись на занятие";
   await ctx.editMessageText(messText);
-  console.log(ctx.callbackQuery);
 }

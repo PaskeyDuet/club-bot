@@ -1,35 +1,41 @@
 import dotenv from "dotenv";
 import { Api, Bot, GrammyError, HttpError, session } from "grammy";
-import sessionConfig from "./botConfig/sessionConfig";
-import { keyboard } from "./handlers/buttonRouters";
 import { conversations, createConversation } from "@grammyjs/conversations";
-import sendStartMessage from "./serviceMessages/sendStartMessage";
-import traceRoutes from "./middleware/traceRoutes";
-import userRegistrationConv from "./conversations/userRegistrationConv";
-import ctxExtender from "./middleware/ctxExtender";
-import { sequelize } from "./dbSetup/dbClient";
-import { MyContext, routeHistoryUnit } from "./types/grammy.types";
-import { newbieSubConv } from "./conversations/subscriptionConvs/newbieSubConv";
-import { subConv } from "./conversations/subscriptionConvs/subConv";
-import { registrationForMeeting } from "./conversations/registrationForMeeting";
-import sendAdminMenu from "./serviceMessages/adminSection/sendAdminMenu";
-import meetingsController from "./dbSetup/handlers/meetingsController";
-import Subscription from "./dbSetup/models/Subscription";
+import sessionConfig from "./botConfig/sessionConfig";
+import SubDetails from "#db/models/SubDetails.ts";
+import { MyContext, routeHistoryUnit } from "types/grammy.types";
+import { registrationForMeeting } from "#conv/registrationForMeeting.ts";
+import { newbieSubConv } from "#conv/subscriptionConvs/newbieSubConv.ts";
+import { subConv } from "#conv/subscriptionConvs/subConv.ts";
+import ctxExtender from "#middleware/ctxExtender.ts";
+import traceRoutes from "#middleware/traceRoutes.ts";
+import sendAdminMenu from "#serviceMessages/adminSection/sendAdminMenu.ts";
+import sendStartMessage from "#serviceMessages/sendStartMessage.ts";
+import userRegistrationConv from "#conv/userRegistrationConv.ts";
+import { sequelize } from "#db/dbClient.ts";
+import { keyboard } from "#handlers/buttonRouters.ts";
+import handleBackButton from "#handlers/handleBackButton.ts";
+import logger from "#root/logger.ts";
+import UserSubscription from "#db/models/UserSubscription.ts";
+import meetingsController from "#db/handlers/meetingsController.ts";
 import User from "./dbSetup/models/User";
 import MeetingsDetails from "./dbSetup/models/MeetingsDetails";
-import Meetings from "./dbSetup/models/Meetings";
-import SubDetails from "./dbSetup/models/SubDetails";
+import { paymentsManaging } from "./conversations/subscriptionConvs/subPaymentApprove";
 
 dotenv.config();
 (async () => {
+  logger.info("bot is running");
   await sequelize.sync({ alter: true });
+  // await User.destroy({ where: { user_id: 335815247 } });
+  // await MeetingsDetails.destroy({ where: { user_id: 335815247 } });
+  // await UserSubscription.destroy({ where: { user_id: 335815247 } });
   // console.log(await Subscription.findAll());
   // console.log(await SubDetails.findAll());
-  // await Subscription.update(
-  //   { sub_number: 3, sub_status: "active" },
-  //   { where: { user_id: 335815247 } }
-  // );
-  // console.log(await Subscription.findAll());
+  await UserSubscription.update(
+    { sub_number: 3, sub_status: "unactive" },
+    { where: { user_id: [335815247, 1973775175] } }
+  );
+  // console.log(await UserSubscription.findAll());
   // await Subscription.update(
   //   { sub_number: 1, sub_status: "unactive" },
   //   { where: { user_id: 1973775175 } }
@@ -91,7 +97,7 @@ dotenv.config();
   //   { sub_name: "Годовая подписка" },
   //   { where: { sub_number: 4 } }
   // );
-  console.log("Database synced");
+  logger.info("Database synced");
 })();
 
 const token = process.env.BOT_API_TOKEN;
@@ -110,50 +116,59 @@ bot.use(createConversation(userRegistrationConv, "userReg"));
 bot.use(createConversation(registrationForMeeting));
 bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
+bot.use(createConversation(paymentsManaging));
 bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
 bot.command("admin", async (ctx) => {
-  await sendAdminMenu(ctx);
+  try {
+    await sendAdminMenu(ctx);
+  } catch (err) {
+    const error = err as Error;
+    logger.fatal(
+      `unable to send sendAdminMenu: ${error.message}, \nError stack:\n${error.stack}`
+    );
+    throw new Error("unable to send sendAdminMenu");
+  }
 });
+
 bot.command("start", async (ctx: MyContext) => {
-  await sendStartMessage(ctx);
+  try {
+    await sendStartMessage(ctx);
+  } catch (err) {
+    const error = err as Error;
+    logger.fatal(
+      `unable to send startMessage: ${error.message}, \nError stack:\n${error.stack}`
+    );
+    throw new Error("unable to send startMessage");
+  }
 });
 
 bot.callbackQuery("back", async (ctx: MyContext) => {
-  const canEdit = ctx.session.editMode;
-  await ctx.session.routeHistory.pop(); //фальшивка
-  const routeParams: routeHistoryUnit = ctx.session.routeHistory.pop()!;
-  // ctx.session.conversation = {};
-
-  if (canEdit) {
-    await ctx.editMessageText(routeParams.text, {
-      reply_markup: routeParams.reply_markup,
-      parse_mode: "HTML",
-    });
-  } else {
-    await ctx.reply(routeParams.text, {
-      reply_markup: routeParams.reply_markup,
-      parse_mode: "HTML",
-    });
-    //FIXME
-    ctx.session.editMode = true;
+  try {
+    await handleBackButton(ctx);
+  } catch (err) {
+    const error = err as Error;
+    logger.fatal(
+      `unable to hange handleBackButton: ${error.message}, \nError stack:\n${error.stack}`
+    );
+    throw new Error("unable to handle handleBackButton");
   }
-  ctx.answerCallbackQuery();
 });
 
 bot.catch((err) => {
   const ctx = err.ctx;
-  console.error(`Error while handling update ${ctx.update.update_id}:`);
+  logger.fatal(`Error while handling update ${ctx.update.update_id}:`);
   const e = err.error;
   if (e instanceof GrammyError) {
-    console.error("Error in request:", e.description);
+    logger.fatal(`Error in request:\n${e}`);
   } else if (e instanceof HttpError) {
-    console.error("Could not contact Telegram:", e);
+    logger.fatal(`Could not contact Telegram:\n${e}`);
   } else {
-    console.error("Unknown error:", e);
+    logger.fatal(`Unknown error:\n${e}`);
   }
+  ctx.reply("На данный момент бот на покое. Зайдите позже");
 });
 
 bot.start();

@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { UserWithSubscription } from "../types/shared.types";
+import { UserWithSubscription } from "types/shared.types";
 
-export function subKeyboard(newbie: boolean) {
+export const subKeyboard = (newbie: boolean) => {
   const k = new InlineKeyboard();
   if (newbie) {
     k.text("Записаться", "gen__meeting__reg").row();
@@ -14,19 +14,24 @@ export function subKeyboard(newbie: boolean) {
       .row();
   }
   return k.text("Главное меню", "back");
-}
+};
+
 export const waitForPayKeyboard = new InlineKeyboard()
   .text("Оплачено", "sub_paid")
   .row()
-  .text("Отменить оплату", "sub_payment_cancel");
+  .text("Отменить оплату", "sub_cancel");
 
 export const subPaymentManaginKeyboard = (paidSubs: UserWithSubscription[]) => {
   const k = new InlineKeyboard();
-  paidSubs.forEach((user, inx) => {
-    inx += 1;
-    console.log(inx);
-    k.text(`${inx}. Decline`, `sub_decline_${user.user_id}`);
-    k.text(`${inx}. Accept`, `sub_accept_${user.user_id}`).row();
-  });
+  if (paidSubs.length > 0) {
+    paidSubs.forEach((user, inx) => {
+      inx += 1;
+      k.text(`${inx}. Decline`, `sub_decline_${user.user_id}`);
+      k.text(`${inx}. Accept`, `sub_accept_${user.user_id}`).row();
+    });
+  } else {
+    k.text("Admin menu", "gen__admin");
+  }
+
   return k;
 };

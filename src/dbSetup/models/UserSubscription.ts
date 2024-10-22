@@ -5,12 +5,12 @@ import {
   DataType,
   ForeignKey,
 } from "sequelize-typescript";
-import User from "./User";
 import type { PartialBy } from "@sequelize/utils";
+import { SubStatusNames } from "types/shared.types";
+import User from "./User";
 import SubDetails from "./SubDetails";
-import { SubStatusNames } from "../../types/shared.types";
 
-export type UserSubscription = {
+export type UserSubscriptionType = {
   id?: number;
   user_id: number;
   sub_date: Date;
@@ -18,15 +18,15 @@ export type UserSubscription = {
   sub_status: SubStatusNames;
   sub_end: string;
 };
-type UserSubscriptionCreationAttributes = PartialBy<UserSubscription, "id">;
+type UserSubscriptionCreationAttributes = PartialBy<UserSubscriptionType, "id">;
 
 @Table({
   timestamps: false,
-  tableName: "subscriptions",
-  modelName: "Subscription",
+  tableName: "user_subscriptions",
+  modelName: "UserSubscription",
 })
-export default class Subscription extends Model<
-  UserSubscription,
+export default class UserSubscription extends Model<
+  UserSubscriptionType,
   UserSubscriptionCreationAttributes
 > {
   @Column({

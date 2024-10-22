@@ -1,20 +1,19 @@
 import { Composer } from "grammy";
 import { MyContext } from "../types/grammy.types";
 import { infoUnits, sendInfoMessage } from "../controllers/infoUnit";
-import {
-  paymentAccepted,
-  paymentDeclined,
-  paymentsManaging,
-} from "../controllers/subscriptionUnit";
+import { paymentManage } from "../controllers/subscriptionUnit";
 import sendStartMessage from "../serviceMessages/sendStartMessage";
 import paymentApproved from "../serviceMessages/paymentApproved";
 import { sendScheduleMessage } from "../controllers/scheduleUnit";
 import { cancelMeetingRegApproveKeyboard } from "../keyboards/meetingsKeyboards";
 import { mainMenu } from "../keyboards/generalKeyboards";
 import meetingsDetailsController from "../dbSetup/handlers/meetingsDetailsController";
+import sendAdminMenu from "../serviceMessages/adminSection/sendAdminMenu";
+import logger from "#root/logger.ts";
+import paymentCanceled from "#root/serviceMessages/paymentCanceled.ts";
 
 export const keyboard = new Composer<MyContext>();
-
+//TODO: add string checks
 keyboard.callbackQuery(/gen__/, async (ctx) => {
   const path = ctx.callbackQuery.data.split("gen__")[1];
 
@@ -32,9 +31,13 @@ keyboard.callbackQuery(/gen__/, async (ctx) => {
       await ctx.conversation.enter("subConv");
       break;
     case "schedule":
-      sendScheduleMessage(ctx);
+      await sendScheduleMessage(ctx);
       break;
+    case "admin":
+      await sendAdminMenu(ctx);
     default:
+      logger.error("used sendStartMessage as default case at gen__");
+      await sendStartMessage(ctx);
       break;
   }
 });
@@ -53,6 +56,8 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
       infoUnits(ctx).when();
       break;
     default:
+      logger.error("used sendStartMessage as default case at info_");
+      await sendStartMessage(ctx);
       break;
   }
 });
@@ -66,48 +71,68 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
   const userId = userIdMatch ? +userIdMatch[1] : null;
 
   if (userId) {
+    console.log(1);
+
     // TODO: Добавить проверку
     const adminAction = action?.split("_")[0];
 
     switch (adminAction) {
       case "decline":
-        await paymentDeclined(ctx, userId);
+        await paymentManage(ctx, userId, "unactive");
         break;
       case "accept":
-        await paymentAccepted(ctx, userId);
+        await paymentManage(ctx, userId, "active");
+        break;
+      default:
+        logger.error("used sendStartMessage as default case at sub_");
+        await sendStartMessage(ctx);
         break;
     }
   } else {
+    console.log(12);
+
     switch (action) {
       case "paid":
         await paymentApproved(ctx);
         break;
+      case "cancel":
+        await paymentCanceled(ctx);
+        break;
       case "manage":
-        await paymentsManaging(ctx);
+        await ctx.conversation.enter("paymentsManaging");
+        break;
+      default:
+        logger.error("used sendStartMessage as default case at sub_");
+        await sendStartMessage(ctx);
+        break;
     }
   }
 });
 
-keyboard.callbackQuery(/meeting__manage/, async (ctx) => {
+keyboard.callbackQuery(/meeting__/, async (ctx) => {
   const cbData = ctx.callbackQuery.data;
-  const [meetingId, userId] = cbData.split(/meeting__manage_/)[1].split(/_/);
+  const [action, meetingId, userId] = cbData.split(/meeting__/)[1].split("_");
 
-  const messText = "Вы действительно хотите отменить запись на занятие?";
-  await ctx.editMessageText(messText, {
-    reply_markup: cancelMeetingRegApproveKeyboard(+meetingId, +userId),
-  });
-});
-keyboard.callbackQuery(/meeting__cancel/, async (ctx) => {
-  // console.log(await meetingsDetailsController.findAll());
-
-  const cbData = ctx.callbackQuery.data;
-  const [meetingId, userId] = cbData.split(/meeting__cancel_/)[1].split(/_/);
-
-  meetingsDetailsController.destroyUserReg(+meetingId, +userId);
-  const messText = "Регистрация на встречу отменена";
-  await ctx.editMessageText(messText, {
-    reply_markup: mainMenu,
-  });
+  let messText = "";
+  switch (action) {
+    case "manage":
+      messText = "Вы действительно хотите отменить запись на занятие?";
+      await ctx.editMessageText(messText, {
+        reply_markup: cancelMeetingRegApproveKeyboard(+meetingId, +userId),
+      });
+      break;
+    case "cancel":
+      await meetingsDetailsController.destroyUserReg(+meetingId, +userId);
+      messText = "Регистрация на встречу отменена";
+      await ctx.editMessageText(messText, {
+        reply_markup: mainMenu,
+      });
+      break;
+    default:
+      logger.error("used sendStartMessage as default case at meeting__");
+      await sendStartMessage(ctx);
+      break;
+  }
 });
 
 keyboard.callbackQuery("main_menu", async (ctx) => {

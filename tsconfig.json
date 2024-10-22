@@ -9,6 +9,42 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": "./src",
+    "paths": {
+      "#root": [
+        "./src/*"
+      ],
+      "#db": [
+        "./src/dbSetup/*"
+      ],
+      "#keyboards": [
+        "./src/keyboards/*"
+      ],
+      "#conv": [
+        "./src/conversations/*"
+      ],
+      "#controllers": [
+        "./src/controllers/*"
+      ],
+      "#serviceMessages": [
+        "./src/serviceMessages/*"
+      ],
+      "#helpers": [
+        "./src/helpers/*"
+      ],
+      "#types": [
+        "./src/types/*"
+      ],
+      "#middleware": [
+        "./src/middleware/*"
+      ],
+      "#handlers": [
+        "./src/handlers/*"
+      ],
+    },
     "typeRoots": [
       "./global.d.ts",
       "./node_modules/@types"
