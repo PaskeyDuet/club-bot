@@ -24,13 +24,13 @@ export default async function (
     {
       otherwise: (ctx) =>
         unlessActions(ctx, () => {
-          const otherwiseText =
-            "<b><i>Пожалуйста, используйте кнопки для ответа</i></b>\n" +
-            messageData.text;
-          ctx.reply(otherwiseText, {
-            reply_markup: messageData.keyboard,
-            parse_mode: "HTML",
-          });
+          // const otherwiseText =
+          //   "<b><i>Пожалуйста, используйте кнопки для ответа</i></b>\n" +
+          //   messageData.text;
+          // ctx.reply(otherwiseText, {
+          //   reply_markup: messageData.keyboard,
+          //   parse_mode: "HTML",
+          // });
         }),
     }
   );

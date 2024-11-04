@@ -1,22 +1,26 @@
-import { keyboard } from "#root/handlers/buttonRouters.ts";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
-import meetingsController from "../dbSetup/handlers/meetingsController";
-import meetingsDetailsController from "../dbSetup/handlers/meetingsDetailsController";
-import createFutureMeetingsList from "../helpers/createFutureMeetingsList";
-import getFutureMeetings from "../helpers/getFutureMeetings";
-import { mainMenu } from "../keyboards/generalKeyboards";
+import {
+  meetingsController,
+  meetingsDetailsController,
+} from "#db/handlers/index.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import {
+  createMeetingsList,
+  getFutureMeetings,
+} from "#helpers/meetingsHelpers.ts";
+import guardExp from "#helpers/guardExp.ts";
+import { mainMenu } from "#keyboards/generalKeyboards.ts";
 import {
   generateMeetingsKeyboard,
   meetingRegApprovedKeyboard,
-} from "../keyboards/meetingsKeyboards";
-import { MyContext, MyConversation } from "../types/grammy.types";
+} from "#keyboards/meetingsKeyboards.ts";
+import { MyContext, MyConversation } from "#types/grammy.types.ts";
 import {
-  MeetingsObject,
+  MeetingObject,
+  MeetingObjectWithId,
   TextWithInlineKeyboardObj,
-} from "../types/shared.types";
+} from "#types/shared.types.ts";
 import chooseMeetingNumber from "./helpers/regForMeeting/chooseMeetingNumber";
 import userFilteredMeetings from "./helpers/regForMeeting/userFilteredMeetings";
-
 //TODO: В дальнейшем необходимо добавить условие "Человек - новичок"
 export async function registrationForMeeting(
   conversation: MyConversation,
@@ -24,18 +28,21 @@ export async function registrationForMeeting(
 ) {
   try {
     const futureMeetingsWithUsers =
-      await meetingsController.futureMeetingsWithUsers();
+      await meetingsController.futureMeetingsWithUsers(ctx.userId);
     const futureMeetings = await getFutureMeetings();
-    [];
 
-    if (!futureMeetings || !futureMeetingsWithUsers) {
-      throw new Error("futureMeetings or futureMeetingsWithUsers is undefined");
-    }
+    guardExp(futureMeetings, "futureMeetings inside regForMeeting");
+    guardExp(
+      futureMeetingsWithUsers,
+      "futureMeetingsWithUsers inside regForMeeting"
+    );
 
     const availableRegs = userFilteredMeetings(
       futureMeetings,
       futureMeetingsWithUsers
     );
+
+    console.log("userFilteredMetings", availableRegs);
 
     const baseMess = baseMessObj(availableRegs);
     await ctx.editMessageText(baseMess.text, {
@@ -44,42 +51,35 @@ export async function registrationForMeeting(
 
     await chooseMeetingNumber(conversation, ctx, baseMess);
     const meetingId = conversation.session.temp.meetingNumber;
+    guardExp(meetingId, "meetingId inside regForMeeting");
 
-    if (meetingId) {
-      await meetingsDetailsController.addUserToMeet(ctx.userId, meetingId);
+    await meetingsDetailsController.addUserToMeet(ctx.userId, meetingId);
+    const currMeeting = futureMeetings.find((el) => el.meetingId === meetingId);
+    guardExp(currMeeting, "currMeeting inside regForMeeting");
 
-      const currMeeting = futureMeetings.find(
-        (el) => el.meetingId === meetingId
-      );
-      if (!currMeeting) {
-        throw new Error(
-          "can't find currMeeting by meetingId inside regForMeeting"
-        );
-      }
-      const isNewbie = ctx.session.user.isNewbie;
-      const finalMessage = finalMessObj(currMeeting, isNewbie);
-      await ctx.editMessageText(finalMessage.text, {
-        reply_markup: finalMessage.keyboard,
-        parse_mode: "HTML",
-      });
-    }
+    const isNewbie = ctx.session.user.isNewbie;
+    const finalMessage = finalMessObj(currMeeting, isNewbie);
+    await ctx.editMessageText(finalMessage.text, {
+      reply_markup: finalMessage.keyboard,
+      parse_mode: "HTML",
+    });
   } catch (err) {
     logErrorAndThrow(err, "fatal", "Can't registrate a user for a meeting");
   }
 }
 
 const baseMessObj = (
-  availableRegs: MeetingsObject[]
+  availableRegs: MeetingObjectWithId[]
 ): TextWithInlineKeyboardObj => {
   let text = "";
   let keyboard;
   if (availableRegs.length !== 0) {
     text += "На данный момент для записи ";
     text += "доступны следующие встречи:\n\n";
-    text += createFutureMeetingsList(availableRegs);
+    text += createMeetingsList.userView(availableRegs);
     text += "\nВыберите ту, на которую ";
     text += "вы хотели бы записаться, нажав на кнопку ниже👇🏻";
-    keyboard = generateMeetingsKeyboard(availableRegs);
+    keyboard = generateMeetingsKeyboard(availableRegs, false);
   } else {
     text = "На данный момент нет доступных встреч. Зайдите позже";
     keyboard = mainMenu;
@@ -92,7 +92,7 @@ const baseMessObj = (
 };
 
 const finalMessObj = (
-  currMeeting: MeetingsObject,
+  currMeeting: MeetingObject,
   isNewbie: boolean
 ): TextWithInlineKeyboardObj => {
   let text = "";

@@ -1,7 +1,4 @@
 import { InlineKeyboard } from "grammy";
-
-//TODO: Если подписка есть, не добавлять кнопку
-//TODO: Если человек зашёл не в первый раз, вместо куда я попал добавлять ИНФО кнопку
 export function greetingKeyboard(
   newbie: boolean,
   subscribed: boolean,
@@ -50,8 +47,12 @@ export const mainMenu = new InlineKeyboard().text("Главное меню", "ma
 export const adminMenuKeyboard = (newSubs: boolean) => {
   const k = new InlineKeyboard();
   if (newSubs) {
-    return k.text("Активировать подписки", "sub_manage");
-  } else {
-    return k.text("пусто");
+    k.text("Активировать подписки", "sub_manage").row();
   }
+  k.text("Создать встречу", "meeting__create").row();
+  k.text("Посмотреть текущие встречи", "meeting__schedule");
+
+  return k;
 };
+
+export const adminMenu = new InlineKeyboard().text("Меню", "gen__admin");

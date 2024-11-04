@@ -1,26 +1,16 @@
-import logger from "#root/logger.ts";
-import subDetailsControllers from "../dbSetup/handlers/subDetailsControllers";
+import { subDetailsControllers } from "#db/handlers/index.ts";
 import { waitForPayKeyboard } from "../keyboards/subKeyboards";
 import { MyContext } from "../types/grammy.types";
 import smoothReplier from "#helpers/smoothReplier.ts";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-
-const createPayText = (price: number) => {
-  let payText = `К оплате ${price}р\n`;
-  payText += "Если уже оплатили, нажмите 'Оплачено'. ";
-  payText += "Вы также можете отменить платёж";
-  return payText;
-};
+import guardExp from "#root/helpers/guardExp.ts";
 
 export default async function (ctx: MyContext) {
   try {
     const SubDetails = await subDetailsControllers.findSubWithDetails(
       ctx.userId
     );
-    if (!SubDetails?.sub_price) {
-      logger.fatal("No subDetails info");
-      throw new Error("No subDetails info");
-    }
+    guardExp(SubDetails?.sub_price, "SubDetails");
 
     const payText = createPayText(SubDetails.sub_price);
     await smoothReplier(ctx, payText, waitForPayKeyboard, "sendPayMessage");
@@ -28,3 +18,10 @@ export default async function (ctx: MyContext) {
     logErrorAndThrow(error, "fatal", "Error inside sendPayMessage");
   }
 }
+
+const createPayText = (price: number) => {
+  let payText = `К оплате ${price}р\n`;
+  payText += "Если уже оплатили, нажмите 'Оплачено'. ";
+  payText += "Вы также можете отменить платёж";
+  return payText;
+};

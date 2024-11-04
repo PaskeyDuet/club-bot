@@ -1,9 +1,12 @@
 import guardExp from "../helpers/guardExp";
-import sendStartMessage from "../serviceMessages/sendStartMessage";
+import startHandler from "../serviceMessages/startHandler";
 import { NextFunction } from "grammy";
 import { CallbackCtx, MyContext } from "../types/grammy.types";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
 
 export default async function (ctx: MyContext, next: NextFunction) {
+  const messObj = ctx.message;
+
   const cbMessageId = ctx?.callbackQuery?.message?.message_id;
   const updateMessageId = ctx?.update?.message?.message_id;
 
@@ -11,9 +14,20 @@ export default async function (ctx: MyContext, next: NextFunction) {
   guardExp(currentMsgId, "traceRoutes error, currentMsgId");
 
   let lastMsgId = ctx.session.lastMsgId ?? 0;
+  const messText = ctx.message?.text;
+  const isTopic = messObj?.is_topic_message;
+  const isSupergroup = messObj?.chat.type === "supergroup";
 
-  if (currentMsgId < lastMsgId || lastMsgId === 0) {
-    return await sendStartMessage(ctx);
+  if (isTopic) {
+    return;
+  } else if (messText === "/admin") {
+    return await sendAdminMenu(ctx);
+  } else if (currentMsgId < lastMsgId || lastMsgId === 0) {
+    if (isSupergroup) {
+      return;
+    } else {
+      return await startHandler(ctx);
+    }
   } else {
     ctx.session.lastMsgId = currentMsgId;
 

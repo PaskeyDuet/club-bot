@@ -9,6 +9,11 @@ const initialConfig: SessionData = {
   },
   temp: {
     meetingNumber: null,
+    meetingParams: {
+      date: "",
+      place: "",
+      topic: "",
+    },
     sub_number: null,
   },
   routeHistory: [],

@@ -1,9 +1,11 @@
 import { Op } from "sequelize";
-import Meetings from "../models/Meetings";
+import Meetings, { MeetingsCreationType } from "../models/Meetings";
 import dates from "../../helpers/dates";
 import MeetingsDetails from "../models/MeetingsDetails";
-import { MeetingsWithDetailsObject } from "../../types/shared.types";
-import { meetingDateParser } from "../../helpers/parseDbDate";
+import {
+  MeetingObject,
+  MeetingsWithDetailsObject,
+} from "../../types/shared.types";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 
 export default {
@@ -52,7 +54,7 @@ export default {
           meetingId: dv.meeting_id,
           place: dv.place,
           topic: dv.topic,
-          date: meetingDateParser(dv.date),
+          date: dates.meetingDateParser(dv.date),
           user_id: detailsDv.user_id,
         };
         return obj;
@@ -65,4 +67,17 @@ export default {
       );
     }
   },
+  createMeeting: async (meeting: MeetingsCreationType) => {
+    try {
+      return await Meetings.create(meeting);
+    } catch (err) {
+      logErrorAndThrow(
+        err,
+        "fatal",
+        "Db error. meetingsController error: createMeeting unavailable"
+      );
+    }
+  },
+  deleteMeeting: async (meetingId: number) =>
+    await Meetings.destroy({ where: { meeting_id: meetingId } }),
 };

@@ -1,6 +1,7 @@
 import SubDetails from "#root/dbSetup/models/SubDetails.ts";
-import subDetailsControllers from "../../dbSetup/handlers/subDetailsControllers";
-import subscriptionHandler from "../../dbSetup/handlers/subscriptionController";
+import guardExp from "#root/helpers/guardExp.ts";
+import { subDetailsControllers } from "#db/handlers/index.ts";
+import { subscriptionController } from "#db/handlers/index.ts";
 import { mainMenu } from "../../keyboards/generalKeyboards";
 import { subKeyboard } from "../../keyboards/subKeyboards";
 import { MyContext, MyConversation } from "../../types/grammy.types";
@@ -9,9 +10,7 @@ import waitForSubNumber from "./helpers/waitForSubNumber";
 
 export async function subConv(conversation: MyConversation, ctx: MyContext) {
   const subs = await subDetailsControllers.getAllButFirstSub();
-  if (!subs) {
-    throw new Error();
-  }
+  guardExp(subs, "subs inside subConv");
 
   const subChooseMessage = generateSubChoosingMessageParts(subs);
   await ctx.editMessageText(subChooseMessage.text, {
@@ -21,16 +20,12 @@ export async function subConv(conversation: MyConversation, ctx: MyContext) {
 
   await waitForSubNumber(ctx, conversation, subChooseMessage);
   const chosenSubNum = conversation.session.temp.sub_number;
-  if (!chosenSubNum) {
-    throw new Error("no chosenSubNum in subConv");
-  }
+  guardExp(chosenSubNum, "chosenSubNum inside subConv");
 
   const chosenSub = subs.find(
     (el) => el.dataValues.sub_number === chosenSubNum
   );
-  if (!chosenSub) {
-    throw new Error("no chosenSub in subConv");
-  }
+  guardExp(chosenSub, "chosenSub inside subConv");
 
   const subApproveText = generateChosenSubText(chosenSub);
   await ctx.editMessageText(subApproveText, {
@@ -38,7 +33,7 @@ export async function subConv(conversation: MyConversation, ctx: MyContext) {
     parse_mode: "HTML",
   });
 
-  await subscriptionHandler.upgradeSub(
+  await subscriptionController.upgradeSub(
     ctx.userId,
     "pending",
     chosenSub.sub_number

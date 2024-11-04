@@ -14,9 +14,6 @@
     "allowImportingTsExtensions": true,
     "baseUrl": "./src",
     "paths": {
-      "#root": [
-        "./src/*"
-      ],
       "#db": [
         "./src/dbSetup/*"
       ],
@@ -44,6 +41,9 @@
       "#handlers": [
         "./src/handlers/*"
       ],
+      "#root": [
+        "./src/*"
+      ]
     },
     "typeRoots": [
       "./global.d.ts",

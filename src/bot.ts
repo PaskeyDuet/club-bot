@@ -2,40 +2,49 @@ import dotenv from "dotenv";
 import { Api, Bot, GrammyError, HttpError, session } from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import sessionConfig from "./botConfig/sessionConfig";
-import SubDetails from "#db/models/SubDetails.ts";
-import { MyContext, routeHistoryUnit } from "types/grammy.types";
+import { MyContext } from "types/grammy.types";
 import { registrationForMeeting } from "#conv/registrationForMeeting.ts";
 import { newbieSubConv } from "#conv/subscriptionConvs/newbieSubConv.ts";
 import { subConv } from "#conv/subscriptionConvs/subConv.ts";
 import ctxExtender from "#middleware/ctxExtender.ts";
 import traceRoutes from "#middleware/traceRoutes.ts";
-import sendAdminMenu from "#serviceMessages/adminSection/sendAdminMenu.ts";
-import sendStartMessage from "#serviceMessages/sendStartMessage.ts";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
 import userRegistrationConv from "#conv/userRegistrationConv.ts";
 import { sequelize } from "#db/dbClient.ts";
 import { keyboard } from "#handlers/buttonRouters.ts";
 import handleBackButton from "#handlers/handleBackButton.ts";
 import logger from "#root/logger.ts";
+import { paymentsManaging } from "#conv/subscriptionConvs/subPaymentApprove.ts";
+import { createMeetingConv } from "#conv/createMeeting.ts";
+import dates from "#helpers/dates.ts";
+import startHandler from "#serviceMessages/startHandler.ts";
 import UserSubscription from "#db/models/UserSubscription.ts";
-import meetingsController from "#db/handlers/meetingsController.ts";
-import User from "./dbSetup/models/User";
-import MeetingsDetails from "./dbSetup/models/MeetingsDetails";
-import { paymentsManaging } from "./conversations/subscriptionConvs/subPaymentApprove";
+import User from "#db/models/User.ts";
+import MeetingsDetails from "#db/models/MeetingsDetails.ts";
+import { Op } from "sequelize";
 
 dotenv.config();
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
+  // await Meetings.truncate({ cascade: true });
+  // await MeetingsDetails.truncate({ cascade: true });
   // await User.destroy({ where: { user_id: 335815247 } });
   // await MeetingsDetails.destroy({ where: { user_id: 335815247 } });
-  // await UserSubscription.destroy({ where: { user_id: 335815247 } });
+  const data = await User.findAll({
+    where: { user_id: { [Op.ne]: 0 } },
+  });
+  console.log(data);
+
   // console.log(await Subscription.findAll());
-  // console.log(await SubDetails.findAll());
-  await UserSubscription.update(
-    { sub_number: 3, sub_status: "unactive" },
-    { where: { user_id: [335815247, 1973775175] } }
-  );
-  // console.log(await UserSubscription.findAll());
+  // console.log(await Meetings.findAll());
+  // await UserSubscription.update(
+  //   { sub_number: 3, sub_status: "unactive" },
+  //   { where: { user_id: [335815247] } }
+  // );
+  // console.log(
+  //   await UserSubscription.findOne({ where: { user_id: 335815247 } })
+  // );
   // await Subscription.update(
   //   { sub_number: 1, sub_status: "unactive" },
   //   { where: { user_id: 1973775175 } }
@@ -81,22 +90,6 @@ dotenv.config();
   //   sub_price: 10000,
   //   sub_name: "Ultima sub",
   // });
-  // await SubDetails.update(
-  //   { sub_name: "Free tier" },
-  //   { where: { sub_number: 1 } }
-  // );
-  // await SubDetails.update(
-  //   { sub_name: "Месячная подписка" },
-  //   { where: { sub_number: 2 } }
-  // );
-  // await SubDetails.update(
-  //   { sub_name: "Трехмесячная подписка" },
-  //   { where: { sub_number: 3 } }
-  // );
-  // await SubDetails.update(
-  //   { sub_name: "Годовая подписка" },
-  //   { where: { sub_number: 4 } }
-  // );
   logger.info("Database synced");
 })();
 
@@ -117,9 +110,14 @@ bot.use(createConversation(registrationForMeeting));
 bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
 bot.use(createConversation(paymentsManaging));
+bot.use(createConversation(createMeetingConv));
 bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
+
+bot.command("date", async (ctx) => {
+  dates.isDatePassed(dates.dateFromString("12-12-2024 10:30"));
+});
 
 bot.command("admin", async (ctx) => {
   try {
@@ -135,7 +133,7 @@ bot.command("admin", async (ctx) => {
 
 bot.command("start", async (ctx: MyContext) => {
   try {
-    await sendStartMessage(ctx);
+    await startHandler(ctx);
   } catch (err) {
     const error = err as Error;
     logger.fatal(

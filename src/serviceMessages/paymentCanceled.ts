@@ -1,8 +1,8 @@
-import subscriptionController from "#root/dbSetup/handlers/subscriptionController.ts";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
-import smoothReplier from "#root/helpers/smoothReplier.ts";
-import { mainMenu } from "#root/keyboards/generalKeyboards.ts";
-import { MyContext } from "#root/types/grammy.types.ts";
+import { subscriptionController } from "#db/handlers/index.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import smoothReplier from "#helpers/smoothReplier.ts";
+import { mainMenu } from "#keyboards/generalKeyboards.ts";
+import { MyContext } from "#types/grammy.types.ts";
 
 export default async function (ctx: MyContext) {
   try {

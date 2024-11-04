@@ -1,16 +1,23 @@
 import { Composer } from "grammy";
 import { MyContext } from "../types/grammy.types";
-import { infoUnits, sendInfoMessage } from "../controllers/infoUnit";
-import { paymentManage } from "../controllers/subscriptionUnit";
-import sendStartMessage from "../serviceMessages/sendStartMessage";
+import { paymentManage } from "#controllers/index.ts";
 import paymentApproved from "../serviceMessages/paymentApproved";
-import { sendScheduleMessage } from "../controllers/scheduleUnit";
+import { sendScheduleMessage } from "#controllers/index.ts";
 import { cancelMeetingRegApproveKeyboard } from "../keyboards/meetingsKeyboards";
 import { mainMenu } from "../keyboards/generalKeyboards";
-import meetingsDetailsController from "../dbSetup/handlers/meetingsDetailsController";
-import sendAdminMenu from "../serviceMessages/adminSection/sendAdminMenu";
+import { meetingsDetailsController } from "#db/handlers/index.ts";
+import sendAdminMenu from "../serviceMessages/sendAdminMenu";
 import logger from "#root/logger.ts";
 import paymentCanceled from "#root/serviceMessages/paymentCanceled.ts";
+import { infoUnits, sendInfoMessage } from "#controllers/index.ts";
+import { infoUnitPathsType } from "#types/shared.types.ts";
+import logErrorAndThrow from "./logErrorAndThrow";
+import { sendAdminScheduleMessage } from "#controllers/scheduleUnit.ts";
+import {
+  deleteMeetingAndRegs,
+  meetingControlMenu,
+} from "#helpers/meetingsHelpers.ts";
+import startHandler from "#serviceMessages/startHandler.ts";
 
 export const keyboard = new Composer<MyContext>();
 //TODO: add string checks
@@ -35,30 +42,22 @@ keyboard.callbackQuery(/gen__/, async (ctx) => {
       break;
     case "admin":
       await sendAdminMenu(ctx);
+      break;
     default:
-      logger.error("used sendStartMessage as default case at gen__");
-      await sendStartMessage(ctx);
+      logger.error("used startHandler as default case at gen__");
+      await startHandler(ctx);
       break;
   }
 });
 
 keyboard.callbackQuery(/info_/, async (ctx) => {
-  const path: string = ctx.callbackQuery.data.split("info_")[1];
+  const path = ctx.callbackQuery.data.split("info_")[1] as infoUnitPathsType;
 
-  switch (path) {
-    case "who":
-      infoUnits(ctx).who();
-      break;
-    case "where":
-      infoUnits(ctx).where();
-      break;
-    case "when":
-      infoUnits(ctx).when();
-      break;
-    default:
-      logger.error("used sendStartMessage as default case at info_");
-      await sendStartMessage(ctx);
-      break;
+  try {
+    await infoUnits(ctx, path);
+  } catch (err) {
+    await startHandler(ctx);
+    logErrorAndThrow(err, "error", "Unable to use infoUnits module");
   }
 });
 
@@ -84,13 +83,11 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
         await paymentManage(ctx, userId, "active");
         break;
       default:
-        logger.error("used sendStartMessage as default case at sub_");
-        await sendStartMessage(ctx);
+        logger.error("used startHandler as default case at sub_");
+        await startHandler(ctx);
         break;
     }
   } else {
-    console.log(12);
-
     switch (action) {
       case "paid":
         await paymentApproved(ctx);
@@ -102,8 +99,8 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
         await ctx.conversation.enter("paymentsManaging");
         break;
       default:
-        logger.error("used sendStartMessage as default case at sub_");
-        await sendStartMessage(ctx);
+        logger.error("used startHandler as default case at sub_");
+        await startHandler(ctx);
         break;
     }
   }
@@ -115,26 +112,47 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
 
   let messText = "";
   switch (action) {
-    case "manage":
-      messText = "Вы действительно хотите отменить запись на занятие?";
+    case "create":
+      await ctx.conversation.enter("createMeetingConv");
+      break;
+    case "cancel":
+      messText = "Вы действительно хотите отменить запись на встречу?";
       await ctx.editMessageText(messText, {
         reply_markup: cancelMeetingRegApproveKeyboard(+meetingId, +userId),
       });
       break;
-    case "cancel":
+    case "schedule":
+      await sendAdminScheduleMessage(ctx);
+      break;
+    case "control":
+      await meetingControlMenu(ctx, +meetingId);
+      break;
+    case "admin-cancel":
+      messText = "Вы действительно хотите отменить запись на встречу?";
+      messText += " В случае удаления все пользователи";
+      messText += " будут уведомлены об этом";
+
+      await ctx.editMessageText(messText, {
+        reply_markup: cancelMeetingRegApproveKeyboard(+meetingId),
+      });
+      break;
+    case "cancel-confirm":
       await meetingsDetailsController.destroyUserReg(+meetingId, +userId);
       messText = "Регистрация на встречу отменена";
       await ctx.editMessageText(messText, {
         reply_markup: mainMenu,
       });
       break;
+    case "admin-cancel-confirm":
+      await deleteMeetingAndRegs(ctx, +meetingId);
+      break;
     default:
-      logger.error("used sendStartMessage as default case at meeting__");
-      await sendStartMessage(ctx);
+      logger.error("used startHandler as default case at meeting__");
+      await startHandler(ctx);
       break;
   }
 });
 
 keyboard.callbackQuery("main_menu", async (ctx) => {
-  await sendStartMessage(ctx);
+  await startHandler(ctx);
 });

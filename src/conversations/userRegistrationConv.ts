@@ -1,9 +1,10 @@
-import sendStartMessage from "../serviceMessages/sendStartMessage";
 import { MyContext, MyConversation } from "../types/grammy.types";
 import { DbUserAttributes } from "../dbSetup/models/User";
 import dates from "../helpers/dates";
-import { createUserDbImage } from "#db/handlers/handlersCompositions.ts";
+import { handlersCompositions as dbHandler } from "#db/handlers/index.ts";
 import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
+import guardExp from "#root/helpers/guardExp.ts";
+import startHandler from "#serviceMessages/startHandler.ts";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {
   try {
@@ -23,9 +24,7 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
       text.otherwise
     );
 
-    if (!ctx.from?.id) {
-      throw new Error("No user id inside userReg");
-    }
+    guardExp(ctx.from?.id, "user_id inside userRegistrationConv");
     const newUser: DbUserAttributes = {
       user_id: ctx.from?.id,
       first_name: user_name,
@@ -33,9 +32,9 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
       username: ctx.from?.username,
       reg_date: dates.currDate(),
     };
-    await createUserDbImage(newUser);
+    await dbHandler.createUserDbImage(newUser);
     //Weak solution. FIXME
-    const lastMsgId = await sendStartMessage(ctx);
+    const lastMsgId = await startHandler(ctx);
     conversation.session.lastMsgId = lastMsgId || 0;
     conversation.session.user.isNewbie = true;
   } catch (err) {

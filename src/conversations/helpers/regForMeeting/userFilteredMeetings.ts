@@ -1,16 +1,18 @@
 import {
-  MeetingsObject,
+  MeetingObjectWithId,
   MeetingsWithDetailsObject,
-} from "../../../types/shared.types";
+} from "#types/shared.types.ts";
 
 export default (
-  futureMeetings: MeetingsObject[],
+  futureMeetings: MeetingObjectWithId[],
   futureMeetingsWithUsers: MeetingsWithDetailsObject[]
 ) => {
-  if (!futureMeetingsWithUsers.length) {
-    return futureMeetings;
-  }
+  console.log("future meetings", futureMeetings);
+  console.log("future meetings with users", futureMeetingsWithUsers);
+
   const f1 = futureMeetings;
+  console.log("futureMeetings", futureMeetings);
   const f2 = futureMeetingsWithUsers.map((el) => el.meetingId);
+  console.log("futureMeetingsWithUsersmapped", f2);
   return f1.filter((el) => !f2.includes(el.meetingId));
 };

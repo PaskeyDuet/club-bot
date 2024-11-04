@@ -7,7 +7,7 @@ import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
 export default async function (
   ctx: MyContext,
   messageText: string,
-  keyboard: InlineKeyboard,
+  keyboard: InlineKeyboard | undefined,
   fnName: string
 ) {
   let updatedCtx: updatedCtxType;
@@ -15,8 +15,8 @@ export default async function (
     try {
       updatedCtx = await ctx.editMessageText(messageText, {
         reply_markup: keyboard,
+        parse_mode: "HTML",
       });
-      console.log("unfo");
       return messageIdSaver(ctx, updatedCtx, fnName);
     } catch (err) {
       const error = err as Error;
@@ -26,10 +26,11 @@ export default async function (
       ) {
         updatedCtx = await ctx.reply(messageText, {
           reply_markup: keyboard,
+          parse_mode: "HTML",
         });
         return messageIdSaver(ctx, updatedCtx, fnName);
       } else {
-        throw new Error("impossible");
+        throw new Error("bot can't edit and reply");
       }
     }
   } catch (err) {

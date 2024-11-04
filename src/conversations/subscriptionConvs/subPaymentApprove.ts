@@ -1,12 +1,10 @@
-import subDetailsControllers from "#root/dbSetup/handlers/subDetailsControllers.ts";
-import usersController from "#root/dbSetup/handlers/usersController.ts";
+import { subDetailsControllers } from "#root/dbSetup/handlers/index.ts";
+import { usersController } from "#root/dbSetup/handlers/index.ts";
 import SubDetails from "#root/dbSetup/models/SubDetails.ts";
+import guardExp from "#root/helpers/guardExp.ts";
 import { subPaymentManaginKeyboard } from "#root/keyboards/subKeyboards.ts";
 import { MyContext, MyConversation } from "#root/types/grammy.types.ts";
-import {
-  TextWithInlineKeyboardObj,
-  UserWithSubscription,
-} from "#root/types/shared.types.ts";
+import { UserWithSubscription } from "#root/types/shared.types.ts";
 
 export async function paymentsManaging(
   conversation: MyConversation,
@@ -16,9 +14,9 @@ export async function paymentsManaging(
     sub_status: "paid",
   });
   const subDetails = await subDetailsControllers.getAllButFirstSub();
-  if (!paidSubs || !subDetails) {
-    throw new Error();
-  }
+
+  guardExp(paidSubs, "paidSubs inside subPaymentApprove");
+  guardExp(subDetails, "paidSubs inside subPaymentApprove");
 
   let messText = "";
   if (paidSubs.length > 0) {

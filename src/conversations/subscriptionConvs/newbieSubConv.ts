@@ -1,4 +1,5 @@
-import meetingsController from "../../dbSetup/handlers/meetingsController";
+import guardExp from "#root/helpers/guardExp.ts";
+import { meetingsController } from "#db/handlers/index.ts";
 import { mainMenu } from "../../keyboards/generalKeyboards";
 import { subKeyboard } from "../../keyboards/subKeyboards";
 import { MyContext, MyConversation } from "../../types/grammy.types";
@@ -10,9 +11,10 @@ export async function newbieSubConv(
   const isNewbie = ctx.session.user.isNewbie;
   const futureMeetingsWithUsers =
     await meetingsController.futureMeetingsWithUsers();
-  if (!futureMeetingsWithUsers) {
-    throw new Error();
-  }
+  guardExp(
+    futureMeetingsWithUsers,
+    "futureMeetingsWithUsers inside newbieSubConv"
+  );
 
   if (isNewbie && futureMeetingsWithUsers.length) {
     let regDenyText = "Для пробного посещения доступно только одно посещение\n";

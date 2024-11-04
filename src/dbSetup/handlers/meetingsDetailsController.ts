@@ -1,4 +1,5 @@
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import { MeetingsDetailsQueryParamsType } from "#types/shared.types.ts";
 import MeetingsDetails from "../models/MeetingsDetails";
 
 export default {
@@ -12,6 +13,9 @@ export default {
         "Db error. meetingsDetailsController error: findAll unavailable"
       );
     }
+  },
+  findAllByQuery: async (query: MeetingsDetailsQueryParamsType) => {
+    return await MeetingsDetails.findAll({ where: query });
   },
   addUserToMeet: async (userId: number, meetingId: number) => {
     try {
@@ -39,5 +43,11 @@ export default {
         "Db error. meetingsDetailsController error: destroyUserReg unavailable"
       );
     }
+  },
+  destroyUserRegs: async (userIds: number[]) => {
+    const delOperations = userIds.map((el) =>
+      MeetingsDetails.destroy({ where: { user_id: el } })
+    );
+    return await Promise.all(delOperations);
   },
 };

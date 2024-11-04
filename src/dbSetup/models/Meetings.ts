@@ -9,7 +9,7 @@ export type MeetingsType = {
   MeetingsDetails?: MeetingsDetails[];
 };
 
-type MeetingsCreationType = PartialBy<
+export type MeetingsCreationType = PartialBy<
   MeetingsType,
   "meeting_id" | "MeetingsDetails"
 >;
