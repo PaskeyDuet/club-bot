@@ -14,50 +14,21 @@
     "allowImportingTsExtensions": true,
     "baseUrl": "./src",
     "paths": {
-      "#db": [
-        "./src/dbSetup/*"
-      ],
-      "#keyboards": [
-        "./src/keyboards/*"
-      ],
-      "#conv": [
-        "./src/conversations/*"
-      ],
-      "#controllers": [
-        "./src/controllers/*"
-      ],
-      "#serviceMessages": [
-        "./src/serviceMessages/*"
-      ],
-      "#helpers": [
-        "./src/helpers/*"
-      ],
-      "#types": [
-        "./src/types/*"
-      ],
-      "#middleware": [
-        "./src/middleware/*"
-      ],
-      "#handlers": [
-        "./src/handlers/*"
-      ],
-      "#root": [
-        "./src/*"
-      ]
+      "#db/*": ["dbSetup/*"],
+      "#keyboards/*": ["keyboards/*"],
+      "#conv/*": ["conversations/*"],
+      "#controllers/*": ["controllers/*"],
+      "#serviceMessages/*": ["serviceMessages/*"],
+      "#helpers/*": ["helpers/*"],
+      "#types/*": ["types/*"],
+      "#middleware/*": ["middleware/*"],
+      "#handlers/*": ["handlers/*"],
+      "#root/*": ["./*"]
     },
-    "typeRoots": [
-      "./global.d.ts",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./config", "./node_modules/@types"]
   },
-  "exclude": [
-    "node_modules/",
-    "dist"
-  ],
-  "include": [
-    "src//**/*",
-    "config//*",
-  ],
+  "exclude": ["node_modules/", "dist"],
+  "include": ["config/*", "src/**/*"],
   "esModuleInterop": true,
   "forceConsistentCasingInFileNames": true,
   "strict": true,

@@ -7,20 +7,15 @@ import {
   MeetingObject,
   MeetingObjectWithId,
   MeetingObjectWithUserCountType,
-} from "../types/shared.types";
-import dates from "./dates";
-import guardExp from "./guardExp";
+} from "#types/shared.types";
+import { dates, guardExp, smoothReplier, notificator } from "./index.ts";
 import Meetings, {
   MeetingsCreationType,
   MeetingsType,
 } from "#db/models/Meetings.ts";
-import { MyContext } from "#types/grammy.types.ts";
-import smoothReplier from "./smoothReplier";
-import { adminMenu } from "#keyboards/generalKeyboards.ts";
-import notificator from "./notificator";
-import { manageMeeting } from "#keyboards/meetingsKeyboards.ts";
+import { adminMenu, manageMeeting } from "#keyboards/index.ts";
 
-export async function meetingControlMenu(ctx: MyContext, meetingId: number) {
+async function meetingControlMenu(ctx: MyContext, meetingId: number) {
   let messText = "Информация о встрече:\n\n";
   messText += await meetingInfoGetter(meetingId);
   messText += "\n\nВыберите действие";
@@ -30,9 +25,7 @@ export async function meetingControlMenu(ctx: MyContext, meetingId: number) {
   });
 }
 
-export async function getFutureMeetings(): Promise<
-  MeetingObjectWithId[] | undefined
-> {
+async function getFutureMeetings(): Promise<MeetingObjectWithId[] | undefined> {
   try {
     const allMeetings = await meetingsController.futureMeetings();
     guardExp(allMeetings, "allMeetings inside futureMeetingsHelpers");
@@ -52,7 +45,7 @@ export async function getFutureMeetings(): Promise<
   }
 }
 
-export const prepareDbMeetingObj = (
+const prepareDbMeetingObj = (
   meetingObj: MeetingObject
 ): MeetingsCreationType => ({
   place: meetingObj.place,
@@ -60,17 +53,17 @@ export const prepareDbMeetingObj = (
   date: dates.meetingDateFromString(meetingObj.date),
 });
 
-export const dbObjDateTransform = (meeting: Meetings): MeetingObjectWithId => ({
+const dbObjDateTransform = (meeting: Meetings): MeetingObjectWithId => ({
   meetingId: meeting.meeting_id,
   date: dates.meetingDateParser(meeting.date),
   place: meeting.place,
   topic: meeting.topic,
 });
 
-export const dbObjsToReadable = (meetings: Meetings[]): MeetingObjectWithId[] =>
+const dbObjsToReadable = (meetings: Meetings[]): MeetingObjectWithId[] =>
   meetings.map((el) => dbObjDateTransform(el));
 
-export const createMeetingsList = {
+const createMeetingsList = {
   userView(meetings: MeetingObject[] | MeetingsType[]) {
     return meetings
       .map((el) => `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n`)
@@ -92,7 +85,7 @@ export const createMeetingsList = {
   },
 };
 
-export async function deleteMeetingAndRegs(ctx: MyContext, meetingId: number) {
+async function deleteMeetingAndRegs(ctx: MyContext, meetingId: number) {
   try {
     const h = deleteMeetingAndRegsHelpers;
 
@@ -164,9 +157,7 @@ async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
   return createMeetingsList.adminView([meetingsWithUserCount]);
 }
 
-export const readableObjsWithCount = async (
-  meetings: MeetingObjectWithId[]
-) => {
+const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {
   const meetingPromises = meetings.map(async (el) => {
     const users = await findRegUserIds(el.meetingId);
     const newObj: MeetingObjectWithUserCountType = {
@@ -176,4 +167,15 @@ export const readableObjsWithCount = async (
     return newObj;
   });
   return await Promise.all(meetingPromises);
+};
+
+export {
+  meetingControlMenu,
+  getFutureMeetings,
+  prepareDbMeetingObj,
+  dbObjDateTransform,
+  dbObjsToReadable,
+  createMeetingsList,
+  deleteMeetingAndRegs,
+  readableObjsWithCount,
 };

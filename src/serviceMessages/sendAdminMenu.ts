@@ -1,9 +1,7 @@
-import { adminMenuKeyboard } from "../keyboards/generalKeyboards";
-import { MyContext } from "../types/grammy.types";
+import { adminMenuKeyboard } from "#keyboards/index.ts";
 import errorHandler from "#handlers/logErrorAndThrow.ts";
-import { subscriptionController } from "#root/dbSetup/handlers/index.ts";
-import guardExp from "#root/helpers/guardExp.ts";
-import smoothReplier from "#helpers/smoothReplier.ts";
+import { smoothReplier, guardExp } from "#helpers/index.ts";
+import subscriptionController from "#db/handlers/subscriptionController.ts";
 
 export default async function (ctx: MyContext) {
   try {

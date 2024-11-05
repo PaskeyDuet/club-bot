@@ -1,8 +1,6 @@
-import guardExp from "#root/helpers/guardExp.ts";
+import { guardExp } from "#helpers/index.ts";
 import { meetingsController } from "#db/handlers/index.ts";
-import { mainMenu } from "../../keyboards/generalKeyboards";
-import { subKeyboard } from "../../keyboards/subKeyboards";
-import { MyContext, MyConversation } from "../../types/grammy.types";
+import { mainMenu, subKeyboard } from "#keyboards/index.ts";
 
 export async function newbieSubConv(
   conversation: MyConversation,

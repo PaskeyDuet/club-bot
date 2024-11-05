@@ -1,16 +1,12 @@
 import errorHandler from "#handlers/logErrorAndThrow.ts";
-import smoothReplier from "#helpers/smoothReplier.ts";
-import { MyContext } from "types/grammy.types";
-import guardExp from "#helpers/guardExp.ts";
-import { subscriptionController } from "#db/handlers/index.ts";
+import { guardExp, validateSub, smoothReplier } from "#helpers/index.ts";
 import { usersController } from "#db/handlers/index.ts";
 import sendPayMessage from "./sendPayMessage";
 import sendPaidMessage from "./sendPaidMessage";
-import { greetingKeyboard } from "#keyboards/generalKeyboards.ts";
+import { greetingKeyboard } from "#keyboards/index.ts";
 import { SubStatusNames } from "#types/shared.types.ts";
 import User from "#db/models/User.ts";
 import UserSubscription from "#db/models/UserSubscription.ts";
-import { validateSub } from "#helpers/subHelpers.ts";
 
 export default async function startHandler(ctx: MyContext) {
   ctx.session.routeHistory = [];

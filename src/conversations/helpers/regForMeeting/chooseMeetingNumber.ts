@@ -1,5 +1,4 @@
-import { MyContext, MyConversation } from "../../../types/grammy.types";
-import { TextWithInlineKeyboardObj } from "../../../types/shared.types";
+import { TextWithInlineKeyboardObj } from "#types/shared.types";
 import unlessActions from "../unlessActions";
 
 export default async function (

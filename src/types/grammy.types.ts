@@ -1,6 +1,5 @@
-import { InlineKeyboardButton, InlineKeyboardMarkup } from "grammy/types";
-import { Api, Context, Filter, RawApi, SessionFlavor } from "grammy";
-import { Conversation, ConversationFlavor } from "@grammyjs/conversations";
+import { InlineKeyboardMarkup } from "grammy/types";
+import { Filter } from "grammy";
 
 export interface SessionData {
   user: TelegramUser;
@@ -18,13 +17,6 @@ export interface SessionData {
   editMode: boolean;
   conversation: object;
 }
-export type MyContext = Context &
-  SessionFlavor<SessionData> &
-  ConversationFlavor & {
-    userId: number;
-    chatId: number;
-  };
-export type MyConversation = Conversation<MyContext>;
 export type CallbackCtx = Filter<MyContext, "callback_query">;
 
 interface TelegramUser {

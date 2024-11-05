@@ -1,4 +1,4 @@
-import { SessionData } from "../types/grammy.types";
+import { SessionData } from "#types/grammy.types.ts";
 
 const initialConfig: SessionData = {
   user: {

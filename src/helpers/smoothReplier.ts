@@ -1,8 +1,7 @@
 import { InlineKeyboard } from "grammy";
-import { MyContext } from "types/grammy.types";
 import { Message, Update } from "grammy/types";
-import logger from "../logger";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
+import logger from "#root/logger.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 
 export default async function (
   ctx: MyContext,

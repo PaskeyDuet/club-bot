@@ -2,7 +2,7 @@ import handleError from "#handlers/logErrorAndThrow.ts";
 import {
   SubStatusNames,
   UserWithSubscriptionPartialType,
-} from "#root/types/shared.types.ts";
+} from "#types/shared.types.ts";
 import UserSubscription from "../models/UserSubscription";
 
 export default {

@@ -1,9 +1,8 @@
-import subscriptionController from "#db/handlers/subscriptionController.ts";
+import { subscriptionController } from "#db/handlers/index.ts";
 import UserSubscription from "#db/models/UserSubscription.ts";
-import guardExp from "./guardExp";
-import notificator from "./notificator";
+import { guardExp } from "./index.ts";
 
-export async function validateSub(userId: number) {
+async function validateSub(userId: number) {
   const h = validateSubHelpers;
 
   const userSub = await subscriptionController.findSub(userId);
@@ -34,3 +33,5 @@ const validateSubHelpers = {
     }
   },
 };
+
+export { validateSub };

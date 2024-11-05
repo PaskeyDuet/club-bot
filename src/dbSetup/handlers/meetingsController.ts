@@ -1,11 +1,8 @@
 import { Op } from "sequelize";
 import Meetings, { MeetingsCreationType } from "../models/Meetings";
-import dates from "../../helpers/dates";
 import MeetingsDetails from "../models/MeetingsDetails";
-import {
-  MeetingObject,
-  MeetingsWithDetailsObject,
-} from "../../types/shared.types";
+import { dates } from "#helpers/index.ts";
+import { MeetingsWithDetailsObject } from "#types/shared.types";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 
 export default {

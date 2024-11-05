@@ -1,5 +1,4 @@
-import smoothReplier from "#root/helpers/smoothReplier.ts";
-import { MyContext, routeHistoryUnit } from "types/grammy.types";
+import { routeHistoryUnit } from "#types/grammy.types";
 
 export default async function (ctx: MyContext) {
   const canEdit = ctx.session.editMode;

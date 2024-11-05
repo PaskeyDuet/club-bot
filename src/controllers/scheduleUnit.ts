@@ -2,19 +2,18 @@ import {
   createMeetingsList,
   dbObjsToReadable,
   readableObjsWithCount,
-} from "#helpers/meetingsHelpers.ts";
-import guardExp from "#root/helpers/guardExp.ts";
+  guardExp,
+  smoothReplier,
+} from "#helpers/index.ts";
 import { meetingsController } from "#db/handlers/index.ts";
-import { generateMeetingsKeyboard } from "../keyboards/meetingsKeyboards";
-import { MyContext } from "../types/grammy.types";
+import { generateMeetingsKeyboard } from "#keyboards/index.ts";
 import {
   MeetingObjectWithUserCountType,
   MeetingsWithDetailsObject,
 } from "#types/shared.types.ts";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import smoothReplier from "#helpers/smoothReplier.ts";
 
-export async function sendScheduleMessage(ctx: MyContext) {
+async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
     ctx.userId
   );
@@ -44,7 +43,7 @@ export async function sendScheduleMessage(ctx: MyContext) {
   }
 }
 
-export async function sendAdminScheduleMessage(ctx: MyContext) {
+async function sendAdminScheduleMessage(ctx: MyContext) {
   const allDbMeetings = await meetingsController.futureMeetings();
   guardExp(allDbMeetings, "allDbMeetings inside sendAdminScheduleMessage");
   const allMeetings = dbObjsToReadable(allDbMeetings);
@@ -102,3 +101,5 @@ const userTexts = {
     return text;
   },
 };
+
+export { sendScheduleMessage, sendAdminScheduleMessage };

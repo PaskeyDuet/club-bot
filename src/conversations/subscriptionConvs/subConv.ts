@@ -1,12 +1,12 @@
-import SubDetails from "#root/dbSetup/models/SubDetails.ts";
-import guardExp from "#root/helpers/guardExp.ts";
-import { subDetailsControllers } from "#db/handlers/index.ts";
-import { subscriptionController } from "#db/handlers/index.ts";
-import { mainMenu } from "../../keyboards/generalKeyboards";
-import { subKeyboard } from "../../keyboards/subKeyboards";
-import { MyContext, MyConversation } from "../../types/grammy.types";
-import { TextWithInlineKeyboardObj } from "../../types/shared.types";
-import waitForSubNumber from "./helpers/waitForSubNumber";
+import SubDetails from "#db/models/SubDetails.ts";
+import { guardExp } from "#helpers/index.ts";
+import {
+  subDetailsControllers,
+  subscriptionController,
+} from "#db/handlers/index.ts";
+import waitForSubNumber from "./helpers/waitForSubNumber.ts";
+import { TextWithInlineKeyboardObj } from "#types/shared.types.ts";
+import { subKeyboard, mainMenu } from "#keyboards/index.ts";
 
 export async function subConv(conversation: MyConversation, ctx: MyContext) {
   const subs = await subDetailsControllers.getAllButFirstSub();

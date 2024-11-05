@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { Api, Bot, GrammyError, HttpError, session } from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import sessionConfig from "./botConfig/sessionConfig";
-import { MyContext } from "types/grammy.types";
 import { registrationForMeeting } from "#conv/registrationForMeeting.ts";
 import { newbieSubConv } from "#conv/subscriptionConvs/newbieSubConv.ts";
 import { subConv } from "#conv/subscriptionConvs/subConv.ts";

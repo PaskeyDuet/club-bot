@@ -6,22 +6,21 @@ import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 import {
   createMeetingsList,
   getFutureMeetings,
-} from "#helpers/meetingsHelpers.ts";
-import guardExp from "#helpers/guardExp.ts";
-import { mainMenu } from "#keyboards/generalKeyboards.ts";
+  guardExp,
+} from "#helpers/index.ts";
 import {
+  mainMenu,
   generateMeetingsKeyboard,
   meetingRegApprovedKeyboard,
-} from "#keyboards/meetingsKeyboards.ts";
-import { MyContext, MyConversation } from "#types/grammy.types.ts";
+} from "#keyboards/index.ts";
 import {
   MeetingObject,
   MeetingObjectWithId,
   TextWithInlineKeyboardObj,
 } from "#types/shared.types.ts";
-import chooseMeetingNumber from "./helpers/regForMeeting/chooseMeetingNumber";
-import userFilteredMeetings from "./helpers/regForMeeting/userFilteredMeetings";
-//TODO: В дальнейшем необходимо добавить условие "Человек - новичок"
+import chooseMeetingNumber from "#conv/helpers/regForMeeting/chooseMeetingNumber.ts";
+import userFilteredMeetings from "#conv/helpers/regForMeeting/userFilteredMeetings.ts";
+
 export async function registrationForMeeting(
   conversation: MyConversation,
   ctx: MyContext

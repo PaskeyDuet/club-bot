@@ -1,7 +1,7 @@
-import guardExp from "../helpers/guardExp";
-import startHandler from "../serviceMessages/startHandler";
+import { guardExp } from "#helpers/index.ts";
+import startHandler from "#serviceMessages/startHandler.ts";
 import { NextFunction } from "grammy";
-import { CallbackCtx, MyContext } from "../types/grammy.types";
+import { CallbackCtx } from "#types/grammy.types.ts";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
 
 export default async function (ctx: MyContext, next: NextFunction) {

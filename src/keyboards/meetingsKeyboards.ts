@@ -1,4 +1,3 @@
-import Meetings from "#db/models/Meetings.ts";
 import { InlineKeyboard } from "grammy";
 import {
   MeetingObjectWithId,
@@ -7,7 +6,7 @@ import {
 
 // import config from "../botConfig/generalConfig";
 
-export const generateMeetingsKeyboard = (
+const generateMeetingsKeyboard = (
   meetings: (MeetingObjectWithId | MeetingsWithDetailsObject)[],
   adminMode: boolean
 ): InlineKeyboard => {
@@ -51,7 +50,7 @@ const meetingButtonsIterator = (
   return keyboard;
 };
 
-export const cancelMeetingRegApproveKeyboard = (
+const cancelMeetingRegApproveKeyboard = (
   meetingId: number,
   userId?: number
 ) => {
@@ -70,13 +69,13 @@ export const cancelMeetingRegApproveKeyboard = (
   return k.row().text("Назад", "back");
 };
 
-export const manageMeeting = (meetingId: number) =>
+const manageMeeting = (meetingId: number) =>
   new InlineKeyboard()
     .text("Отменить встречу", `meeting__admin-cancel_${meetingId}`)
     .row()
     .text("Назад", "back");
 
-export const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
+const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
   const k = new InlineKeyboard();
   if (!isNewbie) {
     k.text("Записаться ещё", "gen__meeting__reg").row();
@@ -84,13 +83,22 @@ export const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
   return k.text("Главное меню", "main_menu");
 };
 
-export const meetingCreateCheckKeyboard = new InlineKeyboard()
+const meetingCreateCheckKeyboard = new InlineKeyboard()
   .text("No", "meeting__create_reject")
   .text("Yes", "meeting__create_submit")
   .row()
   .text("Главное меню", "gen__admin");
 
-export const meetingCreatedMenu = new InlineKeyboard()
+const meetingCreatedMenu = new InlineKeyboard()
   .text("Посмотреть текущие встречи", "meeting__schedule")
   .row()
   .text("Меню", "gen__admin");
+
+export {
+  meetingCreatedMenu,
+  meetingCreateCheckKeyboard,
+  meetingRegApprovedKeyboard,
+  generateMeetingsKeyboard,
+  cancelMeetingRegApproveKeyboard,
+  manageMeeting,
+};

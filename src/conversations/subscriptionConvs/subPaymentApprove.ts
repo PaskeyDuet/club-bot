@@ -1,10 +1,8 @@
-import { subDetailsControllers } from "#root/dbSetup/handlers/index.ts";
-import { usersController } from "#root/dbSetup/handlers/index.ts";
-import SubDetails from "#root/dbSetup/models/SubDetails.ts";
-import guardExp from "#root/helpers/guardExp.ts";
-import { subPaymentManaginKeyboard } from "#root/keyboards/subKeyboards.ts";
-import { MyContext, MyConversation } from "#root/types/grammy.types.ts";
-import { UserWithSubscription } from "#root/types/shared.types.ts";
+import { usersController, subDetailsControllers } from "#db/handlers/index.ts";
+import SubDetails from "#db/models/SubDetails.ts";
+import { guardExp } from "#helpers/index.ts";
+import { subPaymentManaginKeyboard } from "#keyboards/index.ts";
+import { UserWithSubscription } from "#types/shared.types.ts";
 
 export async function paymentsManaging(
   conversation: MyConversation,

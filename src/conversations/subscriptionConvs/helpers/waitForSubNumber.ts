@@ -1,6 +1,5 @@
-import { MyContext, MyConversation } from "../../../types/grammy.types";
-import { TextWithInlineKeyboardObj } from "../../../types/shared.types";
-import unlessActions from "../../helpers/unlessActions";
+import { TextWithInlineKeyboardObj } from "#types/shared.types.ts";
+import unlessActions from "#conv/helpers/unlessActions.ts";
 
 export default async function (
   ctx: MyContext,

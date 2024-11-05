@@ -2,7 +2,7 @@ import dates from "../../helpers/dates";
 import SubDetails from "../models/SubDetails";
 import Subscription from "../models/UserSubscription";
 import User, { DbUserAttributes } from "../models/User";
-import guardExp from "#root/helpers/guardExp.ts";
+import { guardExp } from "#helpers/index.ts";
 
 export default {
   createUserDbImage: async (user: DbUserAttributes) => {

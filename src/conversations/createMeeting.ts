@@ -1,21 +1,19 @@
 import meetingsController from "#db/handlers/meetingsController.ts";
-import dates from "#helpers/dates.ts";
-import guardExp from "#helpers/guardExp.ts";
 import {
+  dates,
+  guardExp,
   createMeetingsList,
-  getFutureMeetings,
   prepareDbMeetingObj,
-} from "#helpers/meetingsHelpers.ts";
-import smoothReplier from "#helpers/smoothReplier.ts";
-import { adminMenu } from "#keyboards/generalKeyboards.ts";
+  smoothReplier,
+} from "#helpers/index.ts";
 import {
+  adminMenu,
   meetingCreateCheckKeyboard,
   meetingCreatedMenu,
-} from "#keyboards/meetingsKeyboards.ts";
+} from "#keyboards/index.ts";
 import logger from "#root/logger.ts";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
-import { MyContext, MyConversation } from "#types/grammy.types.ts";
-import { MeetingObject, MeetingObjectWithId } from "#types/shared.types.ts";
+import { MeetingObject } from "#types/shared.types.ts";
 
 export async function createMeetingConv(
   conversation: MyConversation,

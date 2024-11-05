@@ -1,9 +1,7 @@
 import { subDetailsControllers } from "#db/handlers/index.ts";
-import { waitForPayKeyboard } from "../keyboards/subKeyboards";
-import { MyContext } from "../types/grammy.types";
-import smoothReplier from "#helpers/smoothReplier.ts";
+import { waitForPayKeyboard } from "#keyboards/index.ts";
+import { smoothReplier, guardExp } from "#helpers/index.ts";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import guardExp from "#root/helpers/guardExp.ts";
 
 export default async function (ctx: MyContext) {
   try {

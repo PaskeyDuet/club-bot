@@ -1,7 +1,6 @@
 import errorHandler from "#handlers/logErrorAndThrow.ts";
 import { admin } from "#root/bot.ts";
 import logger from "#root/logger.ts";
-import { MyContext } from "#types/grammy.types.ts";
 import { InlineKeyboard } from "grammy";
 
 export default {

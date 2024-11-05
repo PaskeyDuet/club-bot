@@ -1,7 +1,7 @@
 import { InlineKeyboard } from "grammy";
 import { UserWithSubscription } from "types/shared.types";
 
-export const subKeyboard = (newbie: boolean) => {
+const subKeyboard = (newbie: boolean) => {
   const k = new InlineKeyboard();
   if (newbie) {
     k.text("Записаться", "gen__meeting__reg").row();
@@ -16,12 +16,12 @@ export const subKeyboard = (newbie: boolean) => {
   return k.text("Главное меню", "back");
 };
 
-export const waitForPayKeyboard = new InlineKeyboard()
+const waitForPayKeyboard = new InlineKeyboard()
   .text("Оплачено", "sub_paid")
   .row()
   .text("Отменить оплату", "sub_cancel");
 
-export const subPaymentManaginKeyboard = (paidSubs: UserWithSubscription[]) => {
+const subPaymentManaginKeyboard = (paidSubs: UserWithSubscription[]) => {
   const k = new InlineKeyboard();
   if (paidSubs.length > 0) {
     paidSubs.forEach((user, inx) => {
@@ -35,3 +35,5 @@ export const subPaymentManaginKeyboard = (paidSubs: UserWithSubscription[]) => {
 
   return k;
 };
+
+export { subKeyboard, waitForPayKeyboard, subPaymentManaginKeyboard };

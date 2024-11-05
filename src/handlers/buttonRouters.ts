@@ -1,23 +1,20 @@
 import { Composer } from "grammy";
-import { MyContext } from "../types/grammy.types";
-import { paymentManage } from "#controllers/index.ts";
-import paymentApproved from "../serviceMessages/paymentApproved";
-import { sendScheduleMessage } from "#controllers/index.ts";
-import { cancelMeetingRegApproveKeyboard } from "../keyboards/meetingsKeyboards";
-import { mainMenu } from "../keyboards/generalKeyboards";
+import { cancelMeetingRegApproveKeyboard, mainMenu } from "#keyboards/index.ts";
 import { meetingsDetailsController } from "#db/handlers/index.ts";
-import sendAdminMenu from "../serviceMessages/sendAdminMenu";
 import logger from "#root/logger.ts";
-import paymentCanceled from "#root/serviceMessages/paymentCanceled.ts";
-import { infoUnits, sendInfoMessage } from "#controllers/index.ts";
+import {
+  infoUnits,
+  paymentManage,
+  sendInfoMessage,
+  sendScheduleMessage,
+  sendAdminScheduleMessage,
+} from "#controllers/index.ts";
 import { infoUnitPathsType } from "#types/shared.types.ts";
 import logErrorAndThrow from "./logErrorAndThrow";
-import { sendAdminScheduleMessage } from "#controllers/scheduleUnit.ts";
-import {
-  deleteMeetingAndRegs,
-  meetingControlMenu,
-} from "#helpers/meetingsHelpers.ts";
+import { deleteMeetingAndRegs, meetingControlMenu } from "#helpers/index.ts";
 import startHandler from "#serviceMessages/startHandler.ts";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
+import paymentManagement from "#serviceMessages/paymentManagement.ts";
 
 export const keyboard = new Composer<MyContext>();
 //TODO: add string checks
@@ -90,10 +87,10 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
   } else {
     switch (action) {
       case "paid":
-        await paymentApproved(ctx);
+        await paymentManagement(ctx, "paid");
         break;
       case "cancel":
-        await paymentCanceled(ctx);
+        await paymentManagement(ctx, "unactive");
         break;
       case "manage":
         await ctx.conversation.enter("paymentsManaging");

@@ -1,7 +1,7 @@
-import { infoKeyboards } from "../keyboards/generalKeyboards";
-import guardExp from "../helpers/guardExp";
-import { MyContext } from "../types/grammy.types";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import { guardExp } from "#helpers/index.ts";
+import { infoKeyboards } from "#keyboards/generalKeyboards.ts";
+import { MyContext } from "#types/grammy.types.ts";
 import { infoUnitPathsType } from "#types/shared.types.ts";
 
 export async function sendInfoMessage(ctx: MyContext) {

@@ -1,5 +1,5 @@
+import { DbDateType } from "#types/shared.types.ts";
 import moment from "moment-timezone";
-import { DbDateType } from "#root/types/shared.types.ts";
 
 export default {
   currDate: () => new Date(),

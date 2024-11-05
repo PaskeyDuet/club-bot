@@ -1,4 +1,4 @@
-import { loggerLevelsType } from "types/shared.types";
+import { loggerLevelsType } from "#types/shared.types";
 import logger from "#root/logger.ts";
 
 export default (err: unknown, logLevel: loggerLevelsType, context: string) => {

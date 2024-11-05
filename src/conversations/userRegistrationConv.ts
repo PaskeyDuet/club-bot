@@ -1,9 +1,7 @@
-import { MyContext, MyConversation } from "../types/grammy.types";
-import { DbUserAttributes } from "../dbSetup/models/User";
-import dates from "../helpers/dates";
 import { handlersCompositions as dbHandler } from "#db/handlers/index.ts";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
-import guardExp from "#root/helpers/guardExp.ts";
+import { DbUserAttributes } from "#db/models/User.ts";
+import { dates, guardExp } from "#helpers/index.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
 import startHandler from "#serviceMessages/startHandler.ts";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {

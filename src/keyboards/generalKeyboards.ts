@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "grammy";
-export function greetingKeyboard(
+function greetingKeyboard(
   newbie: boolean,
   subscribed: boolean,
   paidStatus: boolean
@@ -29,7 +29,7 @@ export function greetingKeyboard(
   keyboard.text("Расписание", "gen__schedule");
   return keyboard;
 }
-export const infoKeyboards = {
+const infoKeyboards = {
   generalInfo: new InlineKeyboard()
     .text("Кто мы", "info_who")
     .text("Где мы", "info_where")
@@ -42,9 +42,9 @@ export const infoKeyboards = {
   when: new InlineKeyboard().text("Назад", "back"),
 };
 
-export const mainMenu = new InlineKeyboard().text("Главное меню", "main_menu");
+const mainMenu = new InlineKeyboard().text("Главное меню", "main_menu");
 
-export const adminMenuKeyboard = (newSubs: boolean) => {
+const adminMenuKeyboard = (newSubs: boolean) => {
   const k = new InlineKeyboard();
   if (newSubs) {
     k.text("Активировать подписки", "sub_manage").row();
@@ -55,4 +55,12 @@ export const adminMenuKeyboard = (newSubs: boolean) => {
   return k;
 };
 
-export const adminMenu = new InlineKeyboard().text("Меню", "gen__admin");
+const adminMenu = new InlineKeyboard().text("Меню", "gen__admin");
+
+export {
+  greetingKeyboard,
+  infoKeyboards,
+  mainMenu,
+  adminMenuKeyboard,
+  adminMenu,
+};
