@@ -1,11 +1,11 @@
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import { guardExp } from "#helpers/index.ts";
-import { infoKeyboards } from "#keyboards/generalKeyboards.ts";
-import { MyContext } from "#types/grammy.types.ts";
-import { infoUnitPathsType } from "#types/shared.types.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import { guardExp } from "#helpers/index.js";
+import { infoKeyboards } from "#keyboards/generalKeyboards.js";
+import type { MyContext } from "#types/grammy.types.js";
+import type { infoUnitPathsType } from "#types/shared.types.js";
 
 export async function sendInfoMessage(ctx: MyContext) {
-  let text = infoTexts.infoMessage();
+  const text = infoTexts.infoMessage();
   try {
     ctx.editMessageText(text, {
       reply_markup: infoKeyboards.generalInfo,
@@ -19,13 +19,13 @@ export const infoUnits = async (
   ctx: MyContext,
   endpoint: infoUnitPathsType
 ) => {
-  guardExp(ctx.chatId, "chatId inside infoUnits");
-  guardExp(ctx.msgId, "msgId inside infoUnits");
+  guardExp(ctx.chatId, "chatId inside infoUn.js");
+  guardExp(ctx.msgId, "msgId inside infoUn.js");
 
   const chatId = ctx.chatId;
   const msgId = ctx.msgId;
-  let text = infoTexts[endpoint]();
-  let keyboard = infoKeyboards[endpoint];
+  const text = infoTexts[endpoint]();
+  const keyboard = infoKeyboards[endpoint];
 
   try {
     //FIXME: there is a trouble with trace routes and media messages
@@ -38,7 +38,7 @@ export const infoUnits = async (
       reply_markup: keyboard,
     });
   } catch (err) {
-    logErrorAndThrow(err, "fatal", "error inside who - infoUnits");
+    logErrorAndThrow(err, "fatal", "error inside who - infoUn.js");
   }
 };
 

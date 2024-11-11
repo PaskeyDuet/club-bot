@@ -5,7 +5,7 @@ import Subscription from "./models/UserSubscription";
 import SubDetails from "./models/SubDetails";
 import Meetings from "./models/Meetings";
 import MeetingsDetails from "./models/MeetingsDetails";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
+import logErrorAndThrow from "#root/handlers/logErrorAndThrow.js";
 dotenv.config();
 
 export let sequelize: Sequelize;

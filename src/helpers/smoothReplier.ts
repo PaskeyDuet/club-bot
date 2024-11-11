@@ -1,7 +1,8 @@
-import { InlineKeyboard } from "grammy";
-import { Message, Update } from "grammy/types";
-import logger from "#root/logger.ts";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import type { InlineKeyboard } from "grammy";
+import type { Message, Update } from "grammy/types";
+import logger from "#root/logger.js";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (
   ctx: MyContext,
@@ -28,9 +29,8 @@ export default async function (
           parse_mode: "HTML",
         });
         return messageIdSaver(ctx, updatedCtx, fnName);
-      } else {
-        throw new Error("bot can't edit and reply");
       }
+      throw new Error("bot can't edit and reply");
     }
   } catch (err) {
     logErrorAndThrow(
@@ -49,9 +49,8 @@ const messageIdSaver = (
   if (updatedCtx && typeof updatedCtx !== "boolean") {
     ctx.session.lastMsgId = updatedCtx.message_id;
     return updatedCtx.message_id;
-  } else {
-    logger.warn(`Can't save last msg id inside ${fnName}`);
   }
+  logger.warn(`Can't save last msg id inside ${fnName}`);
 };
 
 type updatedCtxType =

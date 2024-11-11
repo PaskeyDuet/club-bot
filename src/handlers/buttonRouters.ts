@@ -1,20 +1,21 @@
 import { Composer } from "grammy";
-import { cancelMeetingRegApproveKeyboard, mainMenu } from "#keyboards/index.ts";
-import { meetingsDetailsController } from "#db/handlers/index.ts";
-import logger from "#root/logger.ts";
+import { cancelMeetingRegApproveKeyboard, mainMenu } from "#keyboards/index.js";
+import { meetingsDetailsController } from "#db/handlers/index.js";
+import logger from "#root/logger.js";
 import {
-  infoUnits,
   paymentManage,
   sendInfoMessage,
   sendScheduleMessage,
   sendAdminScheduleMessage,
-} from "#controllers/index.ts";
-import { infoUnitPathsType } from "#types/shared.types.ts";
+} from "#controllers/index.js";
+import type { infoUnitPathsType } from "#types/shared.types.js";
 import logErrorAndThrow from "./logErrorAndThrow";
-import { deleteMeetingAndRegs, meetingControlMenu } from "#helpers/index.ts";
-import startHandler from "#serviceMessages/startHandler.ts";
-import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
-import paymentManagement from "#serviceMessages/paymentManagement.ts";
+import { deleteMeetingAndRegs, meetingControlMenu } from "#helpers/index.js";
+import startHandler from "#serviceMessages/startHandler.js";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
+import paymentManagement from "#serviceMessages/paymentManagement.js";
+import type { MyContext } from "#types/grammy.types.js";
+import { infoUnits } from "#controllers/infoUnit.js";
 
 export const keyboard = new Composer<MyContext>();
 //TODO: add string checks
@@ -54,14 +55,14 @@ keyboard.callbackQuery(/info_/, async (ctx) => {
     await infoUnits(ctx, path);
   } catch (err) {
     await startHandler(ctx);
-    logErrorAndThrow(err, "error", "Unable to use infoUnits module");
+    logErrorAndThrow(err, "error", "Unable to use infoUn.js module");
   }
 });
 
 keyboard.callbackQuery(/\bsub_/, async (ctx) => {
   const cbData = ctx.callbackQuery.data;
   const actionMatch = cbData.match(/_(\w+)_?/);
-  let action = actionMatch ? actionMatch[1] : null;
+  const action = actionMatch ? actionMatch[1] : null;
 
   const userIdMatch = cbData.match(/_(\d+)$/);
   const userId = userIdMatch ? +userIdMatch[1] : null;
@@ -93,7 +94,7 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
         await paymentManagement(ctx, "unactive");
         break;
       case "manage":
-        await ctx.conversation.enter("paymentsManaging");
+        await ctx.conversation.enter("payme.jsManaging");
         break;
       default:
         logger.error("used startHandler as default case at sub_");

@@ -1,5 +1,6 @@
-import { subscriptionController } from "#db/handlers/index.ts";
-import { notificator } from "#helpers/index.ts";
+import { subscriptionController } from "#db/handlers/index.js";
+import { notificator } from "#helpers/index.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export async function paymentManage(
   ctx: MyContext,

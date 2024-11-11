@@ -1,6 +1,6 @@
-import * as genK from "./generalKeyboards.ts";
-import * as meetingK from "./meetingsKeyboards.ts";
-import * as subK from "./subKeyboards.ts";
+import * as genK from "./generalKeyboards.js";
+import * as meetingK from "./meetingsKeyboards.js";
+import * as subK from "./subKeyboards.js";
 
 export const {
   greetingKeyboard,

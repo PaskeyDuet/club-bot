@@ -1,12 +1,13 @@
-import SubDetails from "#db/models/SubDetails.ts";
-import { guardExp } from "#helpers/index.ts";
+import type SubDetails from "#db/models/SubDetails.js";
+import { guardExp } from "#helpers/index.js";
 import {
   subDetailsControllers,
   subscriptionController,
-} from "#db/handlers/index.ts";
-import waitForSubNumber from "./helpers/waitForSubNumber.ts";
-import { TextWithInlineKeyboardObj } from "#types/shared.types.ts";
-import { subKeyboard, mainMenu } from "#keyboards/index.ts";
+} from "#db/handlers/index.js";
+import waitForSubNumber from "./helpers/waitForSubNumber.js";
+import type { TextWithInlineKeyboardObj } from "#types/shared.types.js";
+import { subKeyboard, mainMenu } from "#keyboards/index.js";
+import type { MyContext, MyConversation } from "#types/grammy.types.js";
 
 export async function subConv(conversation: MyConversation, ctx: MyContext) {
   const subs = await subDetailsControllers.getAllButFirstSub();
@@ -44,7 +45,8 @@ const generateChosenSubText = (chosenSub: SubDetails) => {
   let numberChosenText = `Вы выбрали:\n "<b>${chosenSub.sub_name}</b>"\n`;
   numberChosenText += `Для подтверждения подписки переведите ${chosenSub.sub_price}₽ `;
   numberChosenText += `по номеру телефона <code>+70000000000</code> и затем нажмите клавишу "Оплачено".\n`;
-  numberChosenText += `Возможность оплатить счёт будет доступна в течение N минут в главном меню`;
+  numberChosenText += "Возможность оплатить счёт будет доступна";
+  numberChosenText += " в течение N минут в главном меню";
 
   return numberChosenText;
 };

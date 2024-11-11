@@ -1,6 +1,6 @@
-import { subscriptionController } from "#db/handlers/index.ts";
-import UserSubscription from "#db/models/UserSubscription.ts";
-import { guardExp } from "./index.ts";
+import { subscriptionController } from "#db/handlers/index.js";
+import type UserSubscription from "#db/models/UserSubscription.js";
+import { guardExp } from "./index.js";
 
 async function validateSub(userId: number) {
   const h = validateSubHelpers;
@@ -20,7 +20,7 @@ const validateSubHelpers = {
     console.log(subEnd);
     console.log(currDate);
 
-    return subEnd < currDate ? true : false;
+    return subEnd < currDate;
   },
   async makeSubUnactive(
     userSub: UserSubscription,

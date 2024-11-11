@@ -1,6 +1,15 @@
-import { InlineKeyboardMarkup } from "grammy/types";
-import { Filter } from "grammy";
+import type { InlineKeyboardMarkup } from "grammy/types";
+import type { Filter } from "grammy";
+import type { Conversation, ConversationFlavor } from "@grammyjs/conversations";
+import type { Context, SessionFlavor } from "grammy";
 
+export type MyContext = Context &
+  SessionFlavor<SessionData> &
+  ConversationFlavor & {
+    userId: number;
+    chatId: number;
+  };
+export type MyConversation = Conversation<MyContext>;
 export interface SessionData {
   user: TelegramUser;
   temp: {

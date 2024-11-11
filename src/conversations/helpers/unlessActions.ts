@@ -1,3 +1,6 @@
+import type { MyContext } from "#types/grammy.types.js";
+
+// biome-ignore lint/suspicious/noExplicitAny: <TODO: find type for otherwise>
 export default async function (ctx: MyContext, otherwise: any) {
   if (
     ctx?.callbackQuery?.data === "back" ||

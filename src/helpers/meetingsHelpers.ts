@@ -1,19 +1,20 @@
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import {
   meetingsController,
   meetingsDetailsController,
-} from "#db/handlers/index.ts";
-import {
+} from "#db/handlers/index.js";
+import type {
   MeetingObject,
   MeetingObjectWithId,
   MeetingObjectWithUserCountType,
 } from "#types/shared.types";
-import { dates, guardExp, smoothReplier, notificator } from "./index.ts";
+import { dates, guardExp, smoothReplier, notificator } from "./index.js";
 import Meetings, {
-  MeetingsCreationType,
-  MeetingsType,
-} from "#db/models/Meetings.ts";
-import { adminMenu, manageMeeting } from "#keyboards/index.ts";
+  type MeetingsCreationType,
+  type MeetingsType,
+} from "#db/models/Meetings.js";
+import { adminMenu, manageMeeting } from "#keyboards/index.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 async function meetingControlMenu(ctx: MyContext, meetingId: number) {
   let messText = "Информация о встрече:\n\n";
@@ -78,7 +79,7 @@ const createMeetingsList = {
       .join("\n");
   },
   adminShortView(meetings: MeetingObjectWithUserCountType[]) {
-    //TODO: change number 8 using env limits
+    //TODO: change number 8 using env lim.js
     return meetings
       .map((el) => `${el.date} -- ${el.topic} -- ${el.userCount}/8\n`)
       .join("\n");
@@ -119,7 +120,7 @@ const deleteMeetingAndRegsHelpers = {
   },
 
   async finalMessage(ctx: MyContext, dbActionsRes: boolean) {
-    let text;
+    let text: string;
     console.log(dbActionsRes);
 
     if (dbActionsRes) {
@@ -147,14 +148,14 @@ async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
   const meetingObj = dbObjDateTransform(meeting);
 
   if (!usersIds) {
-    usersIds = await findRegUserIds(meetingId);
+    const regUserIds = await findRegUserIds(meetingId);
+    const meetingsWithUserCount: MeetingObjectWithUserCountType = {
+      ...meetingObj,
+      userCount: regUserIds.length,
+    };
+    return createMeetingsList.adminView([meetingsWithUserCount]);
   }
-
-  const meetingsWithUserCount: MeetingObjectWithUserCountType = {
-    ...meetingObj,
-    userCount: usersIds.length,
-  };
-  return createMeetingsList.adminView([meetingsWithUserCount]);
+  return "Произошла ошибка. Попробуйте повторить запрос позже";
 }
 
 const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {

@@ -1,5 +1,5 @@
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import { MeetingsDetailsQueryParamsType } from "#types/shared.types.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import { MeetingsDetailsQueryParamsType } from "#types/shared.types.js";
 import MeetingsDetails from "../models/MeetingsDetails";
 
 export default {

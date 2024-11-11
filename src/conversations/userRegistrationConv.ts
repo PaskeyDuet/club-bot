@@ -1,8 +1,9 @@
-import { handlersCompositions as dbHandler } from "#db/handlers/index.ts";
-import { DbUserAttributes } from "#db/models/User.ts";
-import { dates, guardExp } from "#helpers/index.ts";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import startHandler from "#serviceMessages/startHandler.ts";
+import { handlersCompositions as dbHandler } from "#db/handlers/index.js";
+import type { DbUserAttributes } from "#db/models/User.js";
+import { dates, guardExp } from "#helpers/index.js";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import startHandler from "#serviceMessages/startHandler.js";
+import type { MyContext, MyConversation } from "#types/grammy.types.js";
 
 export default async function (conversation: MyConversation, ctx: MyContext) {
   try {
@@ -62,7 +63,7 @@ const regTextObj = (): { name: string; secName: string; otherwise: string } => {
   let secName = "Пожалуйста, напишите вашу <b>фамилию</b>\n";
   secName += "<i>В дальнейшем вы также сможете изменить его</i>";
 
-  let otherwise = "Пожалуйста, используйте текст";
+  const otherwise = "Пожалуйста, используйте текст";
 
   return { name, secName, otherwise };
 };

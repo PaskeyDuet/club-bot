@@ -4,11 +4,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_NO_WARNINGS=1 nodemon --quiet src/bot.ts | npx pino-pretty",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint:check": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "start": "node ./dist/bot.js"
   },
   "imports": {
     "#types/*": "./src/types/*",
@@ -59,6 +60,7 @@
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
+    "tsc-alias": "^1.8.10",
     "whatwg-url": "^14.0.0"
   }
 }

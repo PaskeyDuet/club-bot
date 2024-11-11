@@ -1,9 +1,10 @@
-import { smoothReplier } from "#helpers/index.ts";
-import logErrorAndThrow from "#root/handlers/logErrorAndThrow.ts";
-import { greetingKeyboard } from "#keyboards/index.ts";
+import { smoothReplier } from "#helpers/index.js";
+import logErrorAndThrow from "#root/handlers/logErrorAndThrow.js";
+import { greetingKeyboard } from "#keyboards/index.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async (ctx: MyContext) => {
-  let paidText = "Ваш платёж находится в обработке";
+  const paidText = "Ваш платёж находится в обработке";
   try {
     const keyboard = greetingKeyboard(false, false, true);
     await smoothReplier(ctx, paidText, keyboard, "sendPaidMessages");

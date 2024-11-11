@@ -1,12 +1,13 @@
-import errorHandler from "#handlers/logErrorAndThrow.ts";
-import { guardExp, validateSub, smoothReplier } from "#helpers/index.ts";
-import { usersController } from "#db/handlers/index.ts";
+import errorHandler from "#handlers/logErrorAndThrow.js";
+import { guardExp, validateSub, smoothReplier } from "#helpers/index.js";
+import { usersController } from "#db/handlers/index.js";
 import sendPayMessage from "./sendPayMessage";
 import sendPaidMessage from "./sendPaidMessage";
-import { greetingKeyboard } from "#keyboards/index.ts";
-import { SubStatusNames } from "#types/shared.types.ts";
-import User from "#db/models/User.ts";
-import UserSubscription from "#db/models/UserSubscription.ts";
+import { greetingKeyboard } from "#keyboards/index.js";
+import type { SubStatusNames } from "#types/shared.types.js";
+import type User from "#db/models/User.js";
+import type UserSubscription from "#db/models/UserSubscription.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function startHandler(ctx: MyContext) {
   ctx.session.routeHistory = [];
@@ -20,9 +21,8 @@ export default async function startHandler(ctx: MyContext) {
   if (!user) {
     await ctx.conversation.enter("userReg");
     return;
-  } else {
-    return await sendStartMessage(ctx, user, userId);
   }
+  return await sendStartMessage(ctx, user, userId);
 }
 
 async function sendStartMessage(ctx: MyContext, user: User, userId: number) {
@@ -56,11 +56,11 @@ const sendStartMessageHelpers = {
   subStatusGetter(sub_status: SubStatusNames): "pending" | "paid" | boolean {
     if (sub_status === "active") {
       return true;
-    } else if (sub_status === "unactive") {
-      return false;
-    } else {
-      return sub_status;
     }
+    if (sub_status === "unactive") {
+      return false;
+    }
+    return sub_status;
   },
   async sendPayMessages(ctx: MyContext, subStatus: "pending" | "paid") {
     if (subStatus === "pending") {

@@ -1,7 +1,3 @@
-import { SessionData } from "#types/grammy.types.ts";
-import { Conversation, ConversationFlavor } from "@grammyjs/conversations";
-import { Context, SessionFlavor } from "grammy";
-
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

@@ -4,14 +4,15 @@ import {
   readableObjsWithCount,
   guardExp,
   smoothReplier,
-} from "#helpers/index.ts";
-import { meetingsController } from "#db/handlers/index.ts";
-import { generateMeetingsKeyboard } from "#keyboards/index.ts";
-import {
+} from "#helpers/index.js";
+import { meetingsController } from "#db/handlers/index.js";
+import { generateMeetingsKeyboard } from "#keyboards/index.js";
+import type {
   MeetingObjectWithUserCountType,
   MeetingsWithDetailsObject,
-} from "#types/shared.types.ts";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+} from "#types/shared.types.js";
+import type { MyContext } from "#types/grammy.types.js";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
@@ -19,8 +20,8 @@ async function sendScheduleMessage(ctx: MyContext) {
   );
   guardExp(userMeetings, "userMeetings inside scheduleUnit");
 
-  const texts = userTexts;
-  let meetingsInfo;
+  const texts = usertexts;
+  let meetingsInfo: string;
   if (userMeetings.length) {
     meetingsInfo = texts.regs(userMeetings);
   } else {
@@ -49,9 +50,9 @@ async function sendAdminScheduleMessage(ctx: MyContext) {
   const allMeetings = dbObjsToReadable(allDbMeetings);
   const allMeetingsWithUserCount = await readableObjsWithCount(allMeetings);
 
-  const texts = adminTexts;
+  const texts = admintexts;
 
-  let meetingsInfo;
+  let meetingsInfo: string;
   if (allMeetings.length !== 0) {
     meetingsInfo = texts.currentMeetings(allMeetingsWithUserCount);
   } else {
@@ -74,7 +75,7 @@ async function sendAdminScheduleMessage(ctx: MyContext) {
   }
 }
 
-const adminTexts = {
+const admintexts = {
   currentMeetings: (meetings: MeetingObjectWithUserCountType[]) => {
     let text = "На данный момент ";
     text += "зарегистрированы следующие встречи:\n\n";
@@ -86,7 +87,7 @@ const adminTexts = {
   },
 };
 
-const userTexts = {
+const usertexts = {
   regs: (userMeetings: MeetingsWithDetailsObject[]) => {
     let text = "На данный момент вы ";
     text += "зарегистрированы на следующие встречи:\n\n";

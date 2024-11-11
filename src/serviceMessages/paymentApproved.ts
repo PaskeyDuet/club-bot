@@ -1,7 +1,8 @@
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
-import { subscriptionController } from "#db/handlers/index.ts";
-import { mainMenu } from "#keyboards/generalKeyboards.ts";
-import { notificator, smoothReplier } from "#helpers/index.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import { subscriptionController } from "#db/handlers/index.js";
+import { mainMenu } from "#keyboards/generalKeyboards.js";
+import { notificator, smoothReplier } from "#helpers/index.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (ctx: MyContext) {
   try {
@@ -10,7 +11,7 @@ export default async function (ctx: MyContext) {
     await smoothReplier(ctx, messageText, mainMenu, "paymentApproved");
     await notificator.newSub(ctx);
   } catch (error) {
-    logErrorAndThrow(error, "fatal", `Error inside paymentApproved`);
+    logErrorAndThrow(error, "fatal", "Error inside paymentApproved");
   }
 }
 

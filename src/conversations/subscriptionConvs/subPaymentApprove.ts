@@ -1,9 +1,24 @@
-import { usersController, subDetailsControllers } from "#db/handlers/index.ts";
-import SubDetails from "#db/models/SubDetails.ts";
-import { guardExp } from "#helpers/index.ts";
-import { subPaymentManaginKeyboard } from "#keyboards/index.ts";
-import { UserWithSubscription } from "#types/shared.types.ts";
-
+import { usersController, subDetailsControllers } from "#db/handlers/index.js";
+import type SubDetails from "#db/models/SubDetails.js";
+import { guardExp } from "#helpers/index.js";
+import { subPaymentManaginKeyboard } from "#keyboards/index.js";
+import type { MyContext, MyConversation } from "#types/grammy.types.js";
+import type { UserWithSubscription } from "#types/shared.types.js";
+const findSubPrice = (subDetails: SubDetails[], subNum: number) => {
+  return subDetails.find((el) => el.sub_number === subNum)?.sub_price;
+};
+const usersListGenerator = (
+  paidSubs: UserWithSubscription[],
+  subDetails: SubDetails[]
+) => {
+  return paidSubs
+    .map((el, inx) => {
+      const subPrice = findSubPrice(subDetails, el.UserSubscription.sub_number);
+      const username = el.username || `${el.first_name} ${el.second_name}`;
+      return `${inx + 1}. @${username} - ${subPrice}\n`;
+    })
+    .join("");
+};
 export async function paymentsManaging(
   conversation: MyConversation,
   ctx: MyContext
@@ -27,20 +42,3 @@ export async function paymentsManaging(
     reply_markup: subPaymentManaginKeyboard(paidSubs),
   });
 }
-
-const findSubPrice = (subDetails: SubDetails[], subNum: number) => {
-  return subDetails.find((el) => el.sub_number === subNum)?.sub_price;
-};
-const usersListGenerator = (
-  paidSubs: UserWithSubscription[],
-  subDetails: SubDetails[]
-) => {
-  return paidSubs
-    .map((el, inx) => {
-      const subPrice = findSubPrice(subDetails, el.UserSubscription.sub_number);
-      inx += 1;
-      const username = el.username || `${el.first_name} ${el.second_name}`;
-      return `${inx}. @${username} - ${subPrice}\n`;
-    })
-    .join("");
-};

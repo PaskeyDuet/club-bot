@@ -1,8 +1,8 @@
 import { Op } from "sequelize";
 import SubDetails from "../models/SubDetails";
 import Subscription from "../models/UserSubscription";
-import { SubDetailsPartialType } from "../../types/shared.types";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import type { SubDetailsPartialType } from "#types/shared.types";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 export default {
   getAllSubs: async () => {
@@ -23,7 +23,7 @@ export default {
       logErrorAndThrow(
         err,
         "fatal",
-        "Db error. SubDetailsController error: getAllButFirstSub unavailable"
+        "Db error. SubDetailsController error: getAllButFir.jsub unavailable"
       );
     }
   },

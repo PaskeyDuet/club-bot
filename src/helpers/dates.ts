@@ -1,4 +1,4 @@
-import { DbDateType } from "#types/shared.types.ts";
+import { DbDateType } from "#types/shared.types.js";
 import moment from "moment-timezone";
 
 export default {

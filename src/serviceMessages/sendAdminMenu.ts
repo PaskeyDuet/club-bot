@@ -1,7 +1,8 @@
-import { adminMenuKeyboard } from "#keyboards/index.ts";
-import errorHandler from "#handlers/logErrorAndThrow.ts";
-import { smoothReplier, guardExp } from "#helpers/index.ts";
-import subscriptionController from "#db/handlers/subscriptionController.ts";
+import { adminMenuKeyboard } from "#keyboards/index.js";
+import errorHandler from "#handlers/logErrorAndThrow.js";
+import { smoothReplier, guardExp } from "#helpers/index.js";
+import subscriptionController from "#db/handlers/subscriptionController.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (ctx: MyContext) {
   try {
@@ -9,7 +10,7 @@ export default async function (ctx: MyContext) {
       sub_status: "paid",
     });
     guardExp(paidSubs, "paidSubs at sendAdminMenu");
-    const foundNewSubs = paidSubs.length ? true : false;
+    const foundNewSubs = !!paidSubs.length;
 
     await smoothReplier(
       ctx,

@@ -1,9 +1,9 @@
 import { Op } from "sequelize";
 import Meetings, { MeetingsCreationType } from "../models/Meetings";
 import MeetingsDetails from "../models/MeetingsDetails";
-import { dates } from "#helpers/index.ts";
+import { dates } from "#helpers/index.js";
 import { MeetingsWithDetailsObject } from "#types/shared.types";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 export default {
   allMeetings: async () => {

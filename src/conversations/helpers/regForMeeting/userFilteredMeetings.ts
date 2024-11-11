@@ -1,7 +1,7 @@
 import {
   MeetingObjectWithId,
   MeetingsWithDetailsObject,
-} from "#types/shared.types.ts";
+} from "#types/shared.types.js";
 
 export default (
   futureMeetings: MeetingObjectWithId[],

@@ -1,9 +1,11 @@
-import { routeHistoryUnit } from "#types/grammy.types";
+import guardExp from "#helpers/guardExp.js";
+import type { MyContext, routeHistoryUnit } from "#types/grammy.types";
 
 export default async function (ctx: MyContext) {
   const canEdit = ctx.session.editMode;
   await ctx.session.routeHistory.pop(); //фальшивка
-  const routeParams: routeHistoryUnit = ctx.session.routeHistory.pop()!;
+  const routeParams = ctx.session.routeHistory.pop();
+  guardExp(routeParams, "routeParams inside handleBackButton");
   // ctx.session.conversation = {};
 
   if (canEdit) {

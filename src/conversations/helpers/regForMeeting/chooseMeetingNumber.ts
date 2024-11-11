@@ -1,4 +1,5 @@
-import { TextWithInlineKeyboardObj } from "#types/shared.types";
+import type { MyContext, MyConversation } from "#types/grammy.types.js";
+import type { TextWithInlineKeyboardObj } from "#types/shared.types";
 import unlessActions from "../unlessActions";
 
 export default async function (
@@ -16,9 +17,8 @@ export default async function (
           return true;
         }
         return false;
-      } else {
-        return false;
       }
+      return false;
     },
     {
       otherwise: (ctx) =>

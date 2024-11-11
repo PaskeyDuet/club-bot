@@ -4,7 +4,7 @@ import {
 } from "#types/shared.types";
 import Subscription from "../models/UserSubscription";
 import User from "../models/User";
-import logErrorAndThrow from "#handlers/logErrorAndThrow.ts";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 export default {
   userVerification: async (

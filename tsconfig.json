@@ -10,25 +10,52 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
     "baseUrl": "./src",
     "paths": {
-      "#db/*": ["dbSetup/*"],
-      "#keyboards/*": ["keyboards/*"],
-      "#conv/*": ["conversations/*"],
-      "#controllers/*": ["controllers/*"],
-      "#serviceMessages/*": ["serviceMessages/*"],
-      "#helpers/*": ["helpers/*"],
-      "#types/*": ["types/*"],
-      "#middleware/*": ["middleware/*"],
-      "#handlers/*": ["handlers/*"],
-      "#root/*": ["./*"]
+      "#db/*": [
+        "dbSetup/*"
+      ],
+      "#keyboards/*": [
+        "keyboards/*"
+      ],
+      "#conv/*": [
+        "conversations/*"
+      ],
+      "#controllers/*": [
+        "controllers/*"
+      ],
+      "#serviceMessages/*": [
+        "serviceMessages/*"
+      ],
+      "#helpers/*": [
+        "helpers/*"
+      ],
+      "#types/*": [
+        "types/*"
+      ],
+      "#middleware/*": [
+        "middleware/*"
+      ],
+      "#handlers/*": [
+        "handlers/*"
+      ],
+      "#root/*": [
+        "./*"
+      ]
     },
-    "typeRoots": ["./config", "./node_modules/@types"]
+    "typeRoots": [
+      "./config",
+      "./node_modules/@types"
+    ]
   },
-  "exclude": ["node_modules/", "dist"],
-  "include": ["config/*", "src/**/*"],
+  "exclude": [
+    "node_modules/",
+    "dist"
+  ],
+  "include": [
+    "config/*",
+    "src/**/*"
+  ],
   "esModuleInterop": true,
   "forceConsistentCasingInFileNames": true,
   "strict": true,

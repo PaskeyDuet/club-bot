@@ -1,8 +1,9 @@
-import { guardExp } from "#helpers/index.ts";
-import startHandler from "#serviceMessages/startHandler.ts";
-import { NextFunction } from "grammy";
-import { CallbackCtx } from "#types/grammy.types.ts";
-import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
+import { guardExp } from "#helpers/index.js";
+import startHandler from "#serviceMessages/startHandler.js";
+import type { NextFunction } from "grammy";
+import type { CallbackCtx } from "#types/grammy.types.js";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (ctx: MyContext, next: NextFunction) {
   const messObj = ctx.message;
@@ -10,33 +11,33 @@ export default async function (ctx: MyContext, next: NextFunction) {
   const cbMessageId = ctx?.callbackQuery?.message?.message_id;
   const updateMessageId = ctx?.update?.message?.message_id;
 
-  let currentMsgId: number | undefined = cbMessageId ?? updateMessageId;
+  const currentMsgId: number | undefined = cbMessageId ?? updateMessageId;
   guardExp(currentMsgId, "traceRoutes error, currentMsgId");
 
-  let lastMsgId = ctx.session.lastMsgId ?? 0;
+  const lastMsgId = ctx.session.lastMsgId ?? 0;
   const messText = ctx.message?.text;
   const isTopic = messObj?.is_topic_message;
   const isSupergroup = messObj?.chat.type === "supergroup";
 
   if (isTopic) {
     return;
-  } else if (messText === "/admin") {
+  }
+  if (messText === "/admin") {
     return await sendAdminMenu(ctx);
-  } else if (currentMsgId < lastMsgId || lastMsgId === 0) {
+  }
+  if (currentMsgId < lastMsgId || lastMsgId === 0) {
     if (isSupergroup) {
       return;
-    } else {
-      return await startHandler(ctx);
     }
-  } else {
-    ctx.session.lastMsgId = currentMsgId;
-
-    if (ctx?.callbackQuery) {
-      callbackTracer(<CallbackCtx>ctx);
-    }
-
-    await next();
+    return await startHandler(ctx);
   }
+  ctx.session.lastMsgId = currentMsgId;
+
+  if (ctx?.callbackQuery) {
+    callbackTracer(<CallbackCtx>ctx);
+  }
+
+  await next();
 }
 
 async function callbackTracer(ctx: CallbackCtx) {

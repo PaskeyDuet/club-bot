@@ -1,8 +1,8 @@
-import handleError from "#handlers/logErrorAndThrow.ts";
-import {
+import handleError from "#handlers/logErrorAndThrow.js";
+import type {
   SubStatusNames,
   UserWithSubscriptionPartialType,
-} from "#types/shared.types.ts";
+} from "#types/shared.types.js";
 import UserSubscription from "../models/UserSubscription";
 
 export default {

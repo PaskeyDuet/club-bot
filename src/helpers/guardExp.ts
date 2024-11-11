@@ -1,6 +1,6 @@
-import logger from "#root/logger.ts";
+import logger from "#root/logger.js";
 
-// guardExp.ts
+// guardExp.js
 const guardExp: (
   data: unknown,
   message: string
@@ -8,9 +8,7 @@ const guardExp: (
   if (!data) {
     logger.warn("guardExp was called");
     throw new Error(
-      message +
-        " is null or undefined" +
-        "\nInvalid data: data cannot be null or undefined"
+      `${message} is null or undefined\nInvalid data: data cannot be null or undefined`
     );
   }
 };

@@ -1,19 +1,21 @@
-import meetingsController from "#db/handlers/meetingsController.ts";
+import meetingsController from "#db/handlers/meetingsController.js";
 import {
   dates,
   guardExp,
   createMeetingsList,
   prepareDbMeetingObj,
   smoothReplier,
-} from "#helpers/index.ts";
+} from "#helpers/index.js";
 import {
   adminMenu,
   meetingCreateCheckKeyboard,
   meetingCreatedMenu,
-} from "#keyboards/index.ts";
-import logger from "#root/logger.ts";
-import sendAdminMenu from "#serviceMessages/sendAdminMenu.ts";
-import { MeetingObject } from "#types/shared.types.ts";
+} from "#keyboards/index.js";
+import logger from "#root/logger.js";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
+import type { MeetingObject } from "#types/shared.types.js";
+import type { MyContext, MyConversation } from "#types/grammy.types.js";
+import type { MeetingsCreationType } from "#db/models/Meetings.js";
 
 export async function createMeetingConv(
   conversation: MyConversation,
@@ -54,7 +56,7 @@ const createMeetingHelpers = {
     conversation: MyConversation,
     ctx: MyContext
   ): Promise<MeetingObject> {
-    const texts = createMeetingTexts();
+    const texts = createMeetingtexts();
     const questions = texts.questions();
 
     const details = [];
@@ -63,7 +65,7 @@ const createMeetingHelpers = {
       ctx,
       questions
     )) {
-      guardExp(detail, `detail inside createMeetingConv`);
+      guardExp(detail, "detail inside createMeetingConv");
       details.push(detail);
     }
 
@@ -85,7 +87,7 @@ const createMeetingHelpers = {
     ctx: MyContext,
     meetingDetails: MeetingObject
   ): Promise<boolean> {
-    const texts = createMeetingTexts();
+    const texts = createMeetingtexts();
     const meetingCheckText = texts.meeting(meetingDetails);
 
     await ctx.reply(meetingCheckText, {
@@ -96,14 +98,15 @@ const createMeetingHelpers = {
 
     if (checkAnswer === "submit") {
       return true;
-    } else if (checkAnswer === "reject") {
+    }
+    if (checkAnswer === "reject") {
       return false;
     }
 
     throw new Error("no processing answer");
   },
 
-  async createMeeting(dbMeetingObj: any) {
+  async createMeeting(dbMeetingObj: MeetingsCreationType) {
     await meetingsController.createMeeting(dbMeetingObj);
   },
 
@@ -112,7 +115,7 @@ const createMeetingHelpers = {
     if (errorFound) {
       messText = "Запись могла быть не создана. Проверьте существующие встречи";
     } else {
-      messText = createMeetingTexts().final();
+      messText = createMeetingtexts().final();
     }
     await ctx.reply(messText, {
       reply_markup: meetingCreatedMenu,
@@ -120,7 +123,7 @@ const createMeetingHelpers = {
   },
 };
 
-const createMeetingTexts = () => ({
+const createMeetingtexts = () => ({
   date: "Напишите дату в формате <i><b>24.10.24, 10:30</b></i>",
   topic: "Напишите тему занятия",
   place: "Напишите место, где пройдет встреча",
