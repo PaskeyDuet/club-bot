@@ -5,9 +5,9 @@ import {
   DataType,
   ForeignKey,
 } from "sequelize-typescript";
-import User from "./User";
+import User from "./User.js";
 import type { PartialBy } from "@sequelize/utils";
-import Meetings from "./Meetings";
+import Meetings from "./Meetings.js";
 
 //TODO: Add visited property
 export type MeetingsDetailsType = {

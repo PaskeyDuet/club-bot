@@ -1,5 +1,5 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
-import UserSubscription from "./UserSubscription";
+import type UserSubscription from "./UserSubscription.js";
 
 export type DbUserAttributes = {
   user_id: number;

@@ -7,7 +7,7 @@ import type {
   MeetingObject,
   MeetingObjectWithId,
   MeetingObjectWithUserCountType,
-} from "#types/shared.types";
+} from "#types/shared.types.js";
 import { dates, guardExp, smoothReplier, notificator } from "./index.js";
 import Meetings, {
   type MeetingsCreationType,
@@ -65,7 +65,7 @@ const dbObjsToReadable = (meetings: Meetings[]): MeetingObjectWithId[] =>
   meetings.map((el) => dbObjDateTransform(el));
 
 const createMeetingsList = {
-  userView(meetings: MeetingObject[] | MeetingsType[]) {
+  userView(meetings: MeetingObject[] | MeetingsType[] | MeetingObjectWithId[]) {
     return meetings
       .map((el) => `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n`)
       .join("\n");

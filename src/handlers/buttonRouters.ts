@@ -9,7 +9,7 @@ import {
   sendAdminScheduleMessage,
 } from "#controllers/index.js";
 import type { infoUnitPathsType } from "#types/shared.types.js";
-import logErrorAndThrow from "./logErrorAndThrow";
+import logErrorAndThrow from "./logErrorAndThrow.js";
 import { deleteMeetingAndRegs, meetingControlMenu } from "#helpers/index.js";
 import startHandler from "#serviceMessages/startHandler.js";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
@@ -110,6 +110,9 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
 
   let messText = "";
   switch (action) {
+    case "confirm-visit":
+      await startHandler(ctx);
+      break;
     case "create":
       await ctx.conversation.enter("createMeetingConv");
       break;

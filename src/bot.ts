@@ -1,25 +1,27 @@
 import dotenv from "dotenv";
 import { Api, Bot, GrammyError, HttpError, session } from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
-import sessionConfig from "./botConfig/sessionConfig";
+import sessionConfig from "#root/botConfig/sessionConfig.js";
 import { registrationForMeeting } from "#conv/registrationForMeeting.js";
 import { newbieSubConv } from "#conv/subscriptionConvs/newbieSubConv.js";
 import { subConv } from "#conv/subscriptionConvs/subConv.js";
+import logger from "#root/logger.js";
+import { sequelize } from "#db/dbClient.js";
+import Meetings from "#db/models/Meetings.js";
+import type { MyContext } from "#types/grammy.types.js";
+import userRegistrationConv from "#conv/userRegistrationConv.js";
+import { paymentsManaging } from "#conv/subscriptionConvs/subPaymentApprove.js";
+import { createMeetingConv } from "#conv/createMeeting.js";
 import ctxExtender from "#middleware/ctxExtender.js";
 import traceRoutes from "#middleware/traceRoutes.js";
-import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
-import userRegistrationConv from "#conv/userRegistrationConv.js";
-import { sequelize } from "#db/dbClient.js";
 import { keyboard } from "#handlers/buttonRouters.js";
-import handleBackButton from "#handlers/handleBackButton.js";
-import logger from "#root/logger.js";
-import { createMeetingConv } from "#conv/createMeeting.js";
 import dates from "#helpers/dates.js";
+import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import startHandler from "#serviceMessages/startHandler.js";
-import User from "#db/models/User.js";
-import { Op } from "sequelize";
-import type { MyContext } from "#types/grammy.types";
-import { paymentsManaging } from "#conv/subscriptionConvs/subPaymentApprove.js";
+import handleBackButton from "#handlers/handleBackButton.js";
+import meetingNotificator from "#controllers/meetingNotificator.js";
+import MeetingsDetails from "#db/models/MeetingsDetails.js";
+import scheduledServices from "#helpers/scheduledServices.js";
 
 dotenv.config();
 (async () => {
@@ -29,10 +31,8 @@ dotenv.config();
   // await MeetingsDetails.truncate({ cascade: true });
   // await User.destroy({ where: { user_id: 335815247 } });
   // await MeetingsDetails.destroy({ where: { user_id: 335815247 } });
-  const data = await User.findAll({
-    where: { user_id: { [Op.ne]: 0 } },
-  });
-  console.log(data);
+  // const data = await Meetings.findAll();
+  // console.log(data);
 
   // console.log(await Subscription.findAll());
   // console.log(await Meetings.findAll());
@@ -90,7 +90,7 @@ dotenv.config();
   // });
   logger.info("Database synced");
 })();
-
+scheduledServices();
 const token = process.env.BOT_API_TOKEN;
 if (!token) {
   throw new Error("There is no bot token");

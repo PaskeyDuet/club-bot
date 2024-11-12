@@ -1,9 +1,9 @@
-import usersController from "./usersController";
-import meetingsController from "./meetingsController";
-import subDetailsControllers from "./subDetailsControllers";
-import subscriptionController from "./subscriptionController";
-import meetingsDetailsController from "./meetingsDetailsController";
-import handlersCompositions from "./handlersCompositions";
+import usersController from "./usersController.js";
+import meetingsController from "./meetingsController.js";
+import subDetailsControllers from "./subDetailsControllers.js";
+import subscriptionController from "./subscriptionController.js";
+import meetingsDetailsController from "./meetingsDetailsController.js";
+import handlersCompositions from "./handlersCompositions.js";
 
 export {
   usersController,

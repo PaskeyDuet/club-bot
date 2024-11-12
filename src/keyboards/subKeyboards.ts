@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "grammy";
-import { UserWithSubscription } from "types/shared.types";
+import type { UserWithSubscription } from "types/shared.types.js";
 
 const subKeyboard = (newbie: boolean) => {
   const k = new InlineKeyboard();

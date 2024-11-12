@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
-import SubDetails from "../models/SubDetails";
-import Subscription from "../models/UserSubscription";
-import type { SubDetailsPartialType } from "#types/shared.types";
+import SubDetails from "../models/SubDetails.js";
+import Subscription from "../models/UserSubscription.js";
+import type { SubDetailsPartialType } from "#types/shared.types.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 export default {

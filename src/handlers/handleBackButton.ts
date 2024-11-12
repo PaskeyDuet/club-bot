@@ -1,5 +1,5 @@
 import guardExp from "#helpers/guardExp.js";
-import type { MyContext, routeHistoryUnit } from "#types/grammy.types";
+import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (ctx: MyContext) {
   const canEdit = ctx.session.editMode;

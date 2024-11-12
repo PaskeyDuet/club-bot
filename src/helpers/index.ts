@@ -1,9 +1,9 @@
-import dates from "./dates";
-import guardExp from "./guardExp";
-import * as meetingHelpers from "./meetingsHelpers";
-import notificator from "./notificator";
-import smoothReplier from "./smoothReplier";
-import { validateSub } from "./subHelpers";
+import dates from "./dates.js";
+import guardExp from "./guardExp.js";
+import * as meetingHelpers from "./meetingsHelpers.js";
+import notificator from "./notificator.js";
+import smoothReplier from "./smoothReplier.js";
+import { validateSub } from "./subHelpers.js";
 
 export const {
   meetingControlMenu,

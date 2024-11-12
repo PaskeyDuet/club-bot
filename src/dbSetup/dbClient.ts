@@ -1,12 +1,18 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
-import User from "./models/User";
-import Subscription from "./models/UserSubscription";
-import SubDetails from "./models/SubDetails";
-import Meetings from "./models/Meetings";
-import MeetingsDetails from "./models/MeetingsDetails";
+import User from "./models/User.js";
+import Subscription from "./models/UserSubscription.js";
+import SubDetails from "./models/SubDetails.js";
+import Meetings from "./models/Meetings.js";
+import MeetingsDetails from "./models/MeetingsDetails.js";
 import logErrorAndThrow from "#root/handlers/logErrorAndThrow.js";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import UserSubscription from "./models/UserSubscription.js";
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export let sequelize: Sequelize;
 
@@ -24,7 +30,7 @@ try {
     dialect: "postgres",
     logging: false,
     ...dbObj,
-    models: [__dirname + "/models"],
+    models: [Meetings, MeetingsDetails, SubDetails, User, UserSubscription],
   });
 
   User.hasOne(Subscription, { foreignKey: "user_id" });

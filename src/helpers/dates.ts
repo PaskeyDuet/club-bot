@@ -1,4 +1,4 @@
-import { DbDateType } from "#types/shared.types.js";
+import type { DbDateType } from "#types/shared.types.js";
 import moment from "moment-timezone";
 
 export default {
@@ -19,5 +19,11 @@ export default {
   isDatePassed(dateToCheck: Date) {
     const currDate = this.currDate();
     return currDate > dateToCheck;
+  },
+  dateIsTomorrow: function isTomorrow(dateStr: string) {
+    const inputDate = moment.utc(dateStr);
+    const tomorrow = moment().utc().add(1, "days").startOf("day");
+
+    return inputDate.isSame(tomorrow, "day");
   },
 };

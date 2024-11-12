@@ -1,7 +1,10 @@
-import { infoUnits } from "./infoUnit";
-import { sendInfoMessage } from "./infoUnit";
-import { sendScheduleMessage, sendAdminScheduleMessage } from "./scheduleUnit";
-import { paymentManage } from "./subscriptionUnit";
+import { infoUnits } from "./infoUnit.js";
+import { sendInfoMessage } from "./infoUnit.js";
+import {
+  sendScheduleMessage,
+  sendAdminScheduleMessage,
+} from "./scheduleUnit.js";
+import { paymentManage } from "./subscriptionUnit.js";
 
 export {
   infoUnits,

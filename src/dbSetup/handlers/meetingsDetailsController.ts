@@ -1,6 +1,9 @@
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
-import { MeetingsDetailsQueryParamsType } from "#types/shared.types.js";
-import MeetingsDetails from "../models/MeetingsDetails";
+import type { MeetingsDetailsQueryParamsType } from "#types/shared.types.js";
+import type { FindOptions } from "sequelize";
+import MeetingsDetails, {
+  type MeetingsDetailsType,
+} from "../models/MeetingsDetails.js";
 
 export default {
   findAll: async () => {
@@ -14,8 +17,12 @@ export default {
       );
     }
   },
-  findAllByQuery: async (query: MeetingsDetailsQueryParamsType) => {
-    return await MeetingsDetails.findAll({ where: query });
+  findAllByQuery: async (
+    query: MeetingsDetailsQueryParamsType,
+    options?: FindOptions<MeetingsDetailsType>
+  ) => {
+    console.log(query);
+    return await MeetingsDetails.findAll({ where: query, ...options });
   },
   addUserToMeet: async (userId: number, meetingId: number) => {
     try {

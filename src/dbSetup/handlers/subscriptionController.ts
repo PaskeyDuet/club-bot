@@ -3,7 +3,7 @@ import type {
   SubStatusNames,
   UserWithSubscriptionPartialType,
 } from "#types/shared.types.js";
-import UserSubscription from "../models/UserSubscription";
+import UserSubscription from "../models/UserSubscription.js";
 
 export default {
   findSub: async (userId: number) => {

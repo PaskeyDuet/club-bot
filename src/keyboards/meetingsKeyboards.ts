@@ -1,13 +1,13 @@
 import { InlineKeyboard } from "grammy";
-import {
+import type {
   MeetingObjectWithId,
   MeetingsWithDetailsObject,
-} from "types/shared.types";
+} from "types/shared.types.js";
 
 // import config from "../botConfig/generalConfig";
 
 const generateMeetingsKeyboard = (
-  meetings: (MeetingObjectWithId | MeetingsWithDetailsObject)[],
+  meetings: MeetingsWithDetailsObject[],
   adminMode: boolean
 ): InlineKeyboard => {
   const keyboard = new InlineKeyboard();
@@ -18,32 +18,31 @@ const generateMeetingsKeyboard = (
   );
   if (adminMode) {
     return keyboardWithMeetings.text("Главное меню", "gen__admin");
-  } else {
-    return keyboardWithMeetings.text("Главное меню", "main_menu");
   }
+  return keyboardWithMeetings.text("Главное меню", "main_menu");
 };
 
 const meetingButtonsIterator = (
   keyboard: InlineKeyboard,
-  meetings: (MeetingObjectWithId | MeetingsWithDetailsObject)[],
+  meetings: MeetingsWithDetailsObject[],
   adminMode: boolean
 ) => {
   meetings.forEach((el, inx) => {
     el.date.replace(/202.*$/, "");
     const keyboardText = `${inx + 1}. ${el.date} - ${el.topic}`;
     const meetingId = el.meetingId;
-    const userId = (el as MeetingsWithDetailsObject).user_id; // Проверяем, есть ли user_id
+    const userId = el.user_id; // Проверяем, есть ли user_id
 
     // Формируем текст кнопки в зависимости от типа действия
-    let callbackData;
+    let callbackData: string;
     if (adminMode) {
       callbackData = `meeting__control_${meetingId}`;
-      console.log("callbackData", callbackData);
     } else {
       callbackData = userId
         ? `meeting__cancel_${meetingId}_${userId}`
         : `meeting__reg_${meetingId}`;
     }
+    console.log(callbackData);
 
     keyboard.text(keyboardText, callbackData).row();
   });
@@ -94,6 +93,14 @@ const meetingCreatedMenu = new InlineKeyboard()
   .row()
   .text("Меню", "gen__admin");
 
+const meetingVisitNotificationKeyboard = (
+  meetingId: number,
+  userId: number
+) => {
+  return new InlineKeyboard()
+    .text("Меня не будет", `meeting__cancel_${meetingId}_${userId}`)
+    .text("Я буду!", "meeting__confirm-visit");
+};
 export {
   meetingCreatedMenu,
   meetingCreateCheckKeyboard,
@@ -101,4 +108,5 @@ export {
   generateMeetingsKeyboard,
   cancelMeetingRegApproveKeyboard,
   manageMeeting,
+  meetingVisitNotificationKeyboard,
 };

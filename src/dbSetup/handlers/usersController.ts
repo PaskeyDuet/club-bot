@@ -1,9 +1,9 @@
-import {
+import type {
   UserWithSubscription,
   UserWithSubscriptionPartialType,
-} from "#types/shared.types";
-import Subscription from "../models/UserSubscription";
-import User from "../models/User";
+} from "#types/shared.types.js";
+import Subscription from "../models/UserSubscription.js";
+import User from "../models/User.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 export default {

@@ -6,9 +6,9 @@ import {
   ForeignKey,
 } from "sequelize-typescript";
 import type { PartialBy } from "@sequelize/utils";
-import { SubStatusNames } from "types/shared.types";
-import User from "./User";
-import SubDetails from "./SubDetails";
+import type { SubStatusNames } from "types/shared.types.js";
+import User from "./User.js";
+import SubDetails from "./SubDetails.js";
 
 export type UserSubscriptionType = {
   id?: number;
