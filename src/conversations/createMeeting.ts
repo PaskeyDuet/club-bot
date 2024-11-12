@@ -16,42 +16,86 @@ import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import type { MeetingObject } from "#types/shared.types.js";
 import type { MyContext, MyConversation } from "#types/grammy.types.js";
 import type { MeetingsCreationType } from "#db/models/Meetings.js";
+import dotenv from "dotenv";
+import https from "node:https";
+import fs from "node:fs";
+
+dotenv.config();
 
 export async function createMeetingConv(
   conversation: MyConversation,
   ctx: MyContext
 ) {
-  const h = createMeetingHelpers;
-  try {
-    const meetingDetails = await h.gatherMeetingDetails(conversation, ctx);
-    const dbMeetingObj = prepareDbMeetingObj(meetingDetails);
+  const fileData = await conversation.waitFor(":document");
+  const file = await fileData.getFile();
+  const path = await file.download();
+  console.log(path);
 
-    if (dates.isDatePassed(dbMeetingObj.date)) {
-      await h.handlePastMeetingDate(ctx);
-      return;
-    }
+  // const h = createMeetingHelpers;
+  // try {
+  //   const meetingDetails = await h.gatherMeetingDetails(conversation, ctx);
+  //   const dbMeetingObj = prepareDbMeetingObj(meetingDetails);
 
-    const userConfirmed = await h.processUserAnswer(
-      conversation,
-      ctx,
-      meetingDetails
-    );
+  //   if (dates.isDatePassed(dbMeetingObj.date)) {
+  //     await h.handlePastMeetingDate(ctx);
+  //     return;
+  //   }
 
-    if (!userConfirmed) {
-      await sendAdminMenu(ctx);
-      return;
-    }
+  //   const userConfirmed = await h.processUserAnswer(
+  //     conversation,
+  //     ctx,
+  //     meetingDetails
+  //   );
 
-    await h.createMeeting(dbMeetingObj);
-    await h.displayResult(ctx, false);
-  } catch (err) {
-    const error = err as Error;
-    logger.error(error.message);
-    await h.displayResult(ctx, true);
-  }
+  //   if (!userConfirmed) {
+  //     await sendAdminMenu(ctx);
+  //     return;
+  //   }
+
+  //   await h.createMeeting(dbMeetingObj);
+  //   await h.displayResult(ctx, false);
+  // } catch (err) {
+  //   const error = err as Error;
+  //   logger.error(error.message);
+  //   await h.displayResult(ctx, true);
+  // }
 }
 
 const createMeetingHelpers = {
+  documentFetcher: (filePath: string) =>
+    new Promise((resolve, reject) => {
+      const token = process.env.BOT_API_TOKEN;
+      const url = `https://api.telegram.org/file/bot${token}/${filePath}`;
+
+      https
+        .get(url, (res) => {
+          if (res.statusCode !== 200) {
+            const { statusCode, statusMessage } = res;
+            reject(new Error(`Status code: ${statusCode} ${statusMessage}`));
+          }
+
+          const data: Uint8Array[] = [];
+
+          // Слушаем событие 'data' для получения данных
+          res.on("data", (chunk) => {
+            data.push(chunk); // Сохраняем двоичные данные
+          });
+
+          // Слушаем событие 'end' для завершения получения данных
+          res.on("end", () => {
+            // Объединяем все буферы в один
+            const buffer = Buffer.concat(data);
+
+            // Преобразуем буфер в строку UTF-8
+            const utf8String = buffer.toString("utf-8");
+
+            resolve(utf8String); // Возвращаем строку
+          });
+        })
+        .on("error", (err) => {
+          reject(err); // Обрабатываем ошибки запроса
+        });
+    }),
   async gatherMeetingDetails(
     conversation: MyConversation,
     ctx: MyContext

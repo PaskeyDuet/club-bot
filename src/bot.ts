@@ -22,6 +22,7 @@ import handleBackButton from "#handlers/handleBackButton.js";
 import meetingNotificator from "#controllers/meetingNotificator.js";
 import MeetingsDetails from "#db/models/MeetingsDetails.js";
 import scheduledServices from "#helpers/scheduledServices.js";
+import { FileFlavor, hydrateFiles } from "@grammyjs/files";
 
 dotenv.config();
 (async () => {
@@ -102,6 +103,7 @@ bot.use(
     initial: () => structuredClone(sessionConfig),
   })
 );
+bot.api.config.use(hydrateFiles(token));
 bot.use(conversations());
 bot.use(createConversation(userRegistrationConv, "userReg"));
 bot.use(createConversation(registrationForMeeting));
