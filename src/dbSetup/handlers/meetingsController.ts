@@ -17,6 +17,9 @@ export default {
       );
     }
   },
+  findMeeting: async (meetingId: number) => {
+    return await Meetings.findOne({ where: { meeting_id: meetingId } });
+  },
   futureMeetings: async () => {
     try {
       return await Meetings.findAll({

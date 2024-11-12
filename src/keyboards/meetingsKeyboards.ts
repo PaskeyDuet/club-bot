@@ -39,7 +39,7 @@ const meetingButtonsIterator = (
       callbackData = `meeting__control_${meetingId}`;
     } else {
       callbackData = userId
-        ? `meeting__cancel_${meetingId}_${userId}`
+        ? `meeting__manage_${meetingId}_${userId}`
         : `meeting__reg_${meetingId}`;
     }
     console.log(callbackData);
@@ -68,9 +68,17 @@ const cancelMeetingRegApproveKeyboard = (
   return k.row().text("Назад", "back");
 };
 
-const manageMeeting = (meetingId: number) =>
+const adminManageMeeting = (meetingId: number) =>
   new InlineKeyboard()
     .text("Отменить встречу", `meeting__admin-cancel_${meetingId}`)
+    .row()
+    .text("Назад", "back");
+
+const userManageMeeting = (meetingId: number, userId: number) =>
+  new InlineKeyboard()
+    .text("Открыть словарь", `meeting__open-dictionary_${meetingId}`)
+    .row()
+    .text("Отменить запись", `meeting__cancel_${meetingId}_${userId}`)
     .row()
     .text("Назад", "back");
 
@@ -107,6 +115,7 @@ export {
   meetingRegApprovedKeyboard,
   generateMeetingsKeyboard,
   cancelMeetingRegApproveKeyboard,
-  manageMeeting,
+  adminManageMeeting,
   meetingVisitNotificationKeyboard,
+  userManageMeeting,
 };

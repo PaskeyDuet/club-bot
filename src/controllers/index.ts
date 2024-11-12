@@ -3,6 +3,7 @@ import { sendInfoMessage } from "./infoUnit.js";
 import {
   sendScheduleMessage,
   sendAdminScheduleMessage,
+  sendManageMessage,
 } from "./scheduleUnit.js";
 import { paymentManage } from "./subscriptionUnit.js";
 
@@ -12,4 +13,5 @@ export {
   sendScheduleMessage,
   paymentManage,
   sendAdminScheduleMessage,
+  sendManageMessage,
 };

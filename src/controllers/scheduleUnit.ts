@@ -1,9 +1,9 @@
 import {
   createMeetingsList,
-  dbObjsToReadable,
   readableObjsWithCount,
   guardExp,
   smoothReplier,
+  dbObjsToReadable,
 } from "#helpers/index.js";
 import { meetingsController } from "#db/handlers/index.js";
 import { generateMeetingsKeyboard } from "#keyboards/index.js";
@@ -13,6 +13,9 @@ import type {
 } from "#types/shared.types.js";
 import type { MyContext } from "#types/grammy.types.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import type Meetings from "#db/models/Meetings.js";
+import { userManageMeeting } from "#keyboards/meetingsKeyboards.js";
+import { getMeetingById } from "#helpers/meetingsHelpers.js";
 
 async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
@@ -44,10 +47,21 @@ async function sendScheduleMessage(ctx: MyContext) {
   }
 }
 
+async function sendManageMessage(
+  ctx: MyContext,
+  userId: number,
+  meetingId: number
+) {
+  const meeting = await getMeetingById(meetingId);
+  const meetingText = createMeetingsList.userView([meeting]);
+  const k = userManageMeeting(meetingId, userId);
+  await ctx.editMessageText(meetingText, {
+    reply_markup: k,
+  });
+}
 async function sendAdminScheduleMessage(ctx: MyContext) {
-  const allDbMeetings = await meetingsController.futureMeetings();
-  guardExp(allDbMeetings, "allDbMeetings inside sendAdminScheduleMessage");
-  const allMeetings = dbObjsToReadable(allDbMeetings);
+  const allMeetings = await meetingsController.futureMeetingsWithUsers();
+  guardExp(allMeetings, "allDbMeetings inside sendAdminScheduleMessage");
   const allMeetingsWithUserCount = await readableObjsWithCount(allMeetings);
 
   const texts = admintexts;
@@ -101,6 +115,7 @@ const usertexts = {
     text += "зарегистрированы ни на одну из встреч";
     return text;
   },
+  meetingManaging: (meeting: Meetings) => {},
 };
 
-export { sendScheduleMessage, sendAdminScheduleMessage };
+export { sendScheduleMessage, sendAdminScheduleMessage, sendManageMessage };

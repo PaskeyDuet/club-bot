@@ -16,8 +16,9 @@ export const {
   meetingRegApprovedKeyboard,
   generateMeetingsKeyboard,
   cancelMeetingRegApproveKeyboard,
-  manageMeeting,
+  adminManageMeeting,
   meetingVisitNotificationKeyboard,
+  userManageMeeting,
 } = meetingK;
 
 export const { subKeyboard, waitForPayKeyboard, subPaymentManaginKeyboard } =

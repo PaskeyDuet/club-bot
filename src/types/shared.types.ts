@@ -1,8 +1,8 @@
-import type { InlineKeyboardMarkup } from "grammy/types";
-import type UserSubscription from "../dbSetup/models/UserSubscription";
-import type User from "../dbSetup/models/User";
-import type { SubDetailsType } from "../dbSetup/models/SubDetails";
+import type UserSubscription from "#db/models/UserSubscription.js";
+import type User from "#db/models/User.js";
+import type { SubDetailsType } from "#db/models/SubDetails.js";
 import type MeetingsDetails from "#db/models/MeetingsDetails.js";
+import type { InlineKeyboardMarkup } from "grammy/types";
 
 export type TextWithInlineKeyboardObj = {
   text: string;

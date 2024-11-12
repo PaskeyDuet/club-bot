@@ -14,6 +14,7 @@ export const {
   createMeetingsList,
   deleteMeetingAndRegs,
   readableObjsWithCount,
+  getMeetingById,
 } = meetingHelpers;
 
 export { dates, guardExp, notificator, smoothReplier, validateSub };

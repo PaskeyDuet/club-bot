@@ -9,11 +9,12 @@ import type {
   MeetingObjectWithUserCountType,
 } from "#types/shared.types.js";
 import { dates, guardExp, smoothReplier, notificator } from "./index.js";
-import Meetings, {
-  type MeetingsCreationType,
-  type MeetingsType,
+import type Meetings from "#db/models/Meetings.js";
+import type {
+  MeetingsCreationType,
+  MeetingsType,
 } from "#db/models/Meetings.js";
-import { adminMenu, manageMeeting } from "#keyboards/index.js";
+import { adminMenu, adminManageMeeting } from "#keyboards/index.js";
 import type { MyContext } from "#types/grammy.types.js";
 
 async function meetingControlMenu(ctx: MyContext, meetingId: number) {
@@ -22,7 +23,7 @@ async function meetingControlMenu(ctx: MyContext, meetingId: number) {
   messText += "\n\nВыберите действие";
 
   await ctx.editMessageText(messText, {
-    reply_markup: manageMeeting(+meetingId),
+    reply_markup: adminManageMeeting(+meetingId),
   });
 }
 
@@ -139,14 +140,13 @@ const deleteMeetingAndRegsHelpers = {
     return await notificator.sendBulkMessages(text, ids);
   },
 };
-
-async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
-  const meeting = await Meetings.findOne({
-    where: { meeting_id: meetingId },
-  });
+async function getMeetingById(meetingId: number) {
+  const meeting = await meetingsController.findMeeting(meetingId);
   guardExp(meeting, "meeting inside meetingInfoGetter");
-  const meetingObj = dbObjDateTransform(meeting);
-
+  return dbObjDateTransform(meeting);
+}
+async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
+  const meetingObj = await getMeetingById(meetingId);
   if (!usersIds) {
     const regUserIds = await findRegUserIds(meetingId);
     const meetingsWithUserCount: MeetingObjectWithUserCountType = {
@@ -179,4 +179,5 @@ export {
   createMeetingsList,
   deleteMeetingAndRegs,
   readableObjsWithCount,
+  getMeetingById,
 };

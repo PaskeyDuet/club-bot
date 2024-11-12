@@ -7,6 +7,7 @@ import {
   sendInfoMessage,
   sendScheduleMessage,
   sendAdminScheduleMessage,
+  sendManageMessage,
 } from "#controllers/index.js";
 import type { infoUnitPathsType } from "#types/shared.types.js";
 import logErrorAndThrow from "./logErrorAndThrow.js";
@@ -115,6 +116,9 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
       break;
     case "create":
       await ctx.conversation.enter("createMeetingConv");
+      break;
+    case "manage":
+      await sendManageMessage(ctx, +userId, +meetingId);
       break;
     case "cancel":
       messText = "Вы действительно хотите отменить запись на встречу?";
