@@ -5,7 +5,6 @@ import {
   prepareDbMeetingObj,
 } from "#helpers/index.js";
 import {
-  adminMenu,
   meetingCreateCheckKeyboard,
   meetingCreatedMenu,
 } from "#keyboards/index.js";
@@ -16,9 +15,9 @@ import type { MeetingsCreationType } from "#db/models/Meetings.js";
 import dotenv from "dotenv";
 import mammoth from "mammoth";
 import type { MyContext, MyConversation } from "#types/grammy.types.js";
-import conversationsPluginSupporter from "#helpers/conversationsPluginSupporter.js";
 import { hydrateFiles } from "@grammyjs/files";
 import sanitizedConfig from "#root/config.js";
+import type { MeetingsVocabularyCreationT } from "#db/models/MeetingsVocabulary.js";
 
 dotenv.config();
 
@@ -58,8 +57,9 @@ const getNProcessFile = async (
   const h = getNProcessFileH;
   const filePath = await h.waitNGetFileNPath(conversation);
   const meetingStr = await h.getMeetingStr(conversation, filePath);
-
-  return h.processDetails(meetingStr);
+  const processedObj = h.processDetails(meetingStr);
+  processedObj.vocabulary = h.processVocabulary(processedObj.vocabulary);
+  return processedObj;
 };
 const getNProcessFileH = {
   waitNGetFileNPath: async (conversation: MyConversation) => {
@@ -68,12 +68,10 @@ const getNProcessFileH = {
     const filePath = await fileDetails.download();
     return filePath;
   },
-
   getMeetingStr: async (conversation: MyConversation, filePath: string) =>
     await conversation.external(() =>
       mammoth.extractRawText({ path: filePath }).then((res) => res.value)
     ),
-
   processDetails: (
     meetingStr: string
   ): { meeting: MeetingObject; vocabulary: string } => {
@@ -86,6 +84,38 @@ const getNProcessFileH = {
       ""
     );
     return { meeting: { date, topic, place }, vocabulary };
+  },
+  processVocabulary: (vocab: string): string => {
+    // id: number;
+    // meeting_id: number;
+    // lexical_unit: string;
+    // translation: string;
+    // example: string;
+    // example_translation: string;
+    // tag_id: number;
+    const units = vocab.split(";");
+    const objs = units.map((unit) => {
+      const unitParts = unit.split("\n").filter((s) => s !== "");
+      const [lexical_unit, translation] = unitParts[0].split(" – ");
+      console.log("lex unit ", lexical_unit, "translation ", translation);
+
+      const tag = unitParts[1];
+      console.log("TAG", tag);
+      //TODO: Есть  проблема с дефисом - дефисы могут  быть в документе разных вариаций, каждую из которых нужно учесть для удоства создания документа
+      const [example, example_translation] = unitParts[2].split(" — ");
+      console.log("example ", example, "ex translation", example_translation);
+
+      return {
+        lexical_unit,
+        translation,
+        tag,
+        example,
+        example_translation,
+      };
+    });
+    console.log(objs);
+
+    return "";
   },
 };
 

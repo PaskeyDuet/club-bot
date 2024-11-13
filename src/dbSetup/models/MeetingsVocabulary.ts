@@ -20,7 +20,7 @@ export type MeetingsVocabularyT = {
   tag_id: number;
 };
 
-type MeetingsVocabularyCreationT = PartialBy<MeetingsVocabularyT, "id">;
+export type MeetingsVocabularyCreationT = PartialBy<MeetingsVocabularyT, "id">;
 
 @Table({
   timestamps: false,
