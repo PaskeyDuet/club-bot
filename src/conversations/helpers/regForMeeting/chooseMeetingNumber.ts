@@ -1,6 +1,6 @@
 import type { MyContext, MyConversation } from "#types/grammy.types.js";
-import type { TextWithInlineKeyboardObj } from "#types/shared.types";
-import unlessActions from "../unlessActions";
+import type { TextWithInlineKeyboardObj } from "#types/shared.types.js";
+import unlessActions from "../unlessActions.js";
 
 export default async function (
   conversation: MyConversation,

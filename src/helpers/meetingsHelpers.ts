@@ -9,12 +9,11 @@ import type {
   MeetingObjectWithUserCountType,
 } from "#types/shared.types.js";
 import { dates, guardExp, smoothReplier, notificator } from "./index.js";
-import type Meetings from "#db/models/Meetings.js";
-import type {
-  MeetingsCreationType,
-  MeetingsType,
+import Meetings, {
+  type MeetingsCreationType,
+  type MeetingsType,
 } from "#db/models/Meetings.js";
-import { adminMenu, adminManageMeeting } from "#keyboards/index.js";
+import { adminManageMeeting, adminMenu } from "#keyboards/index.js";
 import type { MyContext } from "#types/grammy.types.js";
 
 async function meetingControlMenu(ctx: MyContext, meetingId: number) {
@@ -46,7 +45,11 @@ async function getFutureMeetings(): Promise<MeetingObjectWithId[] | undefined> {
     logErrorAndThrow(error, "fatal", "Error fetching future meetings");
   }
 }
-
+async function getMeetingById(meetingId: number) {
+  const meeting = await meetingsController.findMeeting(meetingId);
+  guardExp(meeting, "meeting inside meetingInfoGetter");
+  return dbObjDateTransform(meeting);
+}
 const prepareDbMeetingObj = (
   meetingObj: MeetingObject
 ): MeetingsCreationType => ({
@@ -66,7 +69,13 @@ const dbObjsToReadable = (meetings: Meetings[]): MeetingObjectWithId[] =>
   meetings.map((el) => dbObjDateTransform(el));
 
 const createMeetingsList = {
-  userView(meetings: MeetingObject[] | MeetingsType[] | MeetingObjectWithId[]) {
+  userView(
+    meetings:
+      | MeetingObject[]
+      | MeetingsType[]
+      | MeetingObjectWithId[]
+      | MeetingsCreationType[]
+  ) {
     return meetings
       .map((el) => `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n`)
       .join("\n");
@@ -80,7 +89,7 @@ const createMeetingsList = {
       .join("\n");
   },
   adminShortView(meetings: MeetingObjectWithUserCountType[]) {
-    //TODO: change number 8 using env lim.js
+    //TODO: change number 8 using env limits
     return meetings
       .map((el) => `${el.date} -- ${el.topic} -- ${el.userCount}/8\n`)
       .join("\n");
@@ -122,7 +131,6 @@ const deleteMeetingAndRegsHelpers = {
 
   async finalMessage(ctx: MyContext, dbActionsRes: boolean) {
     let text: string;
-    console.log(dbActionsRes);
 
     if (dbActionsRes) {
       text = "Данные о встрече и регистрациях ";
@@ -140,22 +148,23 @@ const deleteMeetingAndRegsHelpers = {
     return await notificator.sendBulkMessages(text, ids);
   },
 };
-async function getMeetingById(meetingId: number) {
-  const meeting = await meetingsController.findMeeting(meetingId);
-  guardExp(meeting, "meeting inside meetingInfoGetter");
-  return dbObjDateTransform(meeting);
-}
+
 async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
-  const meetingObj = await getMeetingById(meetingId);
+  const meeting = await Meetings.findOne({
+    where: { meeting_id: meetingId },
+  });
+  guardExp(meeting, "meeting inside meetingInfoGetter");
+  const meetingObj = dbObjDateTransform(meeting);
+
   if (!usersIds) {
-    const regUserIds = await findRegUserIds(meetingId);
-    const meetingsWithUserCount: MeetingObjectWithUserCountType = {
-      ...meetingObj,
-      userCount: regUserIds.length,
-    };
-    return createMeetingsList.adminView([meetingsWithUserCount]);
+    usersIds = await findRegUserIds(meetingId);
   }
-  return "Произошла ошибка. Попробуйте повторить запрос позже";
+
+  const meetingsWithUserCount: MeetingObjectWithUserCountType = {
+    ...meetingObj,
+    userCount: usersIds.length,
+  };
+  return createMeetingsList.adminView([meetingsWithUserCount]);
 }
 
 const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {

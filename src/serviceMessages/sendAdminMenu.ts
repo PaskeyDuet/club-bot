@@ -5,6 +5,7 @@ import subscriptionController from "#db/handlers/subscriptionController.js";
 import type { MyContext } from "#types/grammy.types.js";
 
 export default async function (ctx: MyContext) {
+  ctx.session.conversation = {};
   try {
     const paidSubs = await subscriptionController.findSubByQuery({
       sub_status: "paid",

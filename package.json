@@ -57,6 +57,7 @@
     "@sequelize/postgres": "^7.0.0-alpha.41",
     "dotenv": "^16.4.5",
     "grammy": "^1.30.0",
+    "mammoth": "^1.8.0",
     "moment": "^2.30.1",
     "node-cron": "^3.0.3",
     "pg": "^8.12.0",

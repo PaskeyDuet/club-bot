@@ -8,7 +8,6 @@ import { createMeetingsList } from "#helpers/meetingsHelpers.js";
 import { meetingVisitNotificationKeyboard } from "#keyboards/index.js";
 
 export default async function () {
-  console.log("Daily check");
   const h = notificatorHelpers;
   const tomorrowMeetings = await h.getTomorrowMeetings();
   const notificationPromises = tomorrowMeetings.map(

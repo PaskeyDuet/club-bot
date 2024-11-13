@@ -1,6 +1,7 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
 import type { PartialBy } from "@sequelize/utils";
 import type MeetingsDetails from "./MeetingsDetails.js";
+
 export type MeetingsType = {
   meeting_id: number;
   place: string;

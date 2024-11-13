@@ -17,8 +17,6 @@ const validateSubHelpers = {
   isSubEnded(userSub: UserSubscription) {
     const subEnd = new Date(userSub.sub_end);
     const currDate = new Date();
-    console.log(subEnd);
-    console.log(currDate);
 
     return subEnd < currDate;
   },

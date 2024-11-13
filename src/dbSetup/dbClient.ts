@@ -6,13 +6,10 @@ import SubDetails from "./models/SubDetails.js";
 import Meetings from "./models/Meetings.js";
 import MeetingsDetails from "./models/MeetingsDetails.js";
 import logErrorAndThrow from "#root/handlers/logErrorAndThrow.js";
-import { fileURLToPath } from "node:url";
-import { dirname } from "node:path";
 import UserSubscription from "./models/UserSubscription.js";
+import MeetingsVocabulary from "./models/MeetingsVocabulary.js";
+import VocabularyTags from "./models/VocabularyTags.js";
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export let sequelize: Sequelize;
 
@@ -30,13 +27,23 @@ try {
     dialect: "postgres",
     logging: false,
     ...dbObj,
-    models: [Meetings, MeetingsDetails, SubDetails, User, UserSubscription],
+    models: [
+      Meetings,
+      MeetingsDetails,
+      SubDetails,
+      User,
+      UserSubscription,
+      VocabularyTags,
+      MeetingsVocabulary,
+    ],
   });
 
   User.hasOne(Subscription, { foreignKey: "user_id" });
   User.hasMany(MeetingsDetails, { foreignKey: "user_id" });
   SubDetails.hasMany(Subscription, { foreignKey: "sub_number" });
   Meetings.hasMany(MeetingsDetails, { foreignKey: "meeting_id" });
+  Meetings.hasMany(MeetingsVocabulary, { foreignKey: "meeting_id" });
+  VocabularyTags.hasMany(MeetingsVocabulary, { foreignKey: "tag_id" });
 } catch (err) {
   logErrorAndThrow(err, "fatal", "can't connect to database");
 }

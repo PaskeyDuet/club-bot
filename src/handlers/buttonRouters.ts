@@ -69,9 +69,6 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
   const userId = userIdMatch ? +userIdMatch[1] : null;
 
   if (userId) {
-    console.log(1);
-
-    // TODO: Добавить проверку
     const adminAction = action?.split("_")[0];
 
     switch (adminAction) {
@@ -95,7 +92,7 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
         await paymentManagement(ctx, "unactive");
         break;
       case "manage":
-        await ctx.conversation.enter("payme.jsManaging");
+        await ctx.conversation.enter("paymentsManaging");
         break;
       default:
         logger.error("used startHandler as default case at sub_");

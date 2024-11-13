@@ -20,7 +20,6 @@ export default async function (
       return messageIdSaver(ctx, updatedCtx, fnName);
     } catch (err) {
       const error = err as Error;
-      console.log(error.message);
       if (
         error.message.match(/message is not modified|message can't be edited/)
       ) {

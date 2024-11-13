@@ -8,7 +8,7 @@ import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 export default {
   allMeetings: async () => {
     try {
-      await Meetings.findAll();
+      return await Meetings.findAll();
     } catch (err) {
       logErrorAndThrow(
         err,
@@ -39,24 +39,26 @@ export default {
         where: { date: { [Op.gt]: dates.currDate() } },
         include: {
           model: MeetingsDetails,
-          required: true,
+          required: false, // Изменено на false, чтобы получать встречи даже без пользователей
           where: { user_id: userId || { [Op.ne]: null } },
         },
       });
 
       return meetings.map((el) => {
         const dv = el.dataValues;
-        if (!dv.MeetingsDetails) {
-          throw new Error("There is no meetingDetails");
-        }
-        const detailsDv = dv.MeetingsDetails[0].dataValues;
+        const details = dv.MeetingsDetails
+          ? dv.MeetingsDetails[0]?.dataValues
+          : null;
+
+        // Формируем объект с данными о встрече
         const obj: MeetingsWithDetailsObject = {
           meetingId: dv.meeting_id,
           place: dv.place,
           topic: dv.topic,
           date: dates.meetingDateParser(dv.date),
-          user_id: detailsDv.user_id,
+          user_id: details?.user_id || null, // user_id будет null, если данных нет
         };
+
         return obj;
       });
     } catch (err) {
@@ -69,6 +71,8 @@ export default {
   },
   createMeeting: async (meeting: MeetingsCreationType) => {
     try {
+      console.log(await Meetings.findAll());
+
       return await Meetings.create(meeting);
     } catch (err) {
       logErrorAndThrow(

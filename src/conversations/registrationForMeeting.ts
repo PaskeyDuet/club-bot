@@ -43,8 +43,6 @@ export async function registrationForMeeting(
       futureMeetingsWithUsers
     );
 
-    console.log("userFilteredMetings", availableRegs);
-
     const baseMess = baseMessObj(availableRegs);
     await ctx.editMessageText(baseMess.text, {
       reply_markup: baseMess.keyboard,

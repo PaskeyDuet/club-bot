@@ -21,7 +21,6 @@ export default {
     query: MeetingsDetailsQueryParamsType,
     options?: FindOptions<MeetingsDetailsType>
   ) => {
-    console.log(query);
     return await MeetingsDetails.findAll({ where: query, ...options });
   },
   addUserToMeet: async (userId: number, meetingId: number) => {

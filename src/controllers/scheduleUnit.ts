@@ -3,7 +3,6 @@ import {
   readableObjsWithCount,
   guardExp,
   smoothReplier,
-  dbObjsToReadable,
 } from "#helpers/index.js";
 import { meetingsController } from "#db/handlers/index.js";
 import { generateMeetingsKeyboard } from "#keyboards/index.js";
@@ -14,7 +13,7 @@ import type {
 import type { MyContext } from "#types/grammy.types.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import type Meetings from "#db/models/Meetings.js";
-import { userManageMeeting } from "#keyboards/meetingsKeyboards.js";
+import { userManageMeeting } from "#keyboards/index.js";
 import { getMeetingById } from "#helpers/meetingsHelpers.js";
 
 async function sendScheduleMessage(ctx: MyContext) {

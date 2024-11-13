@@ -7,7 +7,7 @@ import type {
 // import config from "../botConfig/generalConfig";
 
 const generateMeetingsKeyboard = (
-  meetings: MeetingsWithDetailsObject[],
+  meetings: (MeetingObjectWithId | MeetingsWithDetailsObject)[],
   adminMode: boolean
 ): InlineKeyboard => {
   const keyboard = new InlineKeyboard();
@@ -24,14 +24,14 @@ const generateMeetingsKeyboard = (
 
 const meetingButtonsIterator = (
   keyboard: InlineKeyboard,
-  meetings: MeetingsWithDetailsObject[],
+  meetings: (MeetingObjectWithId | MeetingsWithDetailsObject)[],
   adminMode: boolean
 ) => {
   meetings.forEach((el, inx) => {
     el.date.replace(/202.*$/, "");
     const keyboardText = `${inx + 1}. ${el.date} - ${el.topic}`;
     const meetingId = el.meetingId;
-    const userId = el.user_id; // Проверяем, есть ли user_id
+    const userId = (el as MeetingsWithDetailsObject).user_id; // Проверяем, есть ли user_id
 
     // Формируем текст кнопки в зависимости от типа действия
     let callbackData: string;
@@ -42,7 +42,6 @@ const meetingButtonsIterator = (
         ? `meeting__manage_${meetingId}_${userId}`
         : `meeting__reg_${meetingId}`;
     }
-    console.log(callbackData);
 
     keyboard.text(keyboardText, callbackData).row();
   });
@@ -68,6 +67,25 @@ const cancelMeetingRegApproveKeyboard = (
   return k.row().text("Назад", "back");
 };
 
+const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
+  const k = new InlineKeyboard();
+  if (!isNewbie) {
+    k.text("Записаться ещё", "gen__meeting__reg").row();
+  }
+  return k.text("Главное меню", "main_menu");
+};
+
+const meetingCreateCheckKeyboard = new InlineKeyboard()
+  .text("No", "meeting__obj_reject")
+  .text("Yes", "meeting__obj_submit")
+  .row()
+  .text("Главное меню", "gen__admin");
+
+const meetingCreatedMenu = new InlineKeyboard()
+  .text("Посмотреть текущие встречи", "meeting__schedule")
+  .row()
+  .text("Меню", "gen__admin");
+
 const adminManageMeeting = (meetingId: number) =>
   new InlineKeyboard()
     .text("Отменить встречу", `meeting__admin-cancel_${meetingId}`)
@@ -81,26 +99,6 @@ const userManageMeeting = (meetingId: number, userId: number) =>
     .text("Отменить запись", `meeting__cancel_${meetingId}_${userId}`)
     .row()
     .text("Назад", "back");
-
-const meetingRegApprovedKeyboard = (isNewbie: boolean) => {
-  const k = new InlineKeyboard();
-  if (!isNewbie) {
-    k.text("Записаться ещё", "gen__meeting__reg").row();
-  }
-  return k.text("Главное меню", "main_menu");
-};
-
-const meetingCreateCheckKeyboard = new InlineKeyboard()
-  .text("No", "meeting__create_reject")
-  .text("Yes", "meeting__create_submit")
-  .row()
-  .text("Главное меню", "gen__admin");
-
-const meetingCreatedMenu = new InlineKeyboard()
-  .text("Посмотреть текущие встречи", "meeting__schedule")
-  .row()
-  .text("Меню", "gen__admin");
-
 const meetingVisitNotificationKeyboard = (
   meetingId: number,
   userId: number
@@ -115,7 +113,7 @@ export {
   meetingRegApprovedKeyboard,
   generateMeetingsKeyboard,
   cancelMeetingRegApproveKeyboard,
+  userManageMeeting,
   adminManageMeeting,
   meetingVisitNotificationKeyboard,
-  userManageMeeting,
 };

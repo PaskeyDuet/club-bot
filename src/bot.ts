@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import { Api, Bot, GrammyError, HttpError, session } from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import sessionConfig from "#root/botConfig/sessionConfig.js";
@@ -22,9 +21,9 @@ import handleBackButton from "#handlers/handleBackButton.js";
 import meetingNotificator from "#controllers/meetingNotificator.js";
 import MeetingsDetails from "#db/models/MeetingsDetails.js";
 import scheduledServices from "#helpers/scheduledServices.js";
-import { FileFlavor, hydrateFiles } from "@grammyjs/files";
+import { hydrateFiles } from "@grammyjs/files";
+import sanitizedConfig from "./config.js";
 
-dotenv.config();
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
@@ -92,18 +91,18 @@ dotenv.config();
   logger.info("Database synced");
 })();
 scheduledServices();
-const token = process.env.BOT_API_TOKEN;
+const token = sanitizedConfig.BOT_API_TOKEN;
 if (!token) {
   throw new Error("There is no bot token");
 }
 export const bot = new Bot<MyContext>(token);
+bot.api.config.use(hydrateFiles(token));
 export const admin = new Api(token);
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
   })
 );
-bot.api.config.use(hydrateFiles(token));
 bot.use(conversations());
 bot.use(createConversation(userRegistrationConv, "userReg"));
 bot.use(createConversation(registrationForMeeting));
