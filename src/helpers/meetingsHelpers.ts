@@ -15,6 +15,7 @@ import Meetings, {
 } from "#db/models/Meetings.js";
 import { adminManageMeeting, adminMenu } from "#keyboards/index.js";
 import type { MyContext } from "#types/grammy.types.js";
+import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
 
 async function meetingControlMenu(ctx: MyContext, meetingId: number) {
   let messText = "Информация о встрече:\n\n";
@@ -92,6 +93,19 @@ const createMeetingsList = {
     //TODO: change number 8 using env limits
     return meetings
       .map((el) => `${el.date} -- ${el.topic} -- ${el.userCount}/8\n`)
+      .join("\n");
+  },
+};
+
+const createVocabularyList = {
+  basicView: (vocabList: RawVocabularyWithTagNameT[]) => {
+    return vocabList
+      .map((unit, inx) => {
+        let str = `${inx}<i>${unit.tag_name}</i>\n`;
+        str += `<b>${unit.lexical_unit}</b> - ${unit.translation}\n`;
+        str += `${unit.example}\n<i>${unit.example_translation}</i>\n`;
+        return str;
+      })
       .join("\n");
   },
 };
@@ -186,6 +200,7 @@ export {
   dbObjDateTransform,
   dbObjsToReadable,
   createMeetingsList,
+  createVocabularyList,
   deleteMeetingAndRegs,
   readableObjsWithCount,
   getMeetingById,

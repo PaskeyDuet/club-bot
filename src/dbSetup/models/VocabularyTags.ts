@@ -3,10 +3,10 @@ import type { PartialBy } from "@sequelize/utils";
 
 export type VocabularyTagsT = {
   id: number;
-  name: string;
+  tag_name: string;
 };
 
-type VocabularyTagsCreationT = PartialBy<VocabularyTagsT, "id">;
+export type VocabularyTagsCreationT = PartialBy<VocabularyTagsT, "id">;
 
 @Table({
   timestamps: false,
@@ -23,5 +23,5 @@ export default class VocabularyTags extends Model<
     primaryKey: true,
   })
   declare id: number;
-  @Column({ type: DataType.STRING }) declare name: string;
+  @Column({ type: DataType.STRING, unique: true }) declare tag_name: string;
 }

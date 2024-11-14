@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, type Transaction } from "sequelize";
 import Meetings, { type MeetingsCreationType } from "../models/Meetings.js";
 import MeetingsDetails from "../models/MeetingsDetails.js";
 import { dates } from "#helpers/index.js";
@@ -69,11 +69,12 @@ export default {
       );
     }
   },
-  createMeeting: async (meeting: MeetingsCreationType) => {
+  createMeeting: async (
+    meeting: MeetingsCreationType,
+    transaction: Transaction
+  ) => {
     try {
-      console.log(await Meetings.findAll());
-
-      return await Meetings.create(meeting);
+      return await Meetings.create(meeting, { transaction });
     } catch (err) {
       logErrorAndThrow(
         err,

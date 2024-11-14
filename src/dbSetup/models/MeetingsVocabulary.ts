@@ -19,6 +19,13 @@ export type MeetingsVocabularyT = {
   example_translation: string;
   tag_id: number;
 };
+export type RawVocabularyWithTagNameT = {
+  lexical_unit: string;
+  translation: string;
+  example: string;
+  example_translation: string;
+  tag_name: string;
+};
 
 export type MeetingsVocabularyCreationT = PartialBy<MeetingsVocabularyT, "id">;
 
