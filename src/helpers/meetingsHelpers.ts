@@ -100,9 +100,18 @@ const createMeetingsList = {
 const createVocabularyList = {
   basicView: (vocabList: RawVocabularyWithTagNameT[]) => {
     return vocabList
-      .map((unit, inx) => {
-        let str = `${inx}<i>${unit.tag_name}</i>\n`;
+      .map((unit) => {
+        let str = `<i>${unit.tag_name}</i>\n`;
         str += `<b>${unit.lexical_unit}</b> - ${unit.translation}\n`;
+        str += `${unit.example}\n<i>${unit.example_translation}</i>\n`;
+        return str;
+      })
+      .join("\n");
+  },
+  withoutTags: (vocabList: RawVocabularyWithTagNameT[]) => {
+    return vocabList
+      .map((unit) => {
+        let str = `<b>${unit.lexical_unit}</b> - ${unit.translation}\n`;
         str += `${unit.example}\n<i>${unit.example_translation}</i>\n`;
         return str;
       })

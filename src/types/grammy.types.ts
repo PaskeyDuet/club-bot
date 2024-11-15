@@ -31,11 +31,13 @@ export interface SessionData {
 }
 export type CallbackCtx = Filter<MyContext, "callback_query">;
 
-interface TelegramUser {
+export interface TelegramUser {
   firstName: string;
   secondName: string;
   isNewbie: boolean;
   hasSub: boolean;
+  subEndDate: string;
+  subNumber: number;
 }
 
 export interface routeHistoryUnit {

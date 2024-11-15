@@ -7,11 +7,7 @@ import {
   checkMessageLength,
   guardExp,
 } from "#helpers/index.js";
-import {
-  adminMenu,
-  meetingCreateCheckKeyboard,
-  meetingCreatedMenu,
-} from "#keyboards/index.js";
+import { adminMenu, meetingCreateCheckKeyboard } from "#keyboards/index.js";
 import logger from "#root/logger.js";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import type { MeetingObject } from "#types/shared.types.js";
@@ -31,21 +27,20 @@ import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import type { Transaction } from "sequelize";
 import type Meetings from "#db/models/Meetings.js";
 import vocabularyTagController from "#db/handlers/vocabularyTagController.js";
-import VocabularyTags, { VocabularyTagsT } from "#db/models/VocabularyTags.js";
 import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
-import MeetingsVocabulary from "#db/models/MeetingsVocabulary.js";
+
 type tagMapT = { [key: string]: number };
 export async function createMeetingConv(
   conversation: MyConversation,
   ctx: MyContext
 ) {
+  const h = meetingHelpers;
   try {
     const filesPlugin = hydrateFiles(sanitizedConfig.BOT_API_TOKEN);
     await conversation.run(async (ctx, next) => {
       ctx.api.config.use(filesPlugin);
       await next();
     });
-    const { texts } = meetingHelpers;
 
     await ctx.editMessageText(
       "Пожалуйста, отправьте документ с информацией о встрече",
@@ -59,7 +54,7 @@ export async function createMeetingConv(
     const meetingConfirmed = await checkData(
       ctx,
       conversation,
-      texts.meeting(meeting),
+      h.texts.meeting(meeting),
       meetingCreateCheckKeyboard
     );
     if (!meetingConfirmed) {
@@ -69,7 +64,7 @@ export async function createMeetingConv(
     const vocabularyConfirmed = await checkData(
       ctx,
       conversation,
-      texts.vocabulary(vocabulary),
+      h.texts.vocabulary(vocabulary),
       meetingCreateCheckKeyboard
     );
 
@@ -77,14 +72,53 @@ export async function createMeetingConv(
       await sendAdminMenu(ctx);
       return;
     }
-
     await dbProcessing(meeting, vocabulary);
+    await h.displayResult(ctx);
   } catch (err) {
     const error = err as Error;
     logger.error(error.message);
-    // await h.displayResult(ctx, error.message);
+    await h.displayResult(ctx, error.message);
   }
 }
+
+const meetingHelpers = {
+  falseAnswerHandler: async (ctx: MyContext, answer: boolean) => {
+    await sendAdminMenu(ctx);
+    return;
+  },
+
+  answerHandler: async (conversation: MyConversation) => {
+    const { match } =
+      await conversation.waitForCallbackQuery(/meeting__obj_.+/);
+    const answer = match[0].replace("meeting__obj_", "");
+    return answer;
+  },
+
+  texts: {
+    vocabulary: (vocabObj: RawVocabularyWithTagNameT[]) =>
+      createVocabularyList.basicView(vocabObj),
+    meeting: (meeting: MeetingObject) => createMeetingsList.userView([meeting]),
+  },
+
+  checkAnswer: (answer: string): boolean => {
+    switch (answer) {
+      case "submit":
+        return true;
+      case "reject":
+        return false;
+      default:
+        throw new Error("no processing answer");
+    }
+  },
+
+  async displayResult(ctx: MyContext, errMessage?: string) {
+    let text = "Встреча и вокабуляр к ней были созданы";
+    if (errMessage) {
+      text = errMessage;
+    }
+    await ctx.reply(text, { reply_markup: adminMenu });
+  },
+};
 
 const getNProcessFile = async (
   conversation: MyConversation
@@ -185,8 +219,8 @@ const checkData = async (
   keyboard: InlineKeyboard
 ) => {
   const completeText = `${text}\n\nПодтвердите верность считанных данных`;
-  const lenCheckedText = checkMessageLength(completeText);
-  const reply = await ctx.reply(lenCheckedText, {
+  checkMessageLength(completeText);
+  const reply = await ctx.reply(completeText, {
     reply_markup: keyboard,
     parse_mode: "HTML",
   });
@@ -194,37 +228,6 @@ const checkData = async (
   await ctx.api.deleteMessage(reply.chat.id, reply.message_id);
 
   return meetingHelpers.checkAnswer(checkAnswer);
-};
-
-const meetingHelpers = {
-  falseAnswerHandler: async (ctx: MyContext, answer: boolean) => {
-    await sendAdminMenu(ctx);
-    return;
-  },
-
-  answerHandler: async (conversation: MyConversation) => {
-    const { match } =
-      await conversation.waitForCallbackQuery(/meeting__obj_.+/);
-    const answer = match[0].replace("meeting__obj_", "");
-    return answer;
-  },
-
-  texts: {
-    vocabulary: (vocabObj: RawVocabularyWithTagNameT[]) =>
-      createVocabularyList.basicView(vocabObj),
-    meeting: (meeting: MeetingObject) => createMeetingsList.userView([meeting]),
-  },
-
-  checkAnswer: (answer: string): boolean => {
-    switch (answer) {
-      case "submit":
-        return true;
-      case "reject":
-        return false;
-      default:
-        throw new Error("no processing answer");
-    }
-  },
 };
 
 const dbProcessing = async (
@@ -235,18 +238,16 @@ const dbProcessing = async (
   const transaction = await sequelize.transaction();
   try {
     const meetingDbObj = await h.createMeeting(meeting, transaction);
-    const tagsMap = await h.processAndCollectTagIds(vocab, transaction);
+    const tagsMap = await h.processAndCreateTagIds(vocab, transaction);
     await h.writeVocabUnitsToDb(
       vocab,
       meetingDbObj.meeting_id,
       tagsMap,
       transaction
     );
-    console.log(await VocabularyTags.findAll());
-    console.log(await MeetingsVocabulary.findAll());
+    await transaction.commit();
   } catch (err) {
     await transaction.rollback();
-    console.log(await VocabularyTags.findAll());
     logErrorAndThrow(err as Error, "error", "error creating meeting");
   }
 };
@@ -270,7 +271,7 @@ const dbProcessingH = {
     guardExp(meetingDbObj, "meetingObj inside dbProcessing");
     return meetingDbObj;
   },
-  async writeVocabUnitsToDb(
+  writeVocabUnitsToDb(
     vocabObjs: RawVocabularyWithTagNameT[],
     meeting_id: number,
     tagsMap: tagMapT,
@@ -280,7 +281,7 @@ const dbProcessingH = {
       this.createVocabularyUnit(obj, tagsMap, meeting_id)
     );
 
-    return await meetingsVocabularyController.createVocabularyUnits(
+    return meetingsVocabularyController.createVocabularyUnits(
       formedVocabs,
       transaction
     );
@@ -304,12 +305,13 @@ const dbProcessingH = {
     };
   },
 
-  async processAndCollectTagIds(
+  async processAndCreateTagIds(
     vocab: RawVocabularyWithTagNameT[],
     transaction: Transaction
   ) {
     const uniqueSet = [...new Set(vocab.map((unit) => unit.tag_name))];
     const tagObjects = await this.createTags(uniqueSet, transaction);
+    console.log(tagObjects);
     return tagObjects.reduce((acc: tagMapT, el) => {
       acc[el.tag_name] = el.id;
       return acc;

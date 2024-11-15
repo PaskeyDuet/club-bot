@@ -26,7 +26,10 @@ function greetingKeyboard(
       .text("Оформить подписку", "gen__create_sub")
       .row();
   }
-  keyboard.text("Расписание", "gen__schedule");
+  keyboard
+    .text("Расписание", "gen__schedule")
+    .row()
+    .text("Мой профиль", "gen__profile");
   return keyboard;
 }
 const infoKeyboards = {
@@ -56,11 +59,12 @@ const adminMenuKeyboard = (newSubs: boolean) => {
 };
 
 const adminMenu = new InlineKeyboard().text("Меню", "gen__admin");
-
+const backButton = new InlineKeyboard().text("Назад", "back");
 export {
   greetingKeyboard,
   infoKeyboards,
   mainMenu,
   adminMenuKeyboard,
   adminMenu,
+  backButton,
 };

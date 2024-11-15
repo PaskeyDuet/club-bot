@@ -8,6 +8,8 @@ import {
   sendScheduleMessage,
   sendAdminScheduleMessage,
   sendManageMessage,
+  openDictionary,
+  sendProfileMessage,
 } from "#controllers/index.js";
 import type { infoUnitPathsType } from "#types/shared.types.js";
 import logErrorAndThrow from "./logErrorAndThrow.js";
@@ -41,6 +43,9 @@ keyboard.callbackQuery(/gen__/, async (ctx) => {
       break;
     case "admin":
       await sendAdminMenu(ctx);
+      break;
+    case "profile":
+      await sendProfileMessage(ctx);
       break;
     default:
       logger.error("used startHandler as default case at gen__");
@@ -105,6 +110,7 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
 keyboard.callbackQuery(/meeting__/, async (ctx) => {
   const cbData = ctx.callbackQuery.data;
   const [action, meetingId, userId] = cbData.split(/meeting__/)[1].split("_");
+  console.log(cbData);
 
   let messText = "";
   switch (action) {
@@ -125,6 +131,9 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
       break;
     case "schedule":
       await sendAdminScheduleMessage(ctx);
+      break;
+    case "open-dictionary":
+      await openDictionary(ctx, +meetingId);
       break;
     case "control":
       await meetingControlMenu(ctx, +meetingId);

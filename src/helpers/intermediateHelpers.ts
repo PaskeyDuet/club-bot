@@ -1,12 +1,10 @@
 const checkMessageLength = (str: string) => {
   const messageLimit = 4096;
-  const attentionText =
-    "Достигнута верхняя планка. Сообщение обрезано на 100 символов";
   if (str.length > messageLimit) {
-    const slicedStr = str.slice(0, messageLimit - attentionText.length - 100);
-    return `${slicedStr}\n${attentionText}`;
+    throw new Error(
+      `Был передан текст превышающий ${messageLimit} символов! Его начало:\n${str.slice(0, 40)}...\n`
+    );
   }
-  return str;
 };
 
 export { checkMessageLength };

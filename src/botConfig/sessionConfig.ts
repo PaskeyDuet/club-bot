@@ -6,6 +6,8 @@ const initialConfig: SessionData = {
     secondName: "",
     isNewbie: false,
     hasSub: false,
+    subEndDate: "",
+    subNumber: -1,
   },
   temp: {
     meetingNumber: null,

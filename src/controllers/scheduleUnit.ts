@@ -3,9 +3,13 @@ import {
   readableObjsWithCount,
   guardExp,
   smoothReplier,
+  createVocabularyList,
 } from "#helpers/index.js";
-import { meetingsController } from "#db/handlers/index.js";
-import { generateMeetingsKeyboard } from "#keyboards/index.js";
+import {
+  meetingsController,
+  vocabularyTagController,
+} from "#db/handlers/index.js";
+import { backButton, generateMeetingsKeyboard } from "#keyboards/index.js";
 import type {
   MeetingObjectWithUserCountType,
   MeetingsWithDetailsObject,
@@ -15,12 +19,15 @@ import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import type Meetings from "#db/models/Meetings.js";
 import { userManageMeeting } from "#keyboards/index.js";
 import { getMeetingById } from "#helpers/meetingsHelpers.js";
+import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
+import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
 
 async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
     ctx.userId
   );
   guardExp(userMeetings, "userMeetings inside scheduleUnit");
+  console.log("schedule");
 
   const texts = usertexts;
   let meetingsInfo: string;
@@ -58,6 +65,27 @@ async function sendManageMessage(
     reply_markup: k,
   });
 }
+async function openDictionary(ctx: MyContext, meeting_id: number) {
+  const dbStructuredVocab = await meetingsVocabularyController.findAllByQuery({
+    meeting_id,
+  });
+  const tags = await vocabularyTagController.getTagsMap();
+  const vocabArr: RawVocabularyWithTagNameT[] = dbStructuredVocab.map(
+    (unit) => ({
+      lexical_unit: unit.lexical_unit,
+      translation: unit.translation,
+      example: unit.example,
+      example_translation: unit.example_translation,
+      tag_name: tags.get(unit.id) || "*",
+    })
+  );
+  const text = createVocabularyList.withoutTags(vocabArr);
+  await ctx.editMessageText(text, {
+    reply_markup: backButton,
+    parse_mode: "HTML",
+  });
+}
+
 async function sendAdminScheduleMessage(ctx: MyContext) {
   const allMeetings = await meetingsController.futureMeetingsWithUsers();
   guardExp(allMeetings, "allDbMeetings inside sendAdminScheduleMessage");
@@ -87,7 +115,6 @@ async function sendAdminScheduleMessage(ctx: MyContext) {
     );
   }
 }
-
 const admintexts = {
   currentMeetings: (meetings: MeetingObjectWithUserCountType[]) => {
     let text = "На данный момент ";
@@ -117,4 +144,9 @@ const usertexts = {
   meetingManaging: (meeting: Meetings) => {},
 };
 
-export { sendScheduleMessage, sendAdminScheduleMessage, sendManageMessage };
+export {
+  sendScheduleMessage,
+  sendAdminScheduleMessage,
+  sendManageMessage,
+  openDictionary,
+};

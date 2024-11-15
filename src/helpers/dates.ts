@@ -26,4 +26,5 @@ export default {
 
     return inputDate.isSame(tomorrow, "day");
   },
+  getStrDateWithoutTime: (date: string) => date.split(",")[0],
 };

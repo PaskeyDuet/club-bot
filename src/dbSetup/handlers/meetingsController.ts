@@ -35,11 +35,12 @@ export default {
   },
   futureMeetingsWithUsers: async (userId?: number) => {
     try {
+      const adminMode = !!userId;
       const meetings = await Meetings.findAll({
         where: { date: { [Op.gt]: dates.currDate() } },
         include: {
           model: MeetingsDetails,
-          required: false, // Изменено на false, чтобы получать встречи даже без пользователей
+          required: adminMode, // Изменено на false, чтобы получать встречи даже без пользователей
           where: { user_id: userId || { [Op.ne]: null } },
         },
       });

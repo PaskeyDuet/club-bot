@@ -25,16 +25,18 @@ import { hydrateFiles } from "@grammyjs/files";
 import sanitizedConfig from "./config.js";
 import VocabularyTags from "#db/models/VocabularyTags.js";
 import MeetingsVocabulary from "#db/models/MeetingsVocabulary.js";
+import User from "#db/models/User.js";
+import UserSubscription from "#db/models/UserSubscription.js";
 
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
-  await VocabularyTags.truncate({ cascade: true });
-  await MeetingsVocabulary.truncate({ cascade: true });
-  console.log(await VocabularyTags.findAll());
-
-  // await User.destroy({ where: { user_id: 335815247 } });
-  // await MeetingsDetails.destroy({ where: { user_id: 335815247 } });
+  // await VocabularyTags.truncate({ cascade: true, restartIdentity: true });
+  // await MeetingsVocabulary.truncate({ cascade: true, restartIdentity: true });
+  // await MeetingsDetails.truncate({ cascade: true, restartIdentity: true });
+  // await Meetings.truncate({ cascade: true, restartIdentity: true });
+  // await User.truncate({ cascade: true, restartIdentity: true });
+  // await UserSubscription.truncate({ cascade: true, restartIdentity: true });
   // const data = await Meetings.findAll();
   // console.log(data);
 

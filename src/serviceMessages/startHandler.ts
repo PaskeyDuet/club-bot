@@ -1,8 +1,8 @@
 import errorHandler from "#handlers/logErrorAndThrow.js";
-import { guardExp, validateSub, smoothReplier } from "#helpers/index.js";
+import { guardExp, validateSub, smoothReplier, dates } from "#helpers/index.js";
 import { usersController } from "#db/handlers/index.js";
-import sendPayMessage from "./sendPayMessage";
-import sendPaidMessage from "./sendPaidMessage";
+import sendPayMessage from "./sendPayMessage.js";
+import sendPaidMessage from "./sendPaidMessage.js";
 import { greetingKeyboard } from "#keyboards/index.js";
 import type { SubStatusNames } from "#types/shared.types.js";
 import type User from "#db/models/User.js";
@@ -70,11 +70,13 @@ const sendStartMessageHelpers = {
     }
   },
   ctxFiller(ctx: MyContext, user: User, userSub: UserSubscription) {
-    const { sub_number, sub_status } = userSub;
+    const { sub_number, sub_status, sub_end } = userSub;
 
     const userSession = ctx.session.user;
     userSession.firstName = user.first_name;
     userSession.secondName = user.second_name;
+    userSession.subEndDate = dates.meetingDateParser(sub_end);
+    userSession.subNumber = userSub.sub_number;
 
     if (sub_number === 1 && sub_status === "active") {
       userSession.isNewbie = true;

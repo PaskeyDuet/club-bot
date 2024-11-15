@@ -8,6 +8,7 @@ export const {
   mainMenu,
   adminMenuKeyboard,
   adminMenu,
+  backButton,
 } = genK;
 
 export const {
