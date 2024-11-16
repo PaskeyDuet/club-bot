@@ -9,7 +9,7 @@ export default {
     await User.create(user);
     const newbieSub = await SubDetails.findOne({ where: { sub_number: 1 } });
     guardExp(newbieSub, "newbieSub inside handlersComposition");
-
+    let testCommit = "";
     const subPeriod = newbieSub.duration_days;
     const date = new Date();
     const endDate = new Date(date);
