@@ -2,7 +2,9 @@ import type {
   UserWithSubscription,
   UserWithSubscriptionPartialType,
 } from "#types/shared.types.js";
-import Subscription from "../models/UserSubscription.js";
+import Subscription, {
+  UserSubscriptionType,
+} from "../models/UserSubscription.js";
 import User from "../models/User.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
@@ -38,5 +40,8 @@ export default {
         "Db error. Inside usersController, findUsersWithSub is unavailable"
       );
     }
+  },
+  updateUserDataByQuery: (query: Partial<User>, filter: Partial<User>) => {
+    return User.update(query, { where: filter });
   },
 };

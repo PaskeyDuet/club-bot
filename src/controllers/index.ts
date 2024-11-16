@@ -5,11 +5,13 @@ import {
   sendAdminScheduleMessage,
   sendManageMessage,
   openDictionary,
+  meetingControlMenu,
 } from "./scheduleUnit.js";
 import { paymentManage } from "./subscriptionUnit.js";
 import { sendProfileMessage } from "./profileUnit.js";
 
 export {
+  meetingControlMenu,
   infoUnits,
   sendInfoMessage,
   sendScheduleMessage,

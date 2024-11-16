@@ -7,12 +7,13 @@ export type MeetingsType = {
   place: string;
   topic: string;
   date: Date;
+  ended: boolean;
   MeetingsDetails?: MeetingsDetails[];
 };
 
 export type MeetingsCreationType = PartialBy<
   MeetingsType,
-  "meeting_id" | "MeetingsDetails"
+  "meeting_id" | "MeetingsDetails" | "ended"
 >;
 
 @Table({
@@ -40,6 +41,12 @@ export default class Meetings extends Model<
     type: DataType.STRING,
   })
   declare topic: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+  })
+  declare ended: boolean;
 
   @Column({
     type: DataType.DATE,

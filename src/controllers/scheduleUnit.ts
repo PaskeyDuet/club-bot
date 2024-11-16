@@ -4,6 +4,7 @@ import {
   guardExp,
   smoothReplier,
   createVocabularyList,
+  meetingInfoGetter,
 } from "#helpers/index.js";
 import {
   meetingsController,
@@ -21,6 +22,7 @@ import { userManageMeeting } from "#keyboards/index.js";
 import { getMeetingById } from "#helpers/meetingsHelpers.js";
 import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
 import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
+import { adminManageMeeting } from "#keyboards/meetingsKeyboards.js";
 
 async function sendScheduleMessage(ctx: MyContext) {
   const userMeetings = await meetingsController.futureMeetingsWithUsers(
@@ -65,18 +67,18 @@ async function sendManageMessage(
     reply_markup: k,
   });
 }
+
 async function openDictionary(ctx: MyContext, meeting_id: number) {
   const dbStructuredVocab = await meetingsVocabularyController.findAllByQuery({
     meeting_id,
   });
-  const tags = await vocabularyTagController.getTagsMap();
   const vocabArr: RawVocabularyWithTagNameT[] = dbStructuredVocab.map(
     (unit) => ({
       lexical_unit: unit.lexical_unit,
       translation: unit.translation,
       example: unit.example,
       example_translation: unit.example_translation,
-      tag_name: tags.get(unit.id) || "*",
+      tag_name: "*",
     })
   );
   const text = createVocabularyList.withoutTags(vocabArr);
@@ -115,6 +117,17 @@ async function sendAdminScheduleMessage(ctx: MyContext) {
     );
   }
 }
+
+async function meetingControlMenu(ctx: MyContext, meetingId: number) {
+  let messText = "Информация о встрече:\n\n";
+  messText += await meetingInfoGetter(meetingId);
+  messText += "\n\nВыберите действие";
+
+  await ctx.editMessageText(messText, {
+    reply_markup: adminManageMeeting(+meetingId),
+  });
+}
+
 const admintexts = {
   currentMeetings: (meetings: MeetingObjectWithUserCountType[]) => {
     let text = "На данный момент ";
@@ -145,6 +158,7 @@ const usertexts = {
 };
 
 export {
+  meetingControlMenu,
   sendScheduleMessage,
   sendAdminScheduleMessage,
   sendManageMessage,

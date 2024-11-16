@@ -7,7 +7,7 @@ import smoothReplier from "./smoothReplier.js";
 import { validateSub } from "./subHelpers.js";
 
 export const {
-  meetingControlMenu,
+  meetingInfoGetter,
   getFutureMeetings,
   prepareDbMeetingObj,
   dbObjDateTransform,
@@ -17,6 +17,7 @@ export const {
   readableObjsWithCount,
   getMeetingById,
   createVocabularyList,
+  endMeeting,
 } = meetingHelpers;
 
 export {

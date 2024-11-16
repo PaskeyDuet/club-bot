@@ -1,6 +1,6 @@
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import type { MeetingsDetailsQueryParamsType } from "#types/shared.types.js";
-import type { FindOptions } from "sequelize";
+import type { FindOptions, Transaction } from "sequelize";
 import MeetingsDetails, {
   type MeetingsDetailsType,
 } from "../models/MeetingsDetails.js";
@@ -19,7 +19,8 @@ export default {
   },
   findAllByQuery: async (
     query: MeetingsDetailsQueryParamsType,
-    options?: FindOptions<MeetingsDetailsType>
+    options?: FindOptions<MeetingsDetailsType>,
+    transaction?: Transaction
   ) => {
     return await MeetingsDetails.findAll({ where: query, ...options });
   },

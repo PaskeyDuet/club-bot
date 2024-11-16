@@ -10,10 +10,11 @@ import {
   sendManageMessage,
   openDictionary,
   sendProfileMessage,
+  meetingControlMenu,
 } from "#controllers/index.js";
 import type { infoUnitPathsType } from "#types/shared.types.js";
 import logErrorAndThrow from "./logErrorAndThrow.js";
-import { deleteMeetingAndRegs, meetingControlMenu } from "#helpers/index.js";
+import { deleteMeetingAndRegs, endMeeting } from "#helpers/index.js";
 import startHandler from "#serviceMessages/startHandler.js";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import paymentManagement from "#serviceMessages/paymentManagement.js";
@@ -110,7 +111,6 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
 keyboard.callbackQuery(/meeting__/, async (ctx) => {
   const cbData = ctx.callbackQuery.data;
   const [action, meetingId, userId] = cbData.split(/meeting__/)[1].split("_");
-  console.log(cbData);
 
   let messText = "";
   switch (action) {
@@ -134,6 +134,9 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
       break;
     case "open-dictionary":
       await openDictionary(ctx, +meetingId);
+      break;
+    case "end":
+      endMeeting(ctx, +meetingId);
       break;
     case "control":
       await meetingControlMenu(ctx, +meetingId);
@@ -159,6 +162,22 @@ keyboard.callbackQuery(/meeting__/, async (ctx) => {
       break;
     default:
       logger.error("used startHandler as default case at meeting__");
+      await startHandler(ctx);
+      break;
+  }
+});
+
+keyboard.callbackQuery(/profile__/, async (ctx) => {
+  const cbData = ctx.callbackQuery.data;
+  console.log(cbData);
+  const [action, userId] = cbData.split(/profile__/)[1].split("_");
+
+  switch (action) {
+    case "change-name":
+      await ctx.conversation.enter("changeName");
+      break;
+
+    default:
       await startHandler(ctx);
       break;
   }

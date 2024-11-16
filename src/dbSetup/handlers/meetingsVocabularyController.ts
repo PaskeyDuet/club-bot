@@ -5,6 +5,9 @@ import MeetingsVocabulary, {
 import type { Transaction } from "sequelize";
 
 export default {
+  deleteVocabByQuery(query: Partial<MeetingsVocabularyT>) {
+    return MeetingsVocabulary.destroy({ where: query });
+  },
   findAllByQuery(query: Partial<MeetingsVocabularyT>) {
     return MeetingsVocabulary.findAll({ where: query });
   },

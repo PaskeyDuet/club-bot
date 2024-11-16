@@ -28,6 +28,7 @@ import type { Transaction } from "sequelize";
 import type Meetings from "#db/models/Meetings.js";
 import vocabularyTagController from "#db/handlers/vocabularyTagController.js";
 import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
+import fsp from "node:fs/promises";
 
 type tagMapT = { [key: string]: number };
 export async function createMeetingConv(
@@ -128,7 +129,7 @@ const getNProcessFile = async (
 }> => {
   const h = getNProcessFileH;
   const filePath = await h.waitNGetFileNPath(conversation);
-  const meetingStr = await h.getMeetingStr(conversation, filePath);
+  const meetingStr = await h.getMeetingStrNDeleteFile(conversation, filePath);
   const processedObj = h.processDetails(meetingStr);
   return processedObj;
 };
@@ -136,7 +137,9 @@ const getNProcessFileH = {
   waitNGetFileNPath: async function (conversation: MyConversation) {
     const msgObjWithDoc = await this.waitFile(conversation);
     const fileDetails = await msgObjWithDoc.getFile();
-    const filePath = await fileDetails.download();
+    const filePath = await fileDetails.download(
+      "./src/conversations/temp/meeting"
+    );
     return filePath;
   },
   waitFile: async (conversation: MyConversation) => {
@@ -151,10 +154,16 @@ const getNProcessFileH = {
         ),
     });
   },
-  getMeetingStr: async (conversation: MyConversation, filePath: string) =>
-    await conversation.external(() =>
+  getMeetingStrNDeleteFile: async (
+    conversation: MyConversation,
+    filePath: string
+  ) => {
+    const str = await conversation.external(() =>
       mammoth.extractRawText({ path: filePath }).then((res) => res.value)
-    ),
+    );
+    await fsp.unlink(filePath);
+    return str;
+  },
   processDetails: function (meetingStr: string): {
     meeting: MeetingObject;
     vocabulary: RawVocabularyWithTagNameT[];
@@ -305,22 +314,22 @@ const dbProcessingH = {
     };
   },
 
-  async processAndCreateTagIds(
+  processAndCreateTagIds(
     vocab: RawVocabularyWithTagNameT[],
     transaction: Transaction
   ) {
     const uniqueSet = [...new Set(vocab.map((unit) => unit.tag_name))];
-    const tagObjects = await this.createTags(uniqueSet, transaction);
-    console.log(tagObjects);
-    return tagObjects.reduce((acc: tagMapT, el) => {
-      acc[el.tag_name] = el.id;
-      return acc;
-    }, {});
+    return this.createAndGetUniqueTags(uniqueSet, transaction);
   },
-  createTags(tagsArr: string[], transaction: Transaction) {
-    const formedTags = tagsArr.map((tag) => {
-      return { tag_name: tag };
-    });
-    return vocabularyTagController.createTags(formedTags, transaction);
+  async createAndGetUniqueTags(tagsArr: string[], transaction: Transaction) {
+    const existingTags = await vocabularyTagController.getTagsMap();
+    const formedTags = tagsArr
+      .filter((tag) => !existingTags.has(tag))
+      .map((tag) => ({
+        tag_name: tag,
+      }));
+    await vocabularyTagController.createTags(formedTags, transaction);
+    const allTags = await vocabularyTagController.getTagsMap();
+    return Object.fromEntries(allTags);
   },
 };

@@ -16,16 +16,9 @@ import Meetings, {
 import { adminManageMeeting, adminMenu } from "#keyboards/index.js";
 import type { MyContext } from "#types/grammy.types.js";
 import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
-
-async function meetingControlMenu(ctx: MyContext, meetingId: number) {
-  let messText = "Информация о встрече:\n\n";
-  messText += await meetingInfoGetter(meetingId);
-  messText += "\n\nВыберите действие";
-
-  await ctx.editMessageText(messText, {
-    reply_markup: adminManageMeeting(+meetingId),
-  });
-}
+import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
+import { InlineKeyboard } from "grammy";
+import { Transaction } from "sequelize";
 
 async function getFutureMeetings(): Promise<MeetingObjectWithId[] | undefined> {
   try {
@@ -85,7 +78,7 @@ const createMeetingsList = {
     return meetings
       .map(
         (el) =>
-          `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n ${el.userCount}/8\n`
+          `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n 👥 ${el.userCount}/8\n`
       )
       .join("\n");
   },
@@ -126,7 +119,7 @@ async function deleteMeetingAndRegs(ctx: MyContext, meetingId: number) {
     const userIds = await findRegUserIds(meetingId);
     const meetingInfo = await meetingInfoGetter(meetingId, userIds);
     const meetingUsersDelRes = await h.deleteUserRegs(userIds);
-    const meetingDelRes = await h.deleteMeeting(meetingId);
+    const meetingDelRes = await h.deleteMeetingAndVocab(meetingId);
     await h.cancelationNotif(userIds, meetingInfo);
     //add users check
     const dbActionsRes = meetingDelRes === 1;
@@ -136,16 +129,21 @@ async function deleteMeetingAndRegs(ctx: MyContext, meetingId: number) {
   }
 }
 
-async function findRegUserIds(meetingId: number) {
+async function findRegUserIds(meetingId: number, transaction?: Transaction) {
   const userRegs = await meetingsDetailsController.findAllByQuery({
     meeting_id: meetingId,
   });
-  return userRegs.map((el) => +el.user_id);
+  return userRegs.map((el) => el.user_id);
 }
 
 const deleteMeetingAndRegsHelpers = {
-  async deleteMeeting(meetingId: number) {
-    return await meetingsController.deleteMeeting(meetingId);
+  async deleteMeetingAndVocab(meeting_id: number) {
+    const vocabdelRes = await meetingsVocabularyController.deleteVocabByQuery({
+      meeting_id,
+    });
+    console.log(vocabdelRes);
+
+    return await meetingsController.deleteMeeting(meeting_id);
   },
 
   async deleteUserRegs(userIds: number[]) {
@@ -202,8 +200,45 @@ const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {
   return await Promise.all(meetingPromises);
 };
 
+const endMeeting = async (ctx: MyContext, meetingId: number) => {
+  const h = endMeetingH(meetingId);
+
+  try {
+    const userIds = await findRegUserIds(meetingId);
+    await h.updateMeetingStatus();
+    const t = h.formText();
+    const k = h.getKeyboard();
+    await notificator.sendBulkMessages(t, userIds, k);
+    await ctx.reply("Встреча завершена", { reply_markup: adminMenu });
+  } catch (error) {
+    logErrorAndThrow(error, "error", "error trying to endMeeting");
+  }
+};
+const endMeetingH = (meeting_id: number) => ({
+  updateMeetingStatus() {
+    return meetingsController.updateByQuery({ ended: true }, { meeting_id });
+  },
+  async getMeetingName() {
+    const meeting = await meetingsController.findMeeting(meeting_id);
+    guardExp(meeting, "meeting inside getMeetingName");
+    return meeting.topic;
+  },
+  formText() {
+    const topic = this.getMeetingName();
+    let text = `Спасибо, что посетил встречу по теме ${topic}]n`;
+    text += "Ответь на несколько вопросов";
+    return text;
+  },
+  getKeyboard() {
+    return new InlineKeyboard().text(
+      "Приступим",
+      `meeting__feedback_${meeting_id}`
+    );
+  },
+});
+
 export {
-  meetingControlMenu,
+  meetingInfoGetter,
   getFutureMeetings,
   prepareDbMeetingObj,
   dbObjDateTransform,
@@ -213,4 +248,5 @@ export {
   deleteMeetingAndRegs,
   readableObjsWithCount,
   getMeetingById,
+  endMeeting,
 };

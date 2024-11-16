@@ -88,9 +88,11 @@ const meetingCreatedMenu = new InlineKeyboard()
 
 const adminManageMeeting = (meetingId: number) =>
   new InlineKeyboard()
-    .text("Отменить встречу", `meeting__admin-cancel_${meetingId}`)
+    .text("Открыть словарь", `meeting__open-dictionary_${meetingId}`)
+    .text("Завершить встречу", `meeting__end_${meetingId}`)
     .row()
-    .text("Назад", "back");
+    .text("Назад", "back")
+    .text("Отменить встречу", `meeting__admin-cancel_${meetingId}`);
 
 const userManageMeeting = (meetingId: number, userId: number) =>
   new InlineKeyboard()

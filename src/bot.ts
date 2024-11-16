@@ -27,6 +27,7 @@ import VocabularyTags from "#db/models/VocabularyTags.js";
 import MeetingsVocabulary from "#db/models/MeetingsVocabulary.js";
 import User from "#db/models/User.js";
 import UserSubscription from "#db/models/UserSubscription.js";
+import changeName from "#conv/changeName.js";
 
 (async () => {
   logger.info("bot is running");
@@ -37,8 +38,6 @@ import UserSubscription from "#db/models/UserSubscription.js";
   // await Meetings.truncate({ cascade: true, restartIdentity: true });
   // await User.truncate({ cascade: true, restartIdentity: true });
   // await UserSubscription.truncate({ cascade: true, restartIdentity: true });
-  // const data = await Meetings.findAll();
-  // console.log(data);
 
   // console.log(await Subscription.findAll());
   // console.log(await Meetings.findAll());
@@ -116,6 +115,7 @@ bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
 bot.use(createConversation(paymentsManaging));
 bot.use(createConversation(createMeetingConv));
+bot.use(createConversation(changeName));
 bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);

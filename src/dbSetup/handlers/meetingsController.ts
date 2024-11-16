@@ -37,7 +37,10 @@ export default {
     try {
       const adminMode = !!userId;
       const meetings = await Meetings.findAll({
-        where: { date: { [Op.gt]: dates.currDate() } },
+        where: {
+          date: { [Op.gt]: dates.currDate() },
+          ended: { [Op.is]: false },
+        },
         include: {
           model: MeetingsDetails,
           required: adminMode, // Изменено на false, чтобы получать встречи даже без пользователей
@@ -84,6 +87,9 @@ export default {
       );
     }
   },
-  deleteMeeting: async (meetingId: number) =>
-    await Meetings.destroy({ where: { meeting_id: meetingId } }),
+  deleteMeeting: async (meeting_id: number) =>
+    await Meetings.destroy({ where: { meeting_id } }),
+  updateByQuery: (query: Partial<Meetings>, filter: Partial<Meetings>) => {
+    return Meetings.update(query, { where: filter });
+  },
 };
