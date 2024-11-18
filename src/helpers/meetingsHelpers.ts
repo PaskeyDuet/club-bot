@@ -226,7 +226,7 @@ const endMeetingH = (meeting_id: number) => ({
   },
   async formText() {
     const topic = await this.getMeetingName();
-    let text = `Спасибо, что посетил встречу по теме ${topic}]\n`;
+    let text = `Спасибо, что посетил встречу по теме <b>${topic}</b>\n`;
     text += "Ответь на несколько вопросов";
     return text;
   },
