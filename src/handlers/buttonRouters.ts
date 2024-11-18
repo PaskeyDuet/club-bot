@@ -24,34 +24,43 @@ import { infoUnits } from "#controllers/infoUnit.js";
 export const keyboard = new Composer<MyContext>();
 //TODO: add string checks
 keyboard.callbackQuery(/gen__/, async (ctx) => {
-  const path = ctx.callbackQuery.data.split("gen__")[1];
+  type actionMap =
+    | "info"
+    | "meeting__reg"
+    | "meeting__reg_newbie"
+    | "create_sub"
+    | "schedule"
+    | "admin"
+    | "profile";
 
-  switch (path) {
-    case "info":
-      await sendInfoMessage(ctx);
-      break;
-    case "meeting__reg":
-      await ctx.conversation.enter("registrationForMeeting");
-      break;
-    case "meeting__reg_newbie":
-      await ctx.conversation.enter("newbieSubConv");
-      break;
-    case "create_sub":
-      await ctx.conversation.enter("subConv");
-      break;
-    case "schedule":
-      await sendScheduleMessage(ctx);
-      break;
-    case "admin":
-      await sendAdminMenu(ctx);
-      break;
-    case "profile":
-      await sendProfileMessage(ctx);
-      break;
-    default:
-      logger.error("used startHandler as default case at gen__");
+  const actionsMap: Record<actionMap, (ctx: MyContext) => Promise<void>> = {
+    info: sendInfoMessage,
+    meeting__reg: (ctx: MyContext) =>
+      ctx.conversation.enter("registrationForMeeting"),
+    meeting__reg_newbie: (ctx: MyContext) =>
+      ctx.conversation.enter("newbieSubConv"),
+    create_sub: (ctx: MyContext) => ctx.conversation.enter("subConv"),
+    schedule: sendScheduleMessage,
+    admin: sendAdminMenu,
+    profile: sendProfileMessage,
+  };
+
+  const path: actionMap = ctx.callbackQuery.data.split("gen__")[1] as actionMap;
+  const action = actionsMap[path];
+  if (path) {
+    try {
+      await action(ctx);
+    } catch (error) {
+      logErrorAndThrow(error, "error", "error handling gen__ path");
       await startHandler(ctx);
-      break;
+    }
+  } else {
+    logErrorAndThrow(
+      new Error('No path inside "gen__ catcher"'),
+      "debug",
+      "path error"
+    );
+    await startHandler(ctx);
   }
 });
 
@@ -109,61 +118,82 @@ keyboard.callbackQuery(/\bsub_/, async (ctx) => {
 });
 
 keyboard.callbackQuery(/meeting__/, async (ctx) => {
-  const cbData = ctx.callbackQuery.data;
-  const [action, meetingId, userId] = cbData.split(/meeting__/)[1].split("_");
+  type callbackData = [actionMap, string, string];
+  type actionMap =
+    | "confirm-visit"
+    | "create"
+    | "manage"
+    | "cancel"
+    | "schedule"
+    | "open-dictionary"
+    | "end"
+    | "control"
+    | "admin-cancel"
+    | "cancel-confirm"
+    | "admin-cancel-confirm"
+    | "feedback";
 
-  let messText = "";
-  switch (action) {
-    case "confirm-visit":
-      await startHandler(ctx);
-      break;
-    case "create":
-      await ctx.conversation.enter("createMeetingConv");
-      break;
-    case "manage":
-      await sendManageMessage(ctx, +userId, +meetingId);
-      break;
-    case "cancel":
-      messText = "Вы действительно хотите отменить запись на встречу?";
+  const actionsMap: Record<
+    actionMap,
+    (ctx: MyContext) => Promise<void> | Promise<number | undefined>
+  > = {
+    "confirm-visit": startHandler,
+    create: (ctx: MyContext) => ctx.conversation.enter("createMeetingConv"),
+    manage: (ctx: MyContext) => sendManageMessage(ctx, +userId, +meetingId),
+    cancel: async (ctx: MyContext) => {
+      const messText = "Вы действительно хотите отменить запись на встречу?";
       await ctx.editMessageText(messText, {
         reply_markup: cancelMeetingRegApproveKeyboard(+meetingId, +userId),
       });
-      break;
-    case "schedule":
-      await sendAdminScheduleMessage(ctx);
-      break;
-    case "open-dictionary":
-      await openDictionary(ctx, +meetingId);
-      break;
-    case "end":
-      endMeeting(ctx, +meetingId);
-      break;
-    case "control":
-      await meetingControlMenu(ctx, +meetingId);
-      break;
-    case "admin-cancel":
-      messText = "Вы действительно хотите отменить запись на встречу?";
+    },
+    schedule: sendAdminScheduleMessage,
+    "open-dictionary": (ctx: MyContext) => openDictionary(ctx, +meetingId),
+    end: (ctx: MyContext) => endMeeting(ctx, +meetingId),
+    control: (ctx: MyContext) => meetingControlMenu(ctx, +meetingId),
+    "admin-cancel": async (ctx: MyContext) => {
+      let messText = "Вы действительно хотите отменить запись на встречу?";
       messText += " В случае удаления все пользователи";
       messText += " будут уведомлены об этом";
 
       await ctx.editMessageText(messText, {
         reply_markup: cancelMeetingRegApproveKeyboard(+meetingId),
       });
-      break;
-    case "cancel-confirm":
+    },
+    "cancel-confirm": async (ctx: MyContext) => {
       await meetingsDetailsController.destroyUserReg(+meetingId, +userId);
-      messText = "Регистрация на встречу отменена";
+      const messText = "Регистрация на встречу отменена";
       await ctx.editMessageText(messText, {
         reply_markup: mainMenu,
       });
-      break;
-    case "admin-cancel-confirm":
-      await deleteMeetingAndRegs(ctx, +meetingId);
-      break;
-    default:
-      logger.error("used startHandler as default case at meeting__");
+    },
+    "admin-cancel-confirm": (ctx: MyContext) =>
+      deleteMeetingAndRegs(ctx, +meetingId),
+    feedback: (ctx: MyContext) => {
+      ctx.session.temp.feedbackMeetingId = +meetingId;
+      return ctx.conversation.enter("meetingFeedback");
+    },
+  };
+
+  const cbData = ctx.callbackQuery.data;
+  const [path, meetingId, userId] = cbData
+    .split(/meeting__/)[1]
+    .split("_") as callbackData;
+
+  const action = actionsMap[path];
+  if (path) {
+    try {
+      await action(ctx);
+    } catch (error) {
+      logErrorAndThrow(error, "error", "error handling meeting__ path");
       await startHandler(ctx);
-      break;
+    }
+  } else {
+    logErrorAndThrow(
+      new Error('No path inside "meeting__ catcher"'),
+      "debug",
+      "path error"
+    );
+    await startHandler(ctx);
   }
 });
 
@@ -176,7 +206,9 @@ keyboard.callbackQuery(/profile__/, async (ctx) => {
     case "change-name":
       await ctx.conversation.enter("changeName");
       break;
-
+    case "archive":
+      ctx.answerCallbackQuery();
+      break;
     default:
       await startHandler(ctx);
       break;

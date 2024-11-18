@@ -11,11 +11,7 @@ const initialConfig: SessionData = {
   },
   temp: {
     meetingNumber: null,
-    meetingParams: {
-      date: "",
-      place: "",
-      topic: "",
-    },
+    feedbackMeetingId: null,
     sub_number: null,
   },
   routeHistory: [],

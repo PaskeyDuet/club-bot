@@ -23,7 +23,10 @@ export default {
   futureMeetings: async () => {
     try {
       return await Meetings.findAll({
-        where: { date: { [Op.gt]: dates.currDate() } },
+        where: {
+          date: { [Op.gt]: dates.currDate() },
+          ended: { [Op.is]: false },
+        },
       });
     } catch (err) {
       logErrorAndThrow(

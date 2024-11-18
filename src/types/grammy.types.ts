@@ -17,11 +17,7 @@ export interface SessionData {
   user: TelegramUser;
   temp: {
     meetingNumber: number | null;
-    meetingParams: {
-      date: string;
-      place: string;
-      topic: string;
-    };
+    feedbackMeetingId: number | null;
     sub_number: number | null;
   };
   routeHistory: Array<routeHistoryUnit>; // Укажите тип элементов, если это строки, или другой тип, если необходимо

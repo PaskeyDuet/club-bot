@@ -18,7 +18,7 @@ import type { MyContext } from "#types/grammy.types.js";
 import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
 import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
 import { InlineKeyboard } from "grammy";
-import { Transaction } from "sequelize";
+import type { Transaction } from "sequelize";
 
 async function getFutureMeetings(): Promise<MeetingObjectWithId[] | undefined> {
   try {
@@ -178,6 +178,7 @@ async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
   const meetingObj = dbObjDateTransform(meeting);
 
   if (!usersIds) {
+    // biome-ignore lint/style/noParameterAssign:
     usersIds = await findRegUserIds(meetingId);
   }
 
@@ -206,7 +207,7 @@ const endMeeting = async (ctx: MyContext, meetingId: number) => {
   try {
     const userIds = await findRegUserIds(meetingId);
     await h.updateMeetingStatus();
-    const t = h.formText();
+    const t = await h.formText();
     const k = h.getKeyboard();
     await notificator.sendBulkMessages(t, userIds, k);
     await ctx.reply("Встреча завершена", { reply_markup: adminMenu });
@@ -223,9 +224,9 @@ const endMeetingH = (meeting_id: number) => ({
     guardExp(meeting, "meeting inside getMeetingName");
     return meeting.topic;
   },
-  formText() {
-    const topic = this.getMeetingName();
-    let text = `Спасибо, что посетил встречу по теме ${topic}]n`;
+  async formText() {
+    const topic = await this.getMeetingName();
+    let text = `Спасибо, что посетил встречу по теме ${topic}]\n`;
     text += "Ответь на несколько вопросов";
     return text;
   },

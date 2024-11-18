@@ -45,12 +45,14 @@ class ProfileMessageH {
     this.subEndDate = dates.getStrDateWithoutTime(this.subEndDate);
   }
   createKeyboard() {
-    return new InlineKeyboard()
-      .text("Изменить имя", `profile__change-name_${this.ctx.userId}`)
-      .row()
-      .text("Архив встреч (скоро)", ``)
-      .row()
-      .text("Назад", "back");
+    return (
+      new InlineKeyboard()
+        .text("Изменить имя", `profile__change-name_${this.ctx.userId}`)
+        // .row()
+        // .text("Архив встреч (скоро)", "profile__archive")
+        .row()
+        .text("Назад", "back")
+    );
   }
 }
 

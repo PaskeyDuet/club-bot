@@ -14,24 +14,19 @@ import { createMeetingConv } from "#conv/createMeeting.js";
 import ctxExtender from "#middleware/ctxExtender.js";
 import traceRoutes from "#middleware/traceRoutes.js";
 import { keyboard } from "#handlers/buttonRouters.js";
-import dates from "#helpers/dates.js";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import startHandler from "#serviceMessages/startHandler.js";
 import handleBackButton from "#handlers/handleBackButton.js";
-import meetingNotificator from "#controllers/meetingNotificator.js";
-import MeetingsDetails from "#db/models/MeetingsDetails.js";
 import scheduledServices from "#helpers/scheduledServices.js";
 import { hydrateFiles } from "@grammyjs/files";
 import sanitizedConfig from "./config.js";
-import VocabularyTags from "#db/models/VocabularyTags.js";
-import MeetingsVocabulary from "#db/models/MeetingsVocabulary.js";
-import User from "#db/models/User.js";
-import UserSubscription from "#db/models/UserSubscription.js";
 import changeName from "#conv/changeName.js";
+import meetingFeedback from "#conv/feebackConv.js";
 
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
+  console.log(await Meetings.findAll());
   // await VocabularyTags.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsVocabulary.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsDetails.truncate({ cascade: true, restartIdentity: true });
@@ -116,12 +111,13 @@ bot.use(createConversation(subConv));
 bot.use(createConversation(paymentsManaging));
 bot.use(createConversation(createMeetingConv));
 bot.use(createConversation(changeName));
+bot.use(createConversation(meetingFeedback));
 bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
-bot.command("date", async (ctx) => {
-  dates.isDatePassed(dates.dateFromString("12-12-2024 10:30"));
+bot.command("feed", async (ctx) => {
+  await ctx.conversation.enter("meetingFeedback");
 });
 
 bot.command("admin", async (ctx) => {
