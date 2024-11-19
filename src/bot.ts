@@ -22,11 +22,14 @@ import { hydrateFiles } from "@grammyjs/files";
 import sanitizedConfig from "./config.js";
 import changeName from "#conv/changeName.js";
 import meetingFeedback from "#conv/feebackConv.js";
+import User from "#db/models/User.js";
+import UserSubscription from "#db/models/UserSubscription.js";
+import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
-  console.log(await Meetings.findAll());
+  // console.log(await Meetings.findAll());
   // await VocabularyTags.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsVocabulary.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsDetails.truncate({ cascade: true, restartIdentity: true });
@@ -34,7 +37,6 @@ import meetingFeedback from "#conv/feebackConv.js";
   // await User.truncate({ cascade: true, restartIdentity: true });
   // await UserSubscription.truncate({ cascade: true, restartIdentity: true });
 
-  // console.log(await Subscription.findAll());
   // console.log(await Meetings.findAll());
   // await UserSubscription.update(
   //   { sub_number: 3, sub_status: "unactive" },
@@ -104,7 +106,7 @@ bot.use(
   })
 );
 bot.use(conversations());
-bot.use(createConversation(userRegistrationConv, "userReg"));
+bot.use(createConversation(userRegistrationConv));
 bot.use(createConversation(registrationForMeeting));
 bot.use(createConversation(newbieSubConv));
 bot.use(createConversation(subConv));
@@ -116,19 +118,11 @@ bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
-bot.command("feed", async (ctx) => {
-  await ctx.conversation.enter("meetingFeedback");
-});
-
 bot.command("admin", async (ctx) => {
   try {
     await sendAdminMenu(ctx);
   } catch (err) {
-    const error = err as Error;
-    logger.fatal(
-      `unable to send sendAdminMenu: ${error.message}, \nError stack:\n${error.stack}`
-    );
-    throw new Error("unable to send sendAdminMenu");
+    logErrorAndThrow(err, "fatal", "unable to send sendAdminMenu");
   }
 });
 
@@ -136,11 +130,7 @@ bot.command("start", async (ctx: MyContext) => {
   try {
     await startHandler(ctx);
   } catch (err) {
-    const error = err as Error;
-    logger.fatal(
-      `unable to send startMessage: ${error.message}, \nError stack:\n${error.stack}`
-    );
-    throw new Error("unable to send startMessage");
+    logErrorAndThrow(err, "fatal", "unable to send startMessage");
   }
 });
 
@@ -148,11 +138,7 @@ bot.callbackQuery("back", async (ctx: MyContext) => {
   try {
     await handleBackButton(ctx);
   } catch (err) {
-    const error = err as Error;
-    logger.fatal(
-      `unable to hange handleBackButton: ${error.message}, \nError stack:\n${error.stack}`
-    );
-    throw new Error("unable to handle handleBackButton");
+    logErrorAndThrow(err, "fatal", "unable to hange handleBackButton");
   }
 });
 

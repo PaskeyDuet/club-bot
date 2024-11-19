@@ -1,5 +1,6 @@
 import errorHandler from "#handlers/logErrorAndThrow.js";
 import { admin } from "#root/bot.js";
+import sanitizedConfig from "#root/config.js";
 import logger from "#root/logger.js";
 import type { MyContext } from "#types/grammy.types.js";
 import type { InlineKeyboard } from "grammy";
@@ -13,12 +14,12 @@ class notificator {
   adminIds: number[];
 
   constructor() {
-    this.serviceGroupId = -1002389280014;
+    this.serviceGroupId = +sanitizedConfig.SERVICE_GROUP_ID;
     this.serviceTopics = {
-      subTopic: 5,
-      feedbackTopic: 207,
+      subTopic: +sanitizedConfig.SUB_TOPIC,
+      feedbackTopic: +sanitizedConfig.FEEDBACK_TOPIC,
     };
-    this.adminIds = [335815247];
+    this.adminIds = sanitizedConfig.ADMIN_IDS.split("|").map(Number);
   }
 
   async newSub() {

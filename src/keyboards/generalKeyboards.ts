@@ -7,7 +7,7 @@ function greetingKeyboard(
   const keyboard = new InlineKeyboard();
   if (newbie) {
     keyboard
-      .text("Куда я попал?", "gen__info")
+      .url("Наша группа", "https://t.me/chatterbox_eng")
       .row()
       .text("Попасть на занятие", "gen__meeting__reg_newbie")
       .row();

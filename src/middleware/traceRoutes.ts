@@ -4,6 +4,7 @@ import type { NextFunction } from "grammy";
 import type { CallbackCtx } from "#types/grammy.types.js";
 import sendAdminMenu from "#serviceMessages/sendAdminMenu.js";
 import type { MyContext } from "#types/grammy.types.js";
+import sanitizedConfig from "#root/config.js";
 
 export default async function (ctx: MyContext, next: NextFunction) {
   const messObj = ctx.message;
@@ -18,11 +19,15 @@ export default async function (ctx: MyContext, next: NextFunction) {
   const messText = ctx.message?.text;
   const isTopic = messObj?.is_topic_message;
   const isSupergroup = messObj?.chat.type === "supergroup";
-
+  console.log(ctx);
   if (isTopic) {
     return;
   }
   if (messText === "/admin") {
+    const adminIds = sanitizedConfig.ADMIN_IDS.split("|").map(Number);
+    if (!adminIds.includes(ctx.userId)) {
+      return;
+    }
     return await sendAdminMenu(ctx);
   }
   if (currentMsgId < lastMsgId || lastMsgId === 0) {

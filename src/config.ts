@@ -9,19 +9,30 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-type ENV = {
-  BOT_API_TOKEN: string | undefined;
-  DB_NAME: string | undefined;
-  DB_USERNAME: string | undefined;
-  DB_PASSWORD: string | undefined;
-  DB_HOST: string | undefined;
-  DB_PORT: number | undefined;
-};
+type ENV = Record<
+  | "BOT_API_TOKEN"
+  | "ADMIN_IDS"
+  | "SERVICE_GROUP_ID"
+  | "SUB_TOPIC"
+  | "FEEDBACK_TOPIC"
+  | "USER_LIMIT"
+  | "DB_NAME"
+  | "DB_USERNAME"
+  | "DB_PASSWORD"
+  | "DB_HOST"
+  | "DB_PORT",
+  string | undefined
+>;
 
 // Loading process.env as ENV interface
 const getConfig = (): ENV => {
   return {
     BOT_API_TOKEN: process.env.BOT_API_TOKEN,
+    ADMIN_IDS: process.env.ADMIN_IDS,
+    SERVICE_GROUP_ID: process.env.SERVICE_GROUP_ID,
+    SUB_TOPIC: process.env.SUB_TOPIC,
+    FEEDBACK_TOPIC: process.env.FEEDBACK_TOPIC,
+    USER_LIMIT: process.env.USER_LIMIT,
     DB_NAME: process.env.DB_NAME,
     DB_USERNAME: process.env.DB_USERNAME,
     DB_PASSWORD: process.env.DB_PASSWORD,

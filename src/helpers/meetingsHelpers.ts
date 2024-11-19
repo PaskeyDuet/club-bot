@@ -9,16 +9,14 @@ import type {
   MeetingObjectWithUserCountType,
 } from "#types/shared.types.js";
 import { dates, guardExp, smoothReplier, notificator } from "./index.js";
-import Meetings, {
-  type MeetingsCreationType,
-  type MeetingsType,
-} from "#db/models/Meetings.js";
-import { adminManageMeeting, adminMenu } from "#keyboards/index.js";
+import Meetings, { type MeetingsCreationType } from "#db/models/Meetings.js";
 import type { MyContext } from "#types/grammy.types.js";
 import type { RawVocabularyWithTagNameT } from "#db/models/MeetingsVocabulary.js";
 import meetingsVocabularyController from "#db/handlers/meetingsVocabularyController.js";
 import { InlineKeyboard } from "grammy";
 import type { Transaction } from "sequelize";
+import sanitizedConfig from "#root/config.js";
+import { adminMenu } from "#keyboards/index.js";
 
 async function getFutureMeetings(): Promise<MeetingObjectWithId[] | undefined> {
   try {
@@ -62,14 +60,21 @@ const dbObjDateTransform = (meeting: Meetings): MeetingObjectWithId => ({
 const dbObjsToReadable = (meetings: Meetings[]): MeetingObjectWithId[] =>
   meetings.map((el) => dbObjDateTransform(el));
 
+const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {
+  const meetingPromises = meetings.map(async (el) => {
+    const users = await findRegUserIds(el.meetingId);
+    const newObj: MeetingObjectWithUserCountType = {
+      ...el,
+      userCount: users.length,
+    };
+    return newObj;
+  });
+  return await Promise.all(meetingPromises);
+};
+
 const createMeetingsList = {
-  userView(
-    meetings:
-      | MeetingObject[]
-      | MeetingsType[]
-      | MeetingObjectWithId[]
-      | MeetingsCreationType[]
-  ) {
+  userLimit: sanitizedConfig.USER_LIMIT,
+  userView(meetings: MeetingObject[]) {
     return meetings
       .map((el) => `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n`)
       .join("\n");
@@ -78,14 +83,16 @@ const createMeetingsList = {
     return meetings
       .map(
         (el) =>
-          `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n 👥 ${el.userCount}/8\n`
+          `📅 ${el.date}\n🗒 ${el.topic}\n📍 ${el.place}\n 👥 ${el.userCount}/${this.userLimit}\n`
       )
       .join("\n");
   },
   adminShortView(meetings: MeetingObjectWithUserCountType[]) {
-    //TODO: change number 8 using env limits
     return meetings
-      .map((el) => `${el.date} -- ${el.topic} -- ${el.userCount}/8\n`)
+      .map(
+        (el) =>
+          `${el.date} -- ${el.topic} -- ${el.userCount}/${this.userLimit}\n`
+      )
       .join("\n");
   },
 };
@@ -95,8 +102,8 @@ const createVocabularyList = {
     return vocabList
       .map((unit) => {
         let str = `<i>${unit.tag_name}</i>\n`;
-        str += `<b>${unit.lexical_unit}</b> - ${unit.translation}\n`;
-        str += `${unit.example}\n<i>${unit.example_translation}</i>\n`;
+        str += `<b>${unit.lexical_unit}- ${unit.translation}</b>\n`;
+        str += `${unit.example}\n<span class="tg-spoiler">${unit.example_translation}</span>\n`;
         return str;
       })
       .join("\n");
@@ -105,7 +112,7 @@ const createVocabularyList = {
     return vocabList
       .map((unit) => {
         let str = `<b>${unit.lexical_unit}</b> - ${unit.translation}\n`;
-        str += `${unit.example}\n<i>${unit.example_translation}</i>\n`;
+        str += `${unit.example}\n<span class="tg-spoiler">${unit.example_translation}<span>\n`;
         return str;
       })
       .join("\n");
@@ -188,18 +195,6 @@ async function meetingInfoGetter(meetingId: number, usersIds?: number[]) {
   };
   return createMeetingsList.adminView([meetingsWithUserCount]);
 }
-
-const readableObjsWithCount = async (meetings: MeetingObjectWithId[]) => {
-  const meetingPromises = meetings.map(async (el) => {
-    const users = await findRegUserIds(el.meetingId);
-    const newObj: MeetingObjectWithUserCountType = {
-      ...el,
-      userCount: users.length,
-    };
-    return newObj;
-  });
-  return await Promise.all(meetingPromises);
-};
 
 const endMeeting = async (ctx: MyContext, meetingId: number) => {
   const h = endMeetingH(meetingId);

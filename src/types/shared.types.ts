@@ -4,14 +4,21 @@ import type { SubDetailsType } from "#db/models/SubDetails.js";
 import type MeetingsDetails from "#db/models/MeetingsDetails.js";
 import type { InlineKeyboardMarkup } from "grammy/types";
 
-export type Config = {
-  BOT_API_TOKEN: string;
-  DB_NAME: string;
-  DB_USERNAME: string;
-  DB_PASSWORD: string;
-  DB_HOST: string;
-  DB_PORT: number;
-};
+export type Config = Record<
+  | "BOT_API_TOKEN"
+  | "ADMIN_IDS"
+  | "SERVICE_GROUP_ID"
+  | "SUB_TOPIC"
+  | "FEEDBACK_TOPIC"
+  | "USER_LIMIT"
+  | "DB_NAME"
+  | "DB_USERNAME"
+  | "DB_PASSWORD"
+  | "DB_HOST"
+  | "DB_PORT",
+  string
+>;
+
 export type TextWithInlineKeyboardObj = {
   text: string;
   keyboard?: InlineKeyboardMarkup;

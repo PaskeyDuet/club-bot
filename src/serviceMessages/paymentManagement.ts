@@ -10,7 +10,7 @@ export default async function (ctx: MyContext, status: "paid" | "unactive") {
     const messageText = messageTexts[status]();
     await smoothReplier(ctx, messageText, mainMenu, "paymentManagment");
     if (status === "paid") {
-      await notificator.newSub(ctx);
+      await notificator.newSub();
     } else {
     }
   } catch (error) {
