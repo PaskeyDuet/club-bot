@@ -7,6 +7,7 @@ import type { MyContext } from "#types/grammy.types.js";
 import sanitizedConfig from "#root/config.js";
 
 export default async function (ctx: MyContext, next: NextFunction) {
+  const adminIds = sanitizedConfig.ADMIN_IDS.split("|").map(Number);
   const messObj = ctx.message;
 
   const cbMessageId = ctx?.callbackQuery?.message?.message_id;
@@ -17,20 +18,26 @@ export default async function (ctx: MyContext, next: NextFunction) {
 
   const lastMsgId = ctx.session.lastMsgId ?? 0;
   const messText = ctx.message?.text;
+  guardExp(messText, "messtext inside traceRoutes");
   const isTopic = messObj?.is_topic_message;
   const isSupergroup = messObj?.chat.type === "supergroup";
-  console.log(ctx);
-  if (isTopic) {
+  const adminCommands = ["/admin", "/init"];
+  const isAdminCommand = adminCommands.includes(messText);
+  const isAdminId = adminIds.includes(ctx.userId);
+  if (
+    isTopic ||
+    (ctx.chat?.type === "group" && !adminIds.includes(ctx.userId))
+  ) {
     return;
   }
-  if (messText === "/admin") {
-    const adminIds = sanitizedConfig.ADMIN_IDS.split("|").map(Number);
-    if (!adminIds.includes(ctx.userId)) {
-      return;
-    }
+  if (messText === "/admin" && isAdminId) {
     return await sendAdminMenu(ctx);
   }
-  if (currentMsgId < lastMsgId || lastMsgId === 0) {
+  // if (isAdminCommand && isAdminId) {
+  //   await next();
+  //   return;
+  // }
+  if (currentMsgId < lastMsgId || (lastMsgId === 0 && !isAdminCommand)) {
     if (isSupergroup) {
       return;
     }

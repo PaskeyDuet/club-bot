@@ -34,10 +34,10 @@ export default class GroupsMembers extends Model<
   declare id: number;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.NUMBER })
+  @Column({ type: DataType.INTEGER })
   declare user_id: number;
 
   @ForeignKey(() => UserGroups)
-  @Column({ type: DataType.NUMBER })
+  @Column({ type: DataType.BIGINT })
   declare group_id: number;
 }

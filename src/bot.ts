@@ -1,4 +1,11 @@
-import { Api, Bot, GrammyError, HttpError, session } from "grammy";
+import {
+  Api,
+  Bot,
+  GrammyError,
+  HttpError,
+  MemorySessionStorage,
+  session,
+} from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import sessionConfig from "#root/botConfig/sessionConfig.js";
 import { registrationForMeeting } from "#conv/registrationForMeeting.js";
@@ -25,6 +32,10 @@ import meetingFeedback from "#conv/feebackConv.js";
 import User from "#db/models/User.js";
 import UserSubscription from "#db/models/UserSubscription.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import { mainMenu } from "#keyboards/generalKeyboards.js";
+import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
+import type { ChatMember } from "grammy/types";
+import { groupInit } from "#controllers/groupUnit.js";
 
 (async () => {
   logger.info("bot is running");
@@ -100,11 +111,14 @@ if (!token) {
 export const bot = new Bot<MyContext>(token);
 bot.api.config.use(hydrateFiles(token));
 export const admin = new Api(token);
+
+const adapter = new MemorySessionStorage<ChatMember>();
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
   })
 );
+// bot.use(chatMembers(adapter))
 bot.use(conversations());
 bot.use(createConversation(userRegistrationConv));
 bot.use(createConversation(registrationForMeeting));
@@ -118,6 +132,10 @@ bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
+bot.on(":new_chat_members", async (ctx) => {
+  console.log("Info", ctx);
+});
+
 bot.command("admin", async (ctx) => {
   try {
     await sendAdminMenu(ctx);
@@ -125,6 +143,7 @@ bot.command("admin", async (ctx) => {
     logErrorAndThrow(err, "fatal", "unable to send sendAdminMenu");
   }
 });
+bot.command("init", groupInit);
 
 bot.command("start", async (ctx: MyContext) => {
   try {
@@ -153,7 +172,7 @@ bot.catch((err) => {
   } else {
     logger.fatal(`Unknown error:\n${e}`);
   }
-  ctx.reply("На данный момент бот на покое. Зайдите позже");
+  ctx.reply("На данный момент бот на покое.", { reply_markup: mainMenu });
 });
 
-bot.start();
+bot.start({ allowed_updates: ["chat_member", "message", "callback_query"] });

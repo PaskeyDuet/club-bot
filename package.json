@@ -52,6 +52,7 @@
     "typescript-eslint": "^8.4.0"
   },
   "dependencies": {
+    "@grammyjs/chat-members": "^1.1.0",
     "@grammyjs/conversations": "^1.2.0",
     "@grammyjs/files": "^1.1.1",
     "@sequelize/postgres": "^7.0.0-alpha.41",
