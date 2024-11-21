@@ -112,7 +112,6 @@ export const bot = new Bot<MyContext>(token);
 bot.api.config.use(hydrateFiles(token));
 export const admin = new Api(token);
 
-const adapter = new MemorySessionStorage<ChatMember>();
 bot.use(
   session({
     initial: () => structuredClone(sessionConfig),
