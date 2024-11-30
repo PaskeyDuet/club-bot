@@ -5,15 +5,14 @@ import type {
 import Subscription, {
   UserSubscriptionType,
 } from "../models/UserSubscription.js";
-import User from "../models/User.js";
+import User, { UserT } from "../models/User.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
+import dates from "#helpers/dates.js";
 
 export default {
-  userVerification: async (
-    userId: number
-  ): Promise<User | null | undefined> => {
+  findUser: async (query: Partial<UserT>) => {
     try {
-      return await User.findOne({ where: { user_id: userId } });
+      return await User.findOne({ where: query });
     } catch (err) {
       logErrorAndThrow(
         err,
@@ -21,6 +20,15 @@ export default {
         "Db error. Inside usersController, userVerification is unavailable"
       );
     }
+  },
+  createUserWithId: (user_id: number) => {
+    User.create({
+      user_id,
+      first_name: "",
+      second_name: "",
+      username: "",
+      reg_date: dates.currDate(),
+    });
   },
   findUsersWithSub: async (
     query: UserWithSubscriptionPartialType

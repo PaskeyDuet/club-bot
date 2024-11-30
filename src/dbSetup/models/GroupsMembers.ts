@@ -39,5 +39,5 @@ export default class GroupsMembers extends Model<
 
   @ForeignKey(() => UserGroups)
   @Column({ type: DataType.BIGINT })
-  declare group_id: number;
+  declare chat_id: number;
 }

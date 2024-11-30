@@ -1,5 +1,5 @@
 import { handlersCompositions as dbHandler } from "#db/handlers/index.js";
-import type { DbUserAttributes } from "#db/models/User.js";
+import type { UserT } from "#db/models/User.js";
 import { dates, guardExp } from "#helpers/index.js";
 import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import startHandler from "#serviceMessages/startHandler.js";
@@ -24,7 +24,7 @@ export default async function (conversation: MyConversation, ctx: MyContext) {
     );
 
     guardExp(ctx.from?.id, "user_id inside userRegistrationConv");
-    const newUser: DbUserAttributes = {
+    const newUser: UserT = {
       user_id: ctx.from?.id,
       first_name: user_name,
       second_name: second_user_name,

@@ -17,7 +17,7 @@ export default async function startHandler(ctx: MyContext) {
   const userId = ctx.userId || ctx.callbackQuery?.from.id;
   guardExp(userId, "noId");
 
-  const user = await usersController.userVerification(userId);
+  const user = await usersController.findUser({ user_id: +userId });
   if (!user) {
     await ctx.conversation.enter("userReg");
     return;

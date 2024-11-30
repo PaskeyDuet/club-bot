@@ -1,7 +1,7 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
 import type UserSubscription from "./UserSubscription.js";
 
-export type DbUserAttributes = {
+export type UserT = {
   user_id: number;
   first_name: string;
   second_name: string;
@@ -15,7 +15,7 @@ export type DbUserAttributes = {
   tableName: "users",
   modelName: "User",
 })
-export default class User extends Model<DbUserAttributes> {
+export default class User extends Model<UserT> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
