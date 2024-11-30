@@ -1,11 +1,11 @@
 import { dates } from "#helpers/index.js";
 import SubDetails from "../models/SubDetails.js";
 import Subscription from "../models/UserSubscription.js";
-import User, { type DbUserAttributes } from "../models/User.js";
+import User, { type UserT } from "../models/User.js";
 import { guardExp } from "#helpers/index.js";
 
 export default {
-  createUserDbImage: async (user: DbUserAttributes) => {
+  createUserDbImage: async (user: UserT) => {
     await User.create(user);
     const newbieSub = await SubDetails.findOne({ where: { sub_number: 1 } });
     guardExp(newbieSub, "newbieSub inside handlersComposition");

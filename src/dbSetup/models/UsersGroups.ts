@@ -5,7 +5,7 @@ export type UserGroupsT = {
   id: number;
   active: boolean;
   trial_period: boolean;
-  chat_id: number;
+  group_id: number;
 };
 
 export type UserGroupsCreationT = PartialBy<UserGroupsT, "id" | "active">;
@@ -28,5 +28,5 @@ export default class UsersGroups extends Model<
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare active: boolean;
   @Column({ type: DataType.BOOLEAN }) declare trial_period: boolean;
-  @Column({ type: DataType.BIGINT, unique: true }) declare chat_id: number;
+  @Column({ type: DataType.BIGINT, unique: true }) declare group_id: number;
 }

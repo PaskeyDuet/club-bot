@@ -18,7 +18,7 @@ export default async function (ctx: MyContext, next: NextFunction) {
 
   const lastMsgId = ctx.session.lastMsgId ?? 0;
   const messText = ctx.message?.text;
-  guardExp(messText, "messtext inside traceRoutes");
+  if (!messText) return;
   const isTopic = messObj?.is_topic_message;
   const isSupergroup = messObj?.chat.type === "supergroup";
   const adminCommands = ["/admin", "/init"];

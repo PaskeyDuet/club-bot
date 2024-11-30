@@ -4,7 +4,7 @@ import UsersGroups, {
 import type { Transaction } from "sequelize";
 
 export default {
-  createGroup(query: UserGroupsCreationT, transaction: Transaction) {
+  createGroup(query: UserGroupsCreationT, transaction?: Transaction) {
     return UsersGroups.create(query, { transaction });
   },
   findGroup(query: Partial<UserGroupsCreationT>) {

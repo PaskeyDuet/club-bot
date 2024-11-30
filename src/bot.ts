@@ -35,12 +35,15 @@ import logErrorAndThrow from "#handlers/logErrorAndThrow.js";
 import { mainMenu } from "#keyboards/generalKeyboards.js";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
 import type { ChatMember } from "grammy/types";
-import { groupInit } from "#controllers/groupUnit.js";
+import { groupInit, addUserToGroup } from "#controllers/index.js";
+import UsersGroups from "#db/models/UsersGroups.js";
+import GroupsMembers from "#db/models/GroupsMembers.js";
 
 (async () => {
   logger.info("bot is running");
   await sequelize.sync({ alter: true });
-  // console.log(await Meetings.findAll());
+  console.log(await UsersGroups.findAll());
+  console.log(await GroupsMembers.findAll());
   // await VocabularyTags.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsVocabulary.truncate({ cascade: true, restartIdentity: true });
   // await MeetingsDetails.truncate({ cascade: true, restartIdentity: true });
@@ -132,34 +135,14 @@ bot.use(ctxExtender);
 bot.use(traceRoutes);
 bot.use(keyboard);
 
-bot.on(":new_chat_members", async (ctx) => {
-  console.log("Info", ctx);
-});
+bot.on(":new_chat_members", async (ctx) => console.log(ctx));
 
-bot.command("admin", async (ctx) => {
-  try {
-    await sendAdminMenu(ctx);
-  } catch (err) {
-    logErrorAndThrow(err, "fatal", "unable to send sendAdminMenu");
-  }
-});
+bot.command("admin", sendAdminMenu);
 bot.command("init", groupInit);
 
-bot.command("start", async (ctx: MyContext) => {
-  try {
-    await startHandler(ctx);
-  } catch (err) {
-    logErrorAndThrow(err, "fatal", "unable to send startMessage");
-  }
-});
+bot.command("start", startHandler);
 
-bot.callbackQuery("back", async (ctx: MyContext) => {
-  try {
-    await handleBackButton(ctx);
-  } catch (err) {
-    logErrorAndThrow(err, "fatal", "unable to hange handleBackButton");
-  }
-});
+bot.callbackQuery("back", handleBackButton);
 
 bot.catch((err) => {
   const ctx = err.ctx;
